@@ -68,6 +68,8 @@ const COLUMNS = {
   places: ['id','community_id','type','name','description','photo_url','address','city','country_code','neighborhood','latitude','longitude','timezone','hours_schedule','hours_notes','contact_phone','contact_email','website_url','reservation_url','kashrut_level','kashrut_authority','price_level','cuisine_tags','dietary_tags','has_women_section','has_parking_shabbat','prayer_times_url','denomination','accepts_reservations','wheelchair_accessible','family_friendly','submitted_by','submission_status','approved_by','approved_at','rejection_reason','tags','archived_at','created_at','updated_at'],
   programs: ['id','community_id','category','name','description','photo_url','schedule_text','schedule_recurrence','starts_on','ends_on','timezone','age_min','age_max','price_amount','price_currency','price_period','price_notes','max_capacity','enrolled_count_cached','registration_url','registration_open','requires_approval','contact_user_id','location_place_id','location_text','tags','status','created_at','updated_at'],
   program_enrollments: ['id','program_id','user_id','is_for_child','child_first_name','child_last_name','child_dob','child_gender','notes','custom_fields','status','approved_by','approved_at','rejected_at','rejected_reason','enrolled_at','cancelled_at','created_at','updated_at'],
+  interest_groups: ['id','community_id','category','name','description','photo_url','visibility','frequency','meeting_location','meeting_place_id','created_by_user_id','member_count_cached','is_ai_suggested','tags','archived_at','created_at','updated_at'],
+  group_memberships: ['id','group_id','user_id','role','joined_at','left_at','created_at','updated_at'],
 };
 
 // ─── Relationships ───────────────────────────────────────────────────────────
@@ -184,6 +186,22 @@ const REL = {
       ['program',    'program_id'],
       ['user',       'user_id'],
       ['approver',   'approved_by'],
+    ],
+  },
+  interest_groups: {
+    obj: [
+      ['community',  'community_id'],
+      ['creator',    'created_by_user_id'],
+      ['meeting_place', 'meeting_place_id'],
+    ],
+    arr: [
+      ['memberships', 'group_memberships', 'group_id'],
+    ],
+  },
+  group_memberships: {
+    obj: [
+      ['group',      'group_id'],
+      ['user',       'user_id'],
     ],
   },
 };
@@ -656,6 +674,62 @@ function permissionsFor(table) {
         ownCommunityFilter, ownCommunityFilter,
       ));
       out.delete.push(deletePerm('rabbi', ownCommunityFilter));
+      break;
+    }
+
+    // ── interest_groups ──────────────────────────────────────────────────
+    case 'interest_groups': {
+      const ownCommunityFilter = { community_id: { _in: ALLOWED_COMMUNITY_IDS } };
+      const activeFilter = { archived_at: { _is_null: true } };
+
+      // Member: see active groups in own community + global + public.
+      out.select.push(selectPerm('member', C, {
+        _and: [
+          activeFilter,
+          { _or: [
+            ownCommunityFilter,
+            { community_id: { _is_null: true } },
+            { visibility: { _eq: 'public' } },
+          ] },
+        ],
+      }, { allow_aggregations: true }));
+
+      out.insert.push(insertPerm('member',
+        ['community_id','category','name','description','photo_url','visibility',
+         'frequency','meeting_location','meeting_place_id','tags','is_ai_suggested'],
+        ownCommunityFilter,
+        { created_by_user_id: USER_ID },
+      ));
+
+      out.update.push(updatePerm('member',
+        ['name','description','photo_url','visibility','frequency','meeting_location',
+         'meeting_place_id','tags','archived_at'],
+        { created_by_user_id: { _eq: USER_ID } },
+        { created_by_user_id: { _eq: USER_ID } },
+      ));
+      out.update.push(updatePerm('rabbi',
+        ['name','description','photo_url','visibility','frequency','meeting_location',
+         'meeting_place_id','tags','archived_at'],
+        ownCommunityFilter, ownCommunityFilter,
+      ));
+
+      out.delete.push(deletePerm('member', { created_by_user_id: { _eq: USER_ID } }));
+      out.delete.push(deletePerm('rabbi', ownCommunityFilter));
+      break;
+    }
+
+    // ── group_memberships ────────────────────────────────────────────────
+    case 'group_memberships': {
+      const selfFilter = { user_id: { _eq: USER_ID } };
+      // Expose all rows — visibility enforced upstream via interest_groups perm.
+      out.select.push(selectPerm('member', C, {}, { allow_aggregations: true }));
+      out.insert.push(insertPerm('member',
+        ['group_id'],
+        { user_id: { _eq: USER_ID } },
+        { user_id: USER_ID, role: 'member' },
+      ));
+      out.update.push(updatePerm('member', ['left_at'], selfFilter, selfFilter));
+      out.delete.push(deletePerm('member', selfFilter));
       break;
     }
 
