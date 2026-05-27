@@ -1,11 +1,16 @@
 'use client';
 
-// JewGo-style horizontal scroll category nav for community detail page.
-// Active tab is reflected via URL search param `?cat=<place_type|programs|events|people>`.
+// JewGo-style horizontal scroll category nav.
+//
+// Visibility rules:
+//   - ALWAYS visible: synagogue, food (restaurant + cafe merged), store,
+//     programs, events, people
+//   - Conditionally visible: mikvah, school, service, jcc, museum, cemetery —
+//     only if at least one entry exists (or user is staff).
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { PLACE_TYPES, PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
+import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 interface Tab {
   key: string;
@@ -15,19 +20,35 @@ interface Tab {
 }
 
 interface Props {
-  counts: Partial<Record<PlaceType | 'programs' | 'events' | 'people', number>>;
+  counts: Partial<Record<PlaceType | 'food' | 'programs' | 'events' | 'people', number>>;
+  isStaff: boolean;
 }
 
-export function CategoryNav({ counts }: Props) {
-  const params = useSearchParams();
-  const active = params.get('cat') ?? 'synagogue';
+const ALWAYS_VISIBLE_PLACES: Array<{ key: string; emoji: string; label: string }> = [
+  { key: 'synagogue', emoji: PLACE_TYPE_LABELS.synagogue.emoji, label: PLACE_TYPE_LABELS.synagogue.ru },
+  { key: 'food',      emoji: '🍽',                                 label: 'Кафе и рестораны' },
+  { key: 'store',     emoji: PLACE_TYPE_LABELS.store.emoji,     label: PLACE_TYPE_LABELS.store.ru },
+];
 
-  const placeTabs: Tab[] = PLACE_TYPES.map((t) => ({
-    key: t,
-    emoji: PLACE_TYPE_LABELS[t].emoji,
-    label: PLACE_TYPE_LABELS[t].ru,
-    count: counts[t],
-  })).filter((t) => (t.count ?? 0) >= 0);
+const CONDITIONAL_PLACES: PlaceType[] = ['mikvah', 'school', 'service', 'jcc', 'museum', 'cemetery'];
+
+export function CategoryNav({ counts, isStaff }: Props) {
+  const params = useSearchParams();
+  const active = params.get('cat') ?? 'programs';
+
+  const alwaysTabs: Tab[] = ALWAYS_VISIBLE_PLACES.map((t) => ({
+    ...t,
+    count: counts[t.key as keyof typeof counts],
+  }));
+
+  const conditionalTabs: Tab[] = CONDITIONAL_PLACES
+    .filter((t) => isStaff || (counts[t] ?? 0) > 0)
+    .map((t) => ({
+      key: t,
+      emoji: PLACE_TYPE_LABELS[t].emoji,
+      label: PLACE_TYPE_LABELS[t].ru,
+      count: counts[t],
+    }));
 
   const extraTabs: Tab[] = [
     { key: 'programs', emoji: '📖', label: 'Программы', count: counts.programs },
@@ -35,7 +56,7 @@ export function CategoryNav({ counts }: Props) {
     { key: 'people',   emoji: '👥', label: 'Участники', count: counts.people },
   ];
 
-  const tabs = [...placeTabs, ...extraTabs];
+  const tabs = [...alwaysTabs, ...conditionalTabs, ...extraTabs];
 
   return (
     <div className="sticky top-14 z-20 -mx-5 md:-mx-6 px-5 md:px-6 glass border-b border-(--color-border)/60">

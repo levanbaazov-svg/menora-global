@@ -99,7 +99,7 @@ export default async function CommunityPage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
-  const activeCategory = (await searchParams).cat ?? 'synagogue';
+  const activeCategory = (await searchParams).cat ?? 'programs';
 
   // We currently support only single-community focus. Multi-community switcher in v2.
   const communityId = session.hasura.community_id;
@@ -127,10 +127,16 @@ export default async function CommunityPage({
     placesByType.set(p.type, arr);
   }
 
+  const foodPlaces = [
+    ...(placesByType.get('restaurant') ?? []),
+    ...(placesByType.get('cafe') ?? []),
+  ];
+
   const counts = {
     ...Object.fromEntries(
       PLACE_TYPES.map((t) => [t, placesByType.get(t)?.length ?? 0]),
     ) as Record<PlaceType, number>,
+    food: foodPlaces.length,
     programs: data.programs.length,
     events: data.events.length,
     people: data.memberships_aggregate.aggregate?.count ?? 0,
@@ -179,11 +185,13 @@ export default async function CommunityPage({
       </section>
 
       {/* Category nav (JewGo-style horizontal scroll) */}
-      <CategoryNav counts={counts} />
+      <CategoryNav counts={counts} isStaff={isStaff} />
 
       {/* Active category content */}
       <section className="mt-6">
-        {PLACE_TYPES.includes(activeCategory as PlaceType) ? (
+        {activeCategory === 'food' ? (
+          <FoodList places={foodPlaces} isStaff={isStaff} />
+        ) : PLACE_TYPES.includes(activeCategory as PlaceType) ? (
           <PlaceList
             type={activeCategory as PlaceType}
             places={placesByType.get(activeCategory as PlaceType) ?? []}
@@ -197,11 +205,102 @@ export default async function CommunityPage({
           <PeopleStub />
         ) : null}
       </section>
+
+      {/* Staff-only: link to admin tools */}
+      {isStaff && (
+        <section className="mt-8 grid sm:grid-cols-2 gap-3">
+          <Link
+            href="/dashboard/community/manage"
+            className="block rounded-2xl border border-(--color-gold)/30 bg-(--color-gold-soft)/40 p-4 hover:bg-(--color-gold-soft)/70 transition-colors"
+          >
+            <div className="text-xs uppercase tracking-wider text-(--color-gold-dark) mb-1">Управление</div>
+            <div className="font-semibold">Добавить место или программу</div>
+            <div className="text-xs text-(--color-fg-muted) mt-1">Заполнить city-guide для общины</div>
+          </Link>
+          <Link
+            href="/dashboard/community/pending"
+            className="block rounded-2xl border border-(--color-border) bg-(--color-bg-elevated) p-4 hover:border-(--color-gold)/40 transition-colors"
+          >
+            <div className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-1">Модерация</div>
+            <div className="font-semibold">Предложенные места</div>
+            <div className="text-xs text-(--color-fg-muted) mt-1">Одобрить от участников</div>
+          </Link>
+        </section>
+      )}
+
+      {/* Travelling/Moving CTA — discover other communities */}
+      <section className="mt-10">
+        <Link
+          href="/dashboard/community/discover"
+          className="block rounded-2xl bg-gradient-to-br from-(--color-deep) to-(--color-deep-soft) text-white p-6 md:p-7 hover:scale-[1.01] transition-transform relative overflow-hidden"
+        >
+          <div
+            aria-hidden
+            className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full opacity-25"
+            style={{ background: 'radial-gradient(circle, var(--color-gold), transparent)' }}
+          />
+          <div className="relative">
+            <div className="text-xs uppercase tracking-widest text-(--color-gold) mb-2">
+              ✈️ Путешествуешь? Переезжаешь?
+            </div>
+            <h3 className="font-serif text-2xl font-semibold mb-2">
+              Найди свою еврейскую жизнь в другом городе
+            </h3>
+            <p className="text-sm opacity-85 mb-3 max-w-md">
+              Шаббатные ужины в Бангкоке, синагога в Берлине, школа для детей в Тель-Авиве —
+              все общины в одном месте.
+            </p>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              Открыть карту общин →
+            </span>
+          </div>
+        </Link>
+      </section>
     </div>
   );
 }
 
 // ── Sub-views ────────────────────────────────────────────────────────────────
+function FoodList({ places, isStaff }: { places: Place[]; isStaff: boolean }) {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="font-serif text-2xl font-semibold">🍽 Кафе и рестораны</h2>
+          <p className="text-sm text-(--color-fg-muted)">{places.length} {places.length === 1 ? 'место' : 'мест'}</p>
+        </div>
+        {isStaff && (
+          <LinkButton href="/dashboard/community/places/new?type=restaurant" variant="gold" size="sm">
+            + Добавить
+          </LinkButton>
+        )}
+      </div>
+
+      {places.length === 0 ? (
+        <EmptyState
+          emoji="🍽"
+          title="Пока нет кошерных мест"
+          description={isStaff
+            ? 'Добавь первое — другие участники сразу его увидят.'
+            : 'Знаешь подходящее? Предложи место через кнопку «Подать заявку».'}
+          action={
+            <LinkButton
+              href="/dashboard/community/places/new?type=restaurant"
+              variant="gold" size="sm"
+            >
+              {isStaff ? 'Добавить место' : 'Предложить место'}
+            </LinkButton>
+          }
+        />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {places.map((p) => <PlaceCard key={p.id} {...p} />)}
+        </div>
+      )}
+    </>
+  );
+}
+
 function PlaceList({ type, places, isStaff }: { type: PlaceType; places: Place[]; isStaff: boolean }) {
   const meta = PLACE_TYPE_LABELS[type];
   return (
