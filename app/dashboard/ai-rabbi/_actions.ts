@@ -61,6 +61,7 @@ export async function startConversation(_prev: ActionState, formData: FormData):
       INSERT_CONVERSATION,
       {
         obj: {
+          user_id: session.user.id,
           scenario: scenarioEnum,
           community_id: session.hasura.community_id,
         },
