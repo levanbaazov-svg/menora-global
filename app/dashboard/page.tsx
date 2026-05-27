@@ -130,9 +130,12 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* ── AI Rabbi proactive card (placeholder until Phase B) ─────────── */}
+      {/* ── AI Rabbi hub link ─────────────────────────────────────────── */}
       <section className="mb-10">
-        <div className="rounded-2xl bg-(--color-deep) text-white p-5 md:p-6 relative overflow-hidden">
+        <Link
+          href="/dashboard/ai-rabbi"
+          className="block rounded-2xl bg-(--color-deep) text-white p-5 md:p-6 relative overflow-hidden hover:scale-[1.005] transition-transform"
+        >
           <div
             aria-hidden
             className="absolute -right-10 -top-10 w-44 h-44 rounded-full opacity-20"
@@ -144,15 +147,15 @@ export default async function DashboardPage() {
             </div>
             <div className="flex-1">
               <div className="text-xs uppercase tracking-wider text-(--color-gold) mb-1">
-                AI Раввин · Скоро
+                AI Раввин · Открыт
               </div>
               <p className="text-base leading-relaxed">
-                Когда AI запустится, здесь будут персональные предложения по твоим интересам,
-                расписанию и общине. Например: «Заметил что ты сохранил 3 шаббат-ужина — забронировать на пятницу?»
+                Все 6 сценариев + свободный разговор. Помнит контекст недели, знает твою общину
+                и парашу. Открой →
               </p>
             </div>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* ── Two-column: My community + Today's calendar ──────────────────── */}

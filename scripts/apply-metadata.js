@@ -70,6 +70,8 @@ const COLUMNS = {
   program_enrollments: ['id','program_id','user_id','is_for_child','child_first_name','child_last_name','child_dob','child_gender','notes','custom_fields','status','approved_by','approved_at','rejected_at','rejected_reason','enrolled_at','cancelled_at','created_at','updated_at'],
   interest_groups: ['id','community_id','category','name','description','photo_url','visibility','frequency','meeting_location','meeting_place_id','created_by_user_id','member_count_cached','is_ai_suggested','tags','archived_at','created_at','updated_at'],
   group_memberships: ['id','group_id','user_id','role','joined_at','left_at','created_at','updated_at'],
+  ai_conversations: ['id','user_id','community_id','scenario','title','last_message_at','message_count','total_tokens_input','total_tokens_output','archived_at','created_at','updated_at'],
+  ai_messages: ['id','conversation_id','role','content','tokens_input','tokens_output','model','created_at'],
 };
 
 // ─── Relationships ───────────────────────────────────────────────────────────
@@ -202,6 +204,20 @@ const REL = {
     obj: [
       ['group',      'group_id'],
       ['user',       'user_id'],
+    ],
+  },
+  ai_conversations: {
+    obj: [
+      ['user',       'user_id'],
+      ['community',  'community_id'],
+    ],
+    arr: [
+      ['messages',   'ai_messages', 'conversation_id'],
+    ],
+  },
+  ai_messages: {
+    obj: [
+      ['conversation', 'conversation_id'],
     ],
   },
 };
@@ -765,6 +781,46 @@ function permissionsFor(table) {
       ));
 
       out.delete.push(deletePerm('member', selfFilter));
+      break;
+    }
+
+    // ── ai_conversations ─────────────────────────────────────────────────
+    case 'ai_conversations': {
+      const selfFilter = { user_id: { _eq: USER_ID } };
+
+      // SELECT: only own conversations
+      out.select.push(selectPerm('member', C, selfFilter, { allow_aggregations: true }));
+
+      // INSERT: any member can start a conversation; user_id preset to themselves
+      out.insert.push(insertPerm('member',
+        ['community_id','scenario','title'],
+        selfFilter,
+        { user_id: USER_ID },
+      ));
+
+      // UPDATE: only title + archived_at (rename / archive)
+      out.update.push(updatePerm('member',
+        ['title','archived_at'],
+        selfFilter, selfFilter,
+      ));
+
+      // DELETE: own conversations only
+      out.delete.push(deletePerm('member', selfFilter));
+      break;
+    }
+
+    // ── ai_messages ──────────────────────────────────────────────────────
+    case 'ai_messages': {
+      const ownConversationFilter = {
+        conversation: { user_id: { _eq: USER_ID } },
+      };
+
+      // SELECT: messages from own conversations (system messages filtered in UI)
+      out.select.push(selectPerm('member', C, ownConversationFilter));
+
+      // Messages are inserted server-side via service role (admin secret).
+      // No member-level insert/update/delete — keeps tokens/model fields tamper-proof.
+      // (Cascade delete on conversation handles cleanup.)
       break;
     }
   }
