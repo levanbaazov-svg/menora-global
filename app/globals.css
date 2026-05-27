@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #FCFAF8;
+  --fg: #151B28;
+  --gold: #D4A23C;
+  --deep: #0F172A;
+  --muted: #6B7280;
+  --border: #E5E7EB;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-gold: var(--gold);
+  --color-deep: var(--deep);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: ui-serif, Georgia, serif;
+}
+
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }

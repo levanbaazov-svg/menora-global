@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Maskable safe zone is center 80% — fill entire canvas with brand color -->
+  <rect width="256" height="256" fill="#D4A23C"/>
+  <g fill="none" stroke="#0F172A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 84 L128 192"/>
+    <path d="M88 192 L88 130 Q88 110 100 100"/>
+    <path d="M168 192 L168 130 Q168 110 156 100"/>
+    <path d="M104 192 L104 138 Q104 120 116 112"/>
+    <path d="M152 192 L152 138 Q152 120 140 112"/>
+    <path d="M120 192 L120 145 Q120 130 128 124"/>
+    <path d="M136 192 L136 145 Q136 130 128 124"/>
+    <path d="M76 192 L180 192"/>
+    <path d="M128 200 L128 216"/>
+    <path d="M108 216 L148 216"/>
+  </g>
+  <g fill="#0F172A">
+    <ellipse cx="88" cy="88" rx="4" ry="7"/>
+    <ellipse cx="104" cy="98" rx="4" ry="7"/>
+    <ellipse cx="120" cy="106" rx="4" ry="7"/>
+    <ellipse cx="128" cy="76" rx="4" ry="7"/>
+    <ellipse cx="136" cy="106" rx="4" ry="7"/>
+    <ellipse cx="152" cy="98" rx="4" ry="7"/>
+    <ellipse cx="168" cy="88" rx="4" ry="7"/>
+  </g>
+</svg>

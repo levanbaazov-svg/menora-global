@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="48" fill="#FCFAF8"/>
+  <g fill="none" stroke="#D4A23C" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Center stem -->
+    <path d="M128 56 L128 200"/>
+    <!-- Outer pair -->
+    <path d="M72 200 L72 110 Q72 80 90 70"/>
+    <path d="M184 200 L184 110 Q184 80 166 70"/>
+    <!-- Mid-outer pair -->
+    <path d="M92 200 L92 120 Q92 95 110 85"/>
+    <path d="M164 200 L164 120 Q164 95 146 85"/>
+    <!-- Inner pair -->
+    <path d="M112 200 L112 130 Q112 110 128 100"/>
+    <path d="M144 200 L144 130 Q144 110 128 100"/>
+    <!-- Base -->
+    <path d="M50 200 L206 200"/>
+    <path d="M70 210 L186 210"/>
+    <path d="M128 210 L128 232"/>
+    <path d="M100 232 L156 232"/>
+  </g>
+  <!-- Flames -->
+  <g fill="#D4A23C">
+    <ellipse cx="72" cy="60" rx="5" ry="9"/>
+    <ellipse cx="92" cy="75" rx="5" ry="9"/>
+    <ellipse cx="112" cy="90" rx="5" ry="9"/>
+    <ellipse cx="128" cy="46" rx="5" ry="9"/>
+    <ellipse cx="144" cy="90" rx="5" ry="9"/>
+    <ellipse cx="164" cy="75" rx="5" ry="9"/>
+    <ellipse cx="184" cy="60" rx="5" ry="9"/>
+  </g>
+</svg>

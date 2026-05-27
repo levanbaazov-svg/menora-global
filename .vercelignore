@@ -1,0 +1,12 @@
+# Local-only tooling — runtime doesn't need any of this.
+migrations/
+scripts/
+docs/
+hasura/
+
+# Test/dev artefacts
+.env
+.env.*
+!.env.example
+tsconfig.tsbuildinfo
+*.log
