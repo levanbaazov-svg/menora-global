@@ -65,6 +65,9 @@ const COLUMNS = {
   routines: ['id','user_id','community_id','type','custom_label','target_time','timezone','days_of_week','enabled','reminder_offset_minutes','created_at','updated_at'],
   checkins: ['id','user_id','routine_id','gregorian_date','hebrew_date_text','completed_at','note','created_at'],
   notifications: ['id','recipient_user_id','actor_user_id','community_id','type','title','body','resource_type','resource_id','link','metadata','read_at','created_at'],
+  places: ['id','community_id','type','name','description','photo_url','address','city','country_code','neighborhood','latitude','longitude','timezone','hours_schedule','hours_notes','contact_phone','contact_email','website_url','reservation_url','kashrut_level','kashrut_authority','price_level','cuisine_tags','dietary_tags','has_women_section','has_parking_shabbat','prayer_times_url','denomination','accepts_reservations','wheelchair_accessible','family_friendly','submitted_by','submission_status','approved_by','approved_at','rejection_reason','tags','archived_at','created_at','updated_at'],
+  programs: ['id','community_id','category','name','description','photo_url','schedule_text','schedule_recurrence','starts_on','ends_on','timezone','age_min','age_max','price_amount','price_currency','price_period','price_notes','max_capacity','enrolled_count_cached','registration_url','registration_open','requires_approval','contact_user_id','location_place_id','location_text','tags','status','created_at','updated_at'],
+  program_enrollments: ['id','program_id','user_id','is_for_child','child_first_name','child_last_name','child_dob','child_gender','notes','custom_fields','status','approved_by','approved_at','rejected_at','rejected_reason','enrolled_at','cancelled_at','created_at','updated_at'],
 };
 
 // ─── Relationships ───────────────────────────────────────────────────────────
@@ -154,6 +157,33 @@ const REL = {
       ['recipient',  'recipient_user_id'],
       ['actor',      'actor_user_id'],
       ['community',  'community_id'],
+    ],
+  },
+  places: {
+    obj: [
+      ['community',  'community_id'],
+      ['submitter',  'submitted_by'],
+      ['approver',   'approved_by'],
+    ],
+    arr: [
+      ['programs',   'programs', 'location_place_id'],
+    ],
+  },
+  programs: {
+    obj: [
+      ['community',  'community_id'],
+      ['location',   'location_place_id'],
+      ['contact',    'contact_user_id'],
+    ],
+    arr: [
+      ['enrollments', 'program_enrollments', 'program_id'],
+    ],
+  },
+  program_enrollments: {
+    obj: [
+      ['program',    'program_id'],
+      ['user',       'user_id'],
+      ['approver',   'approved_by'],
     ],
   },
 };
@@ -542,14 +572,125 @@ function permissionsFor(table) {
     // ── notifications ─────────────────────────────────────────────────────
     case 'notifications': {
       const selfFilter = { recipient_user_id: { _eq: USER_ID } };
-      // Read own only
       out.select.push(selectPerm('member', C, selfFilter, { allow_aggregations: true }));
-      // Update own: only flip read_at
+      out.update.push(updatePerm('member', ['read_at'], selfFilter, selfFilter));
+      break;
+    }
+
+    // ── places ────────────────────────────────────────────────────────────
+    case 'places': {
+      const ownCommunityFilter = { community_id: { _in: ALLOWED_COMMUNITY_IDS } };
+      const approvedFilter = { _and: [
+        { submission_status: { _eq: 'approved' } },
+        { archived_at: { _is_null: true } },
+      ] };
+
+      // Member: see approved places in own communities + their own pending submissions
+      out.select.push(selectPerm('member', C, {
+        _and: [
+          ownCommunityFilter,
+          { _or: [approvedFilter, { submitted_by: { _eq: USER_ID } }] },
+        ],
+      }, { allow_aggregations: true }));
+
+      // Rabbi: full read in own community + pending review
+      out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
+
+      // Member: submit a place (goes to pending review)
+      out.insert.push(insertPerm('member',
+        ['community_id','type','name','description','photo_url','address','city','country_code',
+         'neighborhood','latitude','longitude','hours_schedule','hours_notes','contact_phone',
+         'contact_email','website_url','reservation_url','kashrut_level','kashrut_authority',
+         'price_level','cuisine_tags','dietary_tags','has_women_section','has_parking_shabbat',
+         'prayer_times_url','denomination','accepts_reservations','wheelchair_accessible',
+         'family_friendly','tags'],
+        { _and: [ownCommunityFilter, { submitted_by: { _eq: USER_ID } }] },
+        { submitted_by: USER_ID, submission_status: 'pending' },
+      ));
+
+      // Member: update own pending submissions
       out.update.push(updatePerm('member',
-        ['read_at'],
+        ['name','description','photo_url','address','contact_phone','contact_email',
+         'website_url','reservation_url','hours_schedule','hours_notes','tags'],
+        { _and: [{ submitted_by: { _eq: USER_ID } }, { submission_status: { _eq: 'pending' } }] },
+        { submitted_by: { _eq: USER_ID } },
+      ));
+
+      // Rabbi: full update in own community (incl. approve)
+      out.update.push(updatePerm('rabbi',
+        C.filter((c) => !['id','community_id','submitted_by','created_at','updated_at'].includes(c)),
+        ownCommunityFilter, ownCommunityFilter,
+        { approved_by: USER_ID },
+      ));
+
+      // Rabbi: delete (archive preferred but allow hard delete)
+      out.delete.push(deletePerm('rabbi', ownCommunityFilter));
+      break;
+    }
+
+    // ── programs ──────────────────────────────────────────────────────────
+    case 'programs': {
+      const ownCommunityFilter = { community_id: { _in: ALLOWED_COMMUNITY_IDS } };
+      const activeFilter = { status: { _eq: 'active' } };
+
+      // Member: see active programs in own communities
+      out.select.push(selectPerm('member', C, {
+        _and: [ownCommunityFilter, activeFilter],
+      }, { allow_aggregations: true }));
+
+      // Rabbi: full read incl. draft/archived
+      out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
+
+      // Rabbi: create/update/delete programs in own community
+      out.insert.push(insertPerm('rabbi',
+        ['community_id','category','name','description','photo_url','schedule_text',
+         'schedule_recurrence','starts_on','ends_on','age_min','age_max','price_amount',
+         'price_currency','price_period','price_notes','max_capacity','registration_url',
+         'registration_open','requires_approval','contact_user_id','location_place_id',
+         'location_text','tags','status'],
+        ownCommunityFilter,
+        { contact_user_id: USER_ID },
+      ));
+      out.update.push(updatePerm('rabbi',
+        C.filter((c) => !['id','community_id','enrolled_count_cached','created_at','updated_at'].includes(c)),
+        ownCommunityFilter, ownCommunityFilter,
+      ));
+      out.delete.push(deletePerm('rabbi', ownCommunityFilter));
+      break;
+    }
+
+    // ── program_enrollments ──────────────────────────────────────────────
+    case 'program_enrollments': {
+      const selfFilter = { user_id: { _eq: USER_ID } };
+      const ownCommunityFilter = { program: { community_id: { _in: ALLOWED_COMMUNITY_IDS } } };
+
+      // Member: see own enrollments + summary counts on programs in their community
+      out.select.push(selectPerm('member', C, selfFilter, { allow_aggregations: true }));
+      // Rabbi: see all enrollments for programs in their community
+      out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
+
+      // Member: self-enroll
+      out.insert.push(insertPerm('member',
+        ['program_id','is_for_child','child_first_name','child_last_name','child_dob',
+         'child_gender','notes','custom_fields'],
+        { _and: [{ user_id: { _eq: USER_ID } }, ownCommunityFilter] },
+        { user_id: USER_ID, status: 'pending' },
+      ));
+
+      // Member: cancel own
+      out.update.push(updatePerm('member',
+        ['notes','custom_fields','cancelled_at','status'],
         selfFilter, selfFilter,
       ));
-      // Insert + delete: admin only (notifications are system-created)
+
+      // Rabbi: approve/reject pending in own community
+      out.update.push(updatePerm('rabbi',
+        ['status','approved_by','approved_at','rejected_at','rejected_reason','notes'],
+        ownCommunityFilter, ownCommunityFilter,
+        { approved_by: USER_ID },
+      ));
+
+      out.delete.push(deletePerm('member', selfFilter));
       break;
     }
   }

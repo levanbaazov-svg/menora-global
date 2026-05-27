@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5E9CC"/>
+      <stop offset="60%" stop-color="#D4A23C"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+    <linearGradient id="building" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="600" fill="url(#sky)"/>
+
+  <!-- Sun glow -->
+  <circle cx="800" cy="400" r="200" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="800" cy="400" r="120" fill="#FFFFFF" opacity="0.4"/>
+
+  <!-- Distant menorah silhouettes -->
+  <g fill="url(#building)" opacity="0.7">
+    <!-- Left menorah -->
+    <rect x="180" y="430" width="6" height="120"/>
+    <rect x="160" y="455" width="6" height="95"/>
+    <rect x="200" y="455" width="6" height="95"/>
+    <rect x="140" y="480" width="6" height="70"/>
+    <rect x="220" y="480" width="6" height="70"/>
+    <rect x="120" y="500" width="6" height="50"/>
+    <rect x="240" y="500" width="6" height="50"/>
+    <rect x="150" y="548" width="60" height="6"/>
+
+    <!-- Right menorah -->
+    <rect x="1414" y="430" width="6" height="120"/>
+    <rect x="1394" y="455" width="6" height="95"/>
+    <rect x="1434" y="455" width="6" height="95"/>
+    <rect x="1374" y="480" width="6" height="70"/>
+    <rect x="1454" y="480" width="6" height="70"/>
+    <rect x="1354" y="500" width="6" height="50"/>
+    <rect x="1474" y="500" width="6" height="50"/>
+    <rect x="1384" y="548" width="60" height="6"/>
+  </g>
+
+  <!-- Subtle horizon line -->
+  <rect x="0" y="500" width="1600" height="100" fill="#0F172A" opacity="0.3"/>
+</svg>
