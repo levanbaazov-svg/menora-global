@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { HebrewCalendarCard } from './_HebrewCalendarCard';
 import { PastelCard, Chip } from '@/app/_components/ui/Card';
+import { getTodayFeatured, KIND_LABELS } from '@/lib/inspiration/library';
 
 // ── GraphQL ──────────────────────────────────────────────────────────────────
 const FETCH_DASHBOARD = /* GraphQL */ `
@@ -156,6 +157,50 @@ export default async function DashboardPage() {
             </div>
           </div>
         </Link>
+      </section>
+
+      {/* ── Inspire — today's pick ─────────────────────────────────────── */}
+      <section className="mb-10">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-serif text-xl font-semibold">✦ Сегодня для души</h2>
+          <Link
+            href="/dashboard/inspire"
+            className="text-sm text-(--color-fg-muted) hover:text-(--color-deep)"
+          >
+            Вся библиотека →
+          </Link>
+        </div>
+        {(() => {
+          const today = getTodayFeatured();
+          const meta = KIND_LABELS[today.kind];
+          return (
+            <Link
+              href={`/dashboard/inspire/${today.slug}`}
+              className="group block rounded-2xl overflow-hidden relative hover:scale-[1.005] transition-transform"
+            >
+              <div className={`relative bg-gradient-to-br ${today.gradient} p-5 md:p-6 min-h-44 text-white flex flex-col justify-end`}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-widest bg-white/90 text-(--color-deep) px-2 py-0.5 rounded-full font-medium">
+                    {meta.emoji} {meta.ru}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 backdrop-blur text-white font-medium">
+                    {today.readingTimeMinutes} мин
+                  </span>
+                </div>
+                <div className="absolute top-4 right-4 text-3xl drop-shadow-lg">{today.emoji}</div>
+                <div className="relative">
+                  <h3 className="font-serif text-xl md:text-2xl font-semibold leading-tight drop-shadow-md mb-1">
+                    {today.title}
+                  </h3>
+                  {today.subtitle && (
+                    <p className="text-sm opacity-95">{today.subtitle}</p>
+                  )}
+                </div>
+              </div>
+            </Link>
+          );
+        })()}
       </section>
 
       {/* ── Two-column: My community + Today's calendar ──────────────────── */}

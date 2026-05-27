@@ -72,6 +72,7 @@ const COLUMNS = {
   group_memberships: ['id','group_id','user_id','role','joined_at','left_at','created_at','updated_at'],
   ai_conversations: ['id','user_id','community_id','scenario','title','last_message_at','message_count','total_tokens_input','total_tokens_output','archived_at','created_at','updated_at'],
   ai_messages: ['id','conversation_id','role','content','tokens_input','tokens_output','model','created_at'],
+  inspiration_bookmarks: ['id','user_id','item_slug','item_kind','created_at'],
 };
 
 // ─── Relationships ───────────────────────────────────────────────────────────
@@ -218,6 +219,11 @@ const REL = {
   ai_messages: {
     obj: [
       ['conversation', 'conversation_id'],
+    ],
+  },
+  inspiration_bookmarks: {
+    obj: [
+      ['user', 'user_id'],
     ],
   },
 };
@@ -821,6 +827,25 @@ function permissionsFor(table) {
       // Messages are inserted server-side via service role (admin secret).
       // No member-level insert/update/delete — keeps tokens/model fields tamper-proof.
       // (Cascade delete on conversation handles cleanup.)
+      break;
+    }
+
+    // ── inspiration_bookmarks ────────────────────────────────────────────
+    case 'inspiration_bookmarks': {
+      const selfFilter = { user_id: { _eq: USER_ID } };
+
+      // SELECT: own bookmarks only
+      out.select.push(selectPerm('member', C, selfFilter, { allow_aggregations: true }));
+
+      // INSERT: any member can bookmark — user_id preset
+      out.insert.push(insertPerm('member',
+        ['item_slug', 'item_kind'],
+        selfFilter,
+        { user_id: USER_ID },
+      ));
+
+      // DELETE: own bookmarks (unbookmark)
+      out.delete.push(deletePerm('member', selfFilter));
       break;
     }
   }

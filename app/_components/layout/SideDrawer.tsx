@@ -20,7 +20,7 @@ const EXPLORE: MenuItem[] = [
   { href: '/dashboard/events',         icon: '📅', label: 'События',     hint: 'RSVP и создать' },
   { href: '/dashboard/requests',       icon: '🙋', label: 'Просьбы',    hint: 'Доска помощи' },
   { href: '/dashboard/routines',       icon: '🕯', label: 'Моя рутина',  hint: 'Молитвы · стрик' },
-  { href: '/dashboard/discover',       icon: '✨', label: 'Discover',    hint: 'Вдохновение · парша · аудио' },
+  { href: '/dashboard/inspire',        icon: '✨', label: 'Inspire',     hint: 'Праздники · мудрости · истории' },
 ];
 
 const ME: MenuItem[] = [
