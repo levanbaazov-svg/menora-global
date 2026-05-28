@@ -158,18 +158,29 @@ export async function setEnabled(userId: string, enabled: boolean): Promise<void
 /**
  * Generates a QR SVG string for the given token. Returns inline SVG markup
  * which can be embedded directly into a server-rendered page (no client JS).
+ *
+ * Important for scannability:
+ *  - `light` must be solid white (no alpha) — phone cameras need high contrast
+ *  - errorCorrectionLevel 'H' is most forgiving against partial occlusion
+ *  - margin 2+ ('quiet zone') is required by the spec; small margin =
+ *    scanners fail
+ *  - we strip the SVG's fixed width/height so CSS controls sizing
  */
 export async function qrSvgFor(url: string): Promise<string> {
-  return QRCode.toString(url, {
+  const raw = await QRCode.toString(url, {
     type: 'svg',
-    errorCorrectionLevel: 'M',
-    margin: 1,
+    errorCorrectionLevel: 'H',
+    margin: 2,
     color: {
-      dark: '#1A1F2E',  // --color-deep
-      light: '#FFFFFF00',
+      dark: '#0F172A',   // --color-deep
+      light: '#FFFFFF',  // solid white — required for scannability
     },
-    width: 320,
   });
+  // Strip hard-coded width/height so CSS (w-full h-full) controls size.
+  return raw.replace(
+    /<svg([^>]*?)\s+width="[^"]+"\s+height="[^"]+"/,
+    '<svg$1 width="100%" height="100%"',
+  );
 }
 
 export function publicCardUrl(token: string, origin?: string): string {

@@ -36,19 +36,12 @@ export function IdCard({ card, qrSvg, publicUrl, compact }: Props) {
           'linear-gradient(135deg, #1A1F2E 0%, #2A3144 40%, #3E4665 75%, #C7A862 100%)',
       }}
     >
-      {/* Subtle radial highlight */}
+      {/* Subtle radial highlight — top corner only, far from QR */}
       <div
         aria-hidden
         className="absolute -top-24 -right-16 w-64 h-64 rounded-full opacity-40 pointer-events-none"
         style={{ background: 'radial-gradient(circle, #C7A862 0%, transparent 70%)' }}
       />
-      {/* Watermark menorah */}
-      <div
-        aria-hidden
-        className="absolute -bottom-10 -left-6 text-[160px] leading-none opacity-[0.06] pointer-events-none select-none"
-      >
-        🕎
-      </div>
 
       <div className="relative p-6 md:p-7 text-white">
         {/* Top row — brand + chip */}
@@ -125,19 +118,21 @@ export function IdCard({ card, qrSvg, publicUrl, compact }: Props) {
           </div>
         )}
 
-        {/* QR block */}
+        {/* QR block — solid white card with maximum contrast for scanning.
+            Caption sits OUTSIDE the QR's white area to keep the quiet zone
+            clean (scanners need ~4 modules of white border). */}
         {!compact && (
-          <div className="rounded-2xl bg-white p-4 flex flex-col items-center">
+          <div className="rounded-2xl bg-white p-5 flex flex-col items-center">
             <div
-              className="w-44 h-44"
+              className="w-56 h-56"
               // qrSvg is a trusted server-generated SVG string (from qrcode lib).
               dangerouslySetInnerHTML={{ __html: qrSvg }}
             />
-            {publicUrl && (
-              <div className="text-[10px] text-(--color-fg-muted) mt-2 text-center break-all max-w-[14rem] leading-tight">
-                Скан QR — открывает страницу подтверждения
-              </div>
-            )}
+          </div>
+        )}
+        {!compact && publicUrl && (
+          <div className="text-[10px] text-white/60 mt-2 text-center tracking-wide uppercase">
+            Скан QR — страница подтверждения
           </div>
         )}
 
