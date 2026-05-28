@@ -7,30 +7,60 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen overflow-hidden relative flex flex-col">
-      {/* Soft golden radial in background */}
+      {/* ── Background — soft golden radials ─────────────────────────── */}
       <div
         aria-hidden
         className="absolute inset-0 -z-10"
         style={{
           background:
-            'radial-gradient(ellipse 80% 50% at 50% 20%, rgba(212,162,60,0.18), transparent 60%),' +
-            'radial-gradient(ellipse 60% 40% at 80% 80%, rgba(199,168,98,0.12), transparent 60%)',
+            'radial-gradient(ellipse 80% 50% at 50% 18%, rgba(201,155,67,0.20), transparent 60%),' +
+            'radial-gradient(ellipse 60% 40% at 85% 85%, rgba(199,168,98,0.14), transparent 60%)',
         }}
       />
 
-      {/* Hero — emotional value prop */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-16">
-        <div className="hero-pulse w-full max-w-md text-center fade-up">
-          <div className="text-sm uppercase tracking-[0.2em] text-(--color-fg-muted) mb-6">
-            ✦  Menorah Global
+      {/* Subtle Hebrew star pattern — barely visible texture */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><polygon fill='%23000' points='40,4 47,28 73,28 51,44 60,68 40,52 20,68 29,44 7,28 33,28'/></svg>")`,
+          backgroundSize: '160px 160px',
+        }}
+      />
+
+      {/* ── Top brand mark ─────────────────────────────────────────────── */}
+      <header className="px-6 pt-6 md:pt-8 flex items-center justify-between safe-top">
+        <div className="flex items-center gap-2">
+          <span className="text-(--color-gold) text-lg">✦</span>
+          <span className="font-serif italic text-lg font-semibold tracking-tight">
+            Menorah
+          </span>
+        </div>
+        <a
+          href="#features"
+          className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors"
+        >
+          Что внутри ↓
+        </a>
+      </header>
+
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <section className="flex-1 flex flex-col items-center justify-center px-6 py-10 md:py-16">
+        <div className="hero-pulse w-full max-w-xl text-center fade-up">
+          <div className="text-[11px] uppercase tracking-[0.25em] text-(--color-gold-dark) mb-5 font-semibold">
+            Menorah · Jewish community network
           </div>
 
-          <h1 className="font-serif text-5xl sm:text-6xl font-semibold leading-[1.05] tracking-tight mb-6">
-            Свой <em className="italic font-normal text-(--color-gold-dark)">еврейский дом</em><br />
+          <h1 className="font-serif text-[2.75rem] sm:text-5xl md:text-6xl font-semibold leading-[1.02] tracking-tight mb-5">
+            Свой{' '}
+            <em className="italic font-normal text-(--color-gold-dark) relative inline-block">
+              еврейский дом
+            </em>
+            <br />
             везде, где ты
           </h1>
 
-          <p className="text-base text-(--color-fg-muted) leading-relaxed mb-10 max-w-sm mx-auto">
+          <p className="text-base md:text-lg text-(--color-fg-muted) leading-relaxed mb-8 max-w-md mx-auto">
             Шаббат-ужины. Кошерные места. AI-раввин в кармане.
             Найди свою общину или открой новые — в любом городе мира.
           </p>
@@ -47,7 +77,9 @@ export default async function HomePage() {
                 inline-flex items-center gap-3 px-7 h-14 rounded-full
                 bg-(--color-deep) text-white font-semibold
                 hover:scale-[1.02] active:scale-[0.99]
-                transition-transform shadow-[var(--shadow-lg)]
+                transition-all duration-200 shadow-[var(--shadow-lg)]
+                hover:shadow-[var(--shadow-xl)]
+                focus-visible:outline-(--color-gold)
               "
             >
               <GoogleLogo />
@@ -55,17 +87,48 @@ export default async function HomePage() {
             </button>
           </form>
 
-          <p className="text-xs text-(--color-fg-subtle) mt-6">
-            Setup занимает ~3 минуты. Бесплатно.
+          <p className="text-xs text-(--color-fg-subtle) mt-5">
+            Setup ~3 минуты · Бесплатно · Без рекламы
           </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="px-6 py-6 text-center text-xs text-(--color-fg-subtle)">
-        <span>Платформа для еврейских общин по всему миру</span>
+      {/* ── 3 value props ──────────────────────────────────────────────── */}
+      <section id="features" className="px-6 pb-10 md:pb-16">
+        <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-4 fade-up-stagger">
+          <FeatureCard
+            emoji="🕯"
+            title="Шаббат рядом"
+            body="Времена свечей по твоей геолокации. Шаббат-ужины в общине. Дом из коробки."
+          />
+          <FeatureCard
+            emoji="✦"
+            title="AI Раввин"
+            body="6 сценариев плюс свободный разговор. Знает твою общину и недельную парашу."
+          />
+          <FeatureCard
+            emoji="🪪"
+            title="Jewish ID"
+            body="Цифровой паспорт с QR. В любой общине по миру тебя подтвердят за пару секунд."
+          />
+        </div>
+      </section>
+
+      {/* ── Footer ─────────────────────────────────────────────────────── */}
+      <footer className="px-6 py-6 text-center text-xs text-(--color-fg-subtle) safe-bottom">
+        <p>Платформа для еврейских общин по всему миру</p>
       </footer>
     </main>
+  );
+}
+
+function FeatureCard({ emoji, title, body }: { emoji: string; title: string; body: string }) {
+  return (
+    <div className="rounded-2xl bg-white/60 backdrop-blur-sm border border-(--color-border)/60 p-5 hover:bg-white hover:border-(--color-gold)/30 transition-all">
+      <div className="text-2xl mb-2">{emoji}</div>
+      <h3 className="font-serif text-lg font-semibold mb-1">{title}</h3>
+      <p className="text-sm text-(--color-fg-muted) leading-relaxed">{body}</p>
+    </div>
   );
 }
 

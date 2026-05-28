@@ -104,21 +104,30 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto px-5 md:px-6 pt-6 pb-12 fade-up">
       {/* ── Greeting ─────────────────────────────────────────────────────── */}
-      <div className="mb-6 md:mb-8">
-        <div className="text-sm text-(--color-fg-muted) mb-1">
-          {greeting.emoji} {greeting.text}
+      <div className="mb-7 md:mb-9">
+        <div className="text-xs uppercase tracking-[0.15em] text-(--color-fg-muted) mb-2 flex items-center gap-1.5">
+          <span>{greeting.emoji}</span>
+          <span>{greeting.text}</span>
         </div>
-        <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-tight">
-          Шалом, <span className="italic">{firstName}</span>
+        <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.05] tracking-tight">
+          Шалом, <em className="italic font-normal text-(--color-gold-dark)">{firstName}</em>
         </h1>
       </div>
 
       {/* ── AI Rabbi scenarios — the heart of the home ────────────────────── */}
       <section className="mb-10">
-        <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-5">
-          Что у тебя на душе сегодня?
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <header className="mb-5 flex items-end justify-between gap-3">
+          <h2 className="font-serif text-2xl md:text-3xl font-semibold leading-tight">
+            Что у тебя на душе сегодня?
+          </h2>
+          <Link
+            href="/dashboard/ai-rabbi"
+            className="shrink-0 text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors whitespace-nowrap"
+          >
+            Все →
+          </Link>
+        </header>
+        <div className="grid grid-cols-2 gap-3 fade-up-stagger">
           {SCENARIOS.map((s) => (
             <PastelCard
               key={s.href}
@@ -129,34 +138,6 @@ export default async function DashboardPage() {
             />
           ))}
         </div>
-      </section>
-
-      {/* ── AI Rabbi hub link ─────────────────────────────────────────── */}
-      <section className="mb-10">
-        <Link
-          href="/dashboard/ai-rabbi"
-          className="block rounded-2xl bg-(--color-deep) text-white p-5 md:p-6 relative overflow-hidden hover:scale-[1.005] transition-transform"
-        >
-          <div
-            aria-hidden
-            className="absolute -right-10 -top-10 w-44 h-44 rounded-full opacity-20"
-            style={{ background: 'radial-gradient(circle, var(--color-gold), transparent)' }}
-          />
-          <div className="flex items-start gap-3 relative">
-            <div className="shrink-0 w-9 h-9 rounded-full bg-(--color-gold) text-(--color-deep) flex items-center justify-center text-base">
-              ✦
-            </div>
-            <div className="flex-1">
-              <div className="text-xs uppercase tracking-wider text-(--color-gold) mb-1">
-                AI Раввин · Открыт
-              </div>
-              <p className="text-base leading-relaxed">
-                Все 6 сценариев + свободный разговор. Помнит контекст недели, знает твою общину
-                и парашу. Открой →
-              </p>
-            </div>
-          </div>
-        </Link>
       </section>
 
       {/* ── Inspire — today's pick ─────────────────────────────────────── */}
@@ -271,26 +252,67 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      {/* ── My profile snapshot ──────────────────────────────────────────── */}
-      <section className="mb-12">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-serif text-xl font-semibold">Мой профиль</h2>
-          <Link
-            href="/dashboard/me"
-            className="text-sm text-(--color-fg-muted) hover:text-(--color-deep)"
-          >
-            Открыть →
-          </Link>
+      {/* ── My profile + Jewish ID promo ─────────────────────────────────── */}
+      <section className="mb-12 grid gap-4 md:grid-cols-2">
+        {/* Profile snapshot */}
+        <div>
+          <header className="mb-3 flex items-end justify-between">
+            <h2 className="font-serif text-lg font-semibold">Мой профиль</h2>
+            <Link
+              href="/dashboard/me"
+              className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors"
+            >
+              Открыть →
+            </Link>
+          </header>
+          <div className="rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/70 p-5 shadow-[var(--shadow-sm)] h-full">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
+              <dt className="text-(--color-fg-muted) text-xs uppercase tracking-wider">Еврейское имя</dt>
+              <dd className="font-medium font-serif">{profile?.hebrew_name ?? '—'}</dd>
+              <dt className="text-(--color-fg-muted) text-xs uppercase tracking-wider">Направление</dt>
+              <dd className="font-medium">{profile?.denomination ?? '—'}</dd>
+              <dt className="text-(--color-fg-muted) text-xs uppercase tracking-wider">Соблюдение</dt>
+              <dd className="font-medium">{profile?.observance_level ?? '—'}</dd>
+            </dl>
+          </div>
         </div>
-        <div className="rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/60 p-5">
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            <dt className="text-(--color-fg-muted)">Еврейское имя</dt>
-            <dd className="font-medium">{profile?.hebrew_name ?? '—'}</dd>
-            <dt className="text-(--color-fg-muted)">Направление</dt>
-            <dd className="font-medium">{profile?.denomination ?? '—'}</dd>
-            <dt className="text-(--color-fg-muted)">Соблюдение</dt>
-            <dd className="font-medium">{profile?.observance_level ?? '—'}</dd>
-          </dl>
+
+        {/* Jewish ID promo */}
+        <div>
+          <header className="mb-3 flex items-end justify-between">
+            <h2 className="font-serif text-lg font-semibold">🪪 Jewish ID</h2>
+            <Link
+              href="/dashboard/me/jewish-id"
+              className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors"
+            >
+              Открыть карту →
+            </Link>
+          </header>
+          <Link
+            href="/dashboard/me/jewish-id"
+            className="group relative block rounded-2xl overflow-hidden h-full p-5 text-white shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-lg)] transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #14181F 0%, #232838 45%, #C99B43 130%)',
+            }}
+          >
+            <div
+              aria-hidden
+              className="absolute -top-12 -right-10 w-40 h-40 rounded-full opacity-40 pointer-events-none"
+              style={{ background: 'radial-gradient(circle, #C99B43 0%, transparent 70%)' }}
+            />
+            <div className="relative">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-(--color-gold) mb-2 font-semibold">
+                ✦ Цифровой паспорт
+              </div>
+              <p className="text-sm leading-relaxed mb-3 opacity-90">
+                QR-код для подтверждения членства в любой общине Menorah.
+                Покажи — и тебя примут как своего.
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold transition-transform group-hover:translate-x-1">
+                Открыть мою карту <span>→</span>
+              </span>
+            </div>
+          </Link>
         </div>
       </section>
     </div>

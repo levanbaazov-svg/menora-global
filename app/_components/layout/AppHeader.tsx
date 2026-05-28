@@ -19,20 +19,25 @@ export function AppHeader({ user, role, communityName, signOutAction }: Props) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 glass border-b border-(--color-border)/60 safe-top">
+      <header className="sticky top-0 z-30 glass border-b border-(--color-border)/50 safe-top">
         <div className="max-w-5xl mx-auto px-4 md:px-6 h-14 flex items-center gap-3">
-          {/* Avatar = drawer trigger (mobile) / logo+name (desktop) */}
+          {/* Avatar = drawer trigger */}
           <button
             onClick={() => setDrawerOpen(true)}
-            className="flex items-center gap-2.5 hover:opacity-80 active:opacity-60 transition-opacity"
+            className="flex items-center gap-2.5 rounded-full hover:scale-105 active:scale-95 transition-transform"
             aria-label="Открыть меню"
           >
             <Avatar user={user} size="sm" />
           </button>
 
-          {/* Center — Logo */}
-          <Link href="/dashboard" className="flex-1 flex items-center justify-center">
-            <span className="font-serif text-lg font-semibold tracking-tight">
+          {/* Center — Logo (✦ + Menorah serif italic for premium feel) */}
+          <Link
+            href="/dashboard"
+            className="flex-1 flex items-center justify-center gap-1.5 group"
+            aria-label="Главная"
+          >
+            <span className="text-(--color-gold) text-base group-hover:scale-110 transition-transform">✦</span>
+            <span className="font-serif italic text-lg font-semibold tracking-tight">
               Menorah
             </span>
           </Link>

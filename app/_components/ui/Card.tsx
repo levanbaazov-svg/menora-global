@@ -17,12 +17,13 @@ const PADDING = {
   lg: 'p-6',
 };
 
+// Unified card surface across the app.
 const baseClass =
-  'bg-(--color-bg-elevated) border border-(--color-border)/60 rounded-2xl shadow-[var(--shadow-sm)] ' +
-  'transition-all duration-200';
+  'bg-(--color-bg-elevated) border border-(--color-border)/70 rounded-2xl ' +
+  'shadow-[var(--shadow-sm)] transition-all duration-200';
 
 const interactiveClass =
-  'hover:border-(--color-gold)/40 hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 ' +
+  'hover:border-(--color-gold)/40 hover:shadow-[var(--shadow-md)] hover:-translate-y-[2px] ' +
   'active:translate-y-0 active:shadow-[var(--shadow-sm)]';
 
 export function Card({ children, className = '', padding = 'md', interactive, href, onClick }: CardProps) {
@@ -46,7 +47,7 @@ export function PhotoCard({
   aspect = 'square',
 }: {
   imageUrl?: string;
-  gradientColor?: string;   // fallback CSS color/gradient when no image
+  gradientColor?: string;
   badge?: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -65,13 +66,13 @@ export function PhotoCard({
          style={{
            background: imageUrl
              ? `url(${imageUrl}) center/cover no-repeat`
-             : gradientColor ?? 'linear-gradient(135deg, #C7A862, #92400E)',
+             : gradientColor ?? 'linear-gradient(135deg, #C7A862, #8F6A1F)',
          }}>
       {badge && (
         <div className="absolute top-3 left-3 z-10">{badge}</div>
       )}
       <div className="absolute inset-x-0 bottom-0 z-10 p-4 text-white">
-        {title && <div className="font-serif text-xl font-semibold leading-tight">{title}</div>}
+        {title && <div className="font-serif text-xl font-semibold leading-tight drop-shadow-md">{title}</div>}
         {subtitle && <div className="text-sm opacity-90 mt-1">{subtitle}</div>}
         {children}
       </div>
@@ -79,7 +80,7 @@ export function PhotoCard({
   );
 
   return href ? (
-    <Link href={href} className="block hover:scale-[1.01] active:scale-[0.99] transition-transform">
+    <Link href={href} className="block transition-transform duration-200 hover:scale-[1.015] active:scale-[0.99]">
       {inner}
     </Link>
   ) : inner;
@@ -99,12 +100,21 @@ export function PastelCard({
   const tintBg = `bg-[var(--color-pastel-${tint})]`;
 
   const content = (
-    <div className={`relative rounded-2xl p-5 min-h-[140px] flex flex-col justify-between ${tintBg} hover:scale-[1.02] active:scale-[0.99] transition-transform ${className}`}>
-      <div>
+    <div className={`group relative rounded-2xl p-5 min-h-[140px] flex flex-col justify-between
+                     ${tintBg} overflow-hidden
+                     hover:shadow-[var(--shadow-md)]
+                     transition-all duration-200 ${className}`}>
+      {/* Subtle radial glow on hover */}
+      <div
+        aria-hidden
+        className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-300"
+        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%)' }}
+      />
+      <div className="relative">
         <div className="font-serif text-lg font-semibold leading-tight">{title}</div>
         {subtitle && <div className="text-xs text-(--color-fg-muted) mt-1">{subtitle}</div>}
       </div>
-      <div className="self-start w-9 h-9 rounded-full bg-(--color-deep) text-white flex items-center justify-center text-sm">
+      <div className="relative self-start w-9 h-9 rounded-full bg-(--color-deep) text-white flex items-center justify-center text-sm transition-transform duration-200 group-hover:translate-x-1">
         →
       </div>
     </div>
@@ -146,5 +156,37 @@ export function Chip({
     <span {...rest} className={`inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap ${tones[tone]} ${sizes[size]} ${className}`}>
       {children}
     </span>
+  );
+}
+
+/** Section — consistent vertical rhythm + header for content blocks */
+export function Section({
+  title, subtitle, action, children, className = '',
+}: {
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`mb-10 ${className}`}>
+      {(title || subtitle || action) && (
+        <header className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            {title && (
+              <h2 className="font-serif text-xl md:text-2xl font-semibold leading-tight">
+                {title}
+              </h2>
+            )}
+            {subtitle && (
+              <p className="text-xs text-(--color-fg-muted) mt-1">{subtitle}</p>
+            )}
+          </div>
+          {action && <div className="shrink-0">{action}</div>}
+        </header>
+      )}
+      {children}
+    </section>
   );
 }
