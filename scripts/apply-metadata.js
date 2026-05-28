@@ -52,7 +52,7 @@ const ALLOWED_COMMUNITY_IDS = 'X-Hasura-Allowed-Community-Ids';
 // ─── Column inventory per table ──────────────────────────────────────────────
 const COLUMNS = {
   communities: ['id','slug','name','city','country_code','timezone','hebrew_calendar','branding','settings','created_at','updated_at'],
-  users: ['id','email','email_verified_at','name','image_url','locale','onboarding_step','onboarded_at','tutorial_completed','first_signup_path','last_seen_at','deactivated_at','created_at','updated_at'],
+  users: ['id','email','email_verified_at','name','image_url','locale','onboarding_step','onboarded_at','tutorial_completed','first_signup_path','last_seen_at','deactivated_at','jewish_id_token','jewish_id_enabled','jewish_id_regenerated_at','created_at','updated_at'],
   accounts: ['id','user_id','provider','provider_account_id','type','access_token','refresh_token','id_token','expires_at','token_type','scope','session_state','created_at','updated_at'],
   user_profiles: ['user_id','legal_first_name','legal_last_name','hebrew_name','gender','date_of_birth','phone_e164','marital_status','has_children','children_ages','spouse_hebrew_name','denomination','observance_level','kashrut_level','interests','languages','bio','profile_visibility','notification_prefs','custom_fields','updated_at'],
   memberships: ['id','user_id','community_id','role','status','entry_method','request_message','invited_by','approved_by','rejected_by','community_role','member_since','family_id','prayer_config','onboarding_done','joined_at','rejected_at','rejected_reason','suspended_at','left_at','created_at','updated_at'],
