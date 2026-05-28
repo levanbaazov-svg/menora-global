@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useRef } from 'react';
 import { createGroup } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
+import { AITextHelper } from '@/app/_components/ai/AITextHelper';
 import {
   GROUP_CATEGORIES, GROUP_CATEGORY_LABELS,
   GROUP_VISIBILITY, VISIBILITY_LABELS,
@@ -14,6 +15,9 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
   const [state, action] = useActionState(createGroup, INITIAL_STATE);
   const v = (k: string, fallback = '') =>
     (state.values?.[k] as string | undefined) ?? fallback;
+
+  const nameRef = useRef<HTMLInputElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
 
   const [tagsRaw, setTagsRaw] = useState(
     Array.isArray(state.values?.tags) ? (state.values.tags as string[]).join(', ') : v('tags'),
@@ -45,6 +49,7 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
         placeholder="Например: Утренний parsha-кружок"
         defaultValue={v('name')}
         error={state.errors?.name}
+        inputRef={nameRef}
       />
 
       <Textarea
@@ -54,6 +59,8 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
         placeholder="О чём встречаемся, для кого, чего ожидать на первой встрече..."
         defaultValue={v('description')}
         error={state.errors?.description}
+        inputRef={descRef}
+        hint={<AITextHelper targetRef={descRef} kind="group" hint={{ name: nameRef.current?.value }} />}
       />
 
       <Field

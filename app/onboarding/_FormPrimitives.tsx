@@ -1,6 +1,7 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
+import type { Ref } from 'react';
 
 // Shared form atoms for onboarding. Clockout-influenced:
 // - softer borders, bigger touch targets, gold focus glow
@@ -19,10 +20,11 @@ const labelBase = 'text-sm font-semibold text-(--color-fg) block mb-2';
 const errorBase = 'text-xs text-(--color-danger) mt-1.5 block';
 
 export function Field({
-  label, name, type = 'text', required, placeholder, defaultValue, error,
+  label, name, type = 'text', required, placeholder, defaultValue, error, inputRef,
 }: {
   label: string; name: string; type?: string; required?: boolean;
   placeholder?: string; defaultValue?: string; error?: string;
+  inputRef?: Ref<HTMLInputElement>;
 }) {
   return (
     <label className="block">
@@ -30,6 +32,7 @@ export function Field({
         {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <input
+        ref={inputRef}
         name={name} type={type} placeholder={placeholder}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
@@ -41,10 +44,11 @@ export function Field({
 }
 
 export function Select({
-  label, name, required, defaultValue, options, error,
+  label, name, required, defaultValue, options, error, inputRef,
 }: {
   label: string; name: string; required?: boolean; defaultValue?: string;
   options: [string, string][]; error?: string;
+  inputRef?: Ref<HTMLSelectElement>;
 }) {
   return (
     <label className="block">
@@ -52,6 +56,7 @@ export function Select({
         {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <select
+        ref={inputRef}
         name={name}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
@@ -71,10 +76,12 @@ export function Select({
 }
 
 export function Textarea({
-  label, name, rows = 4, required, placeholder, defaultValue, error,
+  label, name, rows = 4, required, placeholder, defaultValue, error, inputRef, hint,
 }: {
   label: string; name: string; rows?: number; required?: boolean;
   placeholder?: string; defaultValue?: string; error?: string;
+  inputRef?: Ref<HTMLTextAreaElement>;
+  hint?: React.ReactNode;
 }) {
   return (
     <label className="block">
@@ -82,11 +89,13 @@ export function Textarea({
         {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <textarea
+        ref={inputRef}
         name={name} rows={rows} placeholder={placeholder}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
         className={inputBase + ' resize-y leading-relaxed'}
       />
+      {hint}
       {error && <span className={errorBase}>{error}</span>}
     </label>
   );

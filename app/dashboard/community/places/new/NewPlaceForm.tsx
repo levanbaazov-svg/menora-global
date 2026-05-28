@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useRef } from 'react';
 import { submitPlace } from '../../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
+import { AITextHelper } from '@/app/_components/ai/AITextHelper';
 import {
   PLACE_TYPES, PLACE_TYPE_LABELS, KASHRUT_LEVELS, KASHRUT_LABELS,
   PRICE_LEVELS, CUISINE_TAGS, CUISINE_LABELS, DIETARY_TAGS, DIETARY_LABELS,
@@ -16,9 +17,18 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
     (defaultType ?? (state.values?.type as PlaceType | undefined) ?? 'restaurant'),
   );
   const v = (k: string, d = '') => (state.values?.[k] as string | undefined) ?? d;
+  const nameRef = useRef<HTMLInputElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
 
   const isFood = ['restaurant', 'cafe', 'store'].includes(type);
   const isSynagogue = type === 'synagogue';
+
+  const aiKind =
+    type === 'synagogue' ? 'place_synagogue' as const :
+    type === 'restaurant' ? 'place_restaurant' as const :
+    type === 'cafe' ? 'place_cafe' as const :
+    type === 'store' ? 'place_store' as const :
+    'place_generic' as const;
 
   return (
     <form action={action} className="space-y-5">
@@ -51,12 +61,14 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
         </div>
       </fieldset>
 
-      <Field label="Название" name="name" required defaultValue={v('name')} error={state.errors?.name} />
+      <Field label="Название" name="name" required defaultValue={v('name')} error={state.errors?.name} inputRef={nameRef} />
       <Textarea
         label="Описание" name="description" rows={3}
         defaultValue={v('description')}
         placeholder="Что важно знать посетителю..."
         error={state.errors?.description}
+        inputRef={descRef}
+        hint={<AITextHelper targetRef={descRef} kind={aiKind} hint={{ name: nameRef.current?.value }} />}
       />
       <Field
         label="Фото URL" name="photo_url" type="url"

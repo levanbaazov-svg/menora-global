@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { HebrewCalendarCard } from './_HebrewCalendarCard';
 import { PastelCard, Chip } from '@/app/_components/ui/Card';
 import { getTodayFeatured, KIND_LABELS } from '@/lib/inspiration/library';
+import { DailyHomeCard } from '@/app/_components/ai/DailyHomeCard';
+import { Suspense } from 'react';
 
 // ── GraphQL ──────────────────────────────────────────────────────────────────
 const FETCH_DASHBOARD = /* GraphQL */ `
@@ -113,6 +115,13 @@ export default async function DashboardPage() {
           Шалом, <em className="italic font-normal text-(--color-gold-dark)">{firstName}</em>
         </h1>
       </div>
+
+      {/* ── AI proactive card (today's personalized hint) ─────────────────── */}
+      <section className="mb-8">
+        <Suspense fallback={<div className="h-32 skeleton rounded-2xl" />}>
+          <DailyHomeCard userId={session.user.id} />
+        </Suspense>
+      </section>
 
       {/* ── AI Rabbi scenarios — the heart of the home ────────────────────── */}
       <section className="mb-10">
