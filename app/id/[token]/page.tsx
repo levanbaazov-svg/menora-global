@@ -1,7 +1,7 @@
 // /id/[token] — public verification page. NO auth required. Renders the card
 // view-only so anyone scanning the QR can verify community membership.
 
-import { fetchPublicCardByToken, publicCardUrl, qrSvgFor } from '@/lib/jewish-id';
+import { fetchPublicCardByToken, publicCardUrl, qrDataUrlFor } from '@/lib/jewish-id';
 import { IdCard, DisabledCardPlaceholder } from '@/app/dashboard/me/jewish-id/IdCard';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -28,7 +28,7 @@ export default async function PublicJewishIdPage({
   const proto = h.get('x-forwarded-proto') ?? 'https';
   const origin = host ? `${proto}://${host}` : (process.env.NEXTAUTH_URL ?? '');
   const url = publicCardUrl(card.token, origin);
-  const qrSvg = await qrSvgFor(url);
+  const qrDataUrl = await qrDataUrlFor(url);
 
   return (
     <main className="min-h-screen flex flex-col bg-(--color-bg) py-10 px-5">
@@ -48,7 +48,7 @@ export default async function PublicJewishIdPage({
             </p>
           </div>
 
-          <IdCard card={card} qrSvg={qrSvg} publicUrl={url} />
+          <IdCard card={card} qrDataUrl={qrDataUrl} publicUrl={url} />
 
           <p className="text-center text-xs text-(--color-fg-subtle) mt-5">
             Жми/наводи на ❌ если карта выглядит подозрительно — мы расследуем

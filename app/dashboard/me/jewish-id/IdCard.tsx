@@ -17,15 +17,15 @@ const ROLE_TONES = {
 
 interface Props {
   card: JewishIdCard;
-  /** Inline SVG markup for the QR (server-generated) */
-  qrSvg: string;
+  /** PNG data URL for the QR (server-generated) */
+  qrDataUrl: string;
   /** Optional URL printed under QR */
   publicUrl?: string;
   /** Compact mode hides QR (for nav previews) */
   compact?: boolean;
 }
 
-export function IdCard({ card, qrSvg, publicUrl, compact }: Props) {
+export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
   const initials = (card.display_name || '?').slice(0, 1).toUpperCase();
 
   return (
@@ -119,14 +119,17 @@ export function IdCard({ card, qrSvg, publicUrl, compact }: Props) {
         )}
 
         {/* QR block — solid white card with maximum contrast for scanning.
-            Caption sits OUTSIDE the QR's white area to keep the quiet zone
-            clean (scanners need ~4 modules of white border). */}
+            QR is a PNG <img> with quiet-zone baked into the data URL, so we
+            don't add extra padding (would just enlarge the empty border). */}
         {!compact && (
-          <div className="rounded-2xl bg-white p-5 flex flex-col items-center">
-            <div
-              className="w-56 h-56"
-              // qrSvg is a trusted server-generated SVG string (from qrcode lib).
-              dangerouslySetInnerHTML={{ __html: qrSvg }}
+          <div className="rounded-2xl bg-white p-2 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrDataUrl}
+              alt="QR — Jewish ID verification"
+              className="block w-56 h-56"
+              width={224}
+              height={224}
             />
           </div>
         )}

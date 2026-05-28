@@ -3,7 +3,7 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { fetchOwnCard, qrSvgFor, publicCardUrl } from '@/lib/jewish-id';
+import { fetchOwnCard, qrDataUrlFor, publicCardUrl } from '@/lib/jewish-id';
 import { IdCard } from './IdCard';
 import { JewishIdControls } from './JewishIdControls';
 import { EmptyState } from '@/app/_components/ui/EmptyState';
@@ -33,7 +33,7 @@ export default async function MyJewishIdPage() {
   const origin = host ? `${proto}://${host}` : (process.env.NEXTAUTH_URL ?? '');
 
   const publicUrl = publicCardUrl(card.token, origin);
-  const qrSvg = card.enabled ? await qrSvgFor(publicUrl) : '';
+  const qrDataUrl = card.enabled ? await qrDataUrlFor(publicUrl) : '';
 
   return (
     <div className="max-w-3xl mx-auto px-5 md:px-6 pt-2 pb-12">
@@ -61,7 +61,7 @@ export default async function MyJewishIdPage() {
         {/* The card itself */}
         <div>
           {card.enabled ? (
-            <IdCard card={card} qrSvg={qrSvg} publicUrl={publicUrl} />
+            <IdCard card={card} qrDataUrl={qrDataUrl} publicUrl={publicUrl} />
           ) : (
             <div className="rounded-2xl border-2 border-dashed border-(--color-border) p-10 text-center">
               <div className="text-5xl mb-4 opacity-40">🔒</div>

@@ -156,31 +156,29 @@ export async function setEnabled(userId: string, enabled: boolean): Promise<void
 
 // ── QR generation ──────────────────────────────────────────────────────────
 /**
- * Generates a QR SVG string for the given token. Returns inline SVG markup
- * which can be embedded directly into a server-rendered page (no client JS).
+ * Generates a QR as a base64-encoded PNG data URL for use in an <img> tag.
  *
- * Important for scannability:
- *  - `light` must be solid white (no alpha) — phone cameras need high contrast
+ * Why PNG/data-URL instead of inline SVG:
+ *  - SVG from qrcode includes hard-coded width/height attributes that bleed
+ *    past CSS containers, making the QR overflow its card. Hard to constrain
+ *    cleanly across browsers.
+ *  - <img src="data:image/png;base64,..."> respects width/height attributes
+ *    and CSS without surprises.
+ *
+ * Scannability:
  *  - errorCorrectionLevel 'H' is most forgiving against partial occlusion
- *  - margin 2+ ('quiet zone') is required by the spec; small margin =
- *    scanners fail
- *  - we strip the SVG's fixed width/height so CSS controls sizing
+ *  - margin 4 ('quiet zone') matches QR spec recommendation
+ *  - solid colors for max contrast
+ *  - 512px is hi-DPI for retina; CSS resizes down
  */
-export async function qrSvgFor(url: string): Promise<string> {
-  const raw = await QRCode.toString(url, {
-    type: 'svg',
+export async function qrDataUrlFor(url: string): Promise<string> {
+  return QRCode.toDataURL(url, {
+    type: 'image/png',
     errorCorrectionLevel: 'H',
-    margin: 2,
-    color: {
-      dark: '#0F172A',   // --color-deep
-      light: '#FFFFFF',  // solid white — required for scannability
-    },
+    margin: 4,
+    width: 512,
+    color: { dark: '#0F172A', light: '#FFFFFF' },
   });
-  // Strip hard-coded width/height so CSS (w-full h-full) controls size.
-  return raw.replace(
-    /<svg([^>]*?)\s+width="[^"]+"\s+height="[^"]+"/,
-    '<svg$1 width="100%" height="100%"',
-  );
 }
 
 export function publicCardUrl(token: string, origin?: string): string {
