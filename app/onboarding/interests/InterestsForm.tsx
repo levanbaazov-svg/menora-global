@@ -40,7 +40,7 @@ export function InterestsForm({ defaults, mode = 'onboarding' }: Props) {
                 defaultValue={(state.values?.bio as string) ?? defaults.bio}
                 placeholder="Что хотел бы рассказать другим членам общины?"
                 error={state.errors?.bio} />
-      <div className="pt-4 flex items-center gap-3">
+      <div className="pt-4 space-y-2">
         <SubmitButton>Дальше</SubmitButton>
         <SkipButton />
       </div>

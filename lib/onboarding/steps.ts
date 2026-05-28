@@ -44,3 +44,57 @@ export const STEP_TITLES: Record<OnboardingStep, string> = {
   community_choice: 'Община',
   privacy: 'Приватность',
 };
+
+/**
+ * Clockout-style emotional meta per step.
+ * Used by the new onboarding shell — big emoji + a question instead of a label,
+ * + an optional tagline that sets emotional context.
+ */
+export interface StepMeta {
+  emoji: string;
+  /** Big serif question, asked TO the user */
+  question: string;
+  /** Tagline under the question (optional) */
+  tagline?: string;
+  /** Background tint for this step's hero area */
+  tint: 'yellow' | 'rose' | 'mint' | 'lavender' | 'sky' | 'cream';
+}
+
+export const STEP_META: Record<OnboardingStep, StepMeta> = {
+  identity: {
+    emoji: '👋',
+    question: 'Давай знакомиться',
+    tagline: 'Несколько базовых вопросов — и мы найдём твою общину.',
+    tint: 'yellow',
+  },
+  family: {
+    emoji: '👨‍👩‍👧',
+    question: 'Расскажи про семью',
+    tagline: 'Это поможет подобрать программы и события — для детей, пар, родителей.',
+    tint: 'rose',
+  },
+  religious: {
+    emoji: '🕯',
+    question: 'Как у тебя с традицией?',
+    tagline: 'Никакого осуждения. Любой ответ — ок. Это поможет показать релевантное.',
+    tint: 'cream',
+  },
+  interests: {
+    emoji: '✦',
+    question: 'Что тебе близко?',
+    tagline: 'Тора, шаббат, спорт, искусство… выбери что откликается.',
+    tint: 'mint',
+  },
+  community_choice: {
+    emoji: '🕍',
+    question: 'Найди свою общину',
+    tagline: 'Открой карту или подай заявку напрямую раввину.',
+    tint: 'sky',
+  },
+  privacy: {
+    emoji: '🔒',
+    question: 'Кто видит твой профиль?',
+    tagline: 'Можешь поменять в любой момент в настройках.',
+    tint: 'lavender',
+  },
+};

@@ -2,8 +2,21 @@
 
 import { useFormStatus } from 'react-dom';
 
-// Shared form atoms used across onboarding steps.
-// All accept an `error` prop and render inline error text in red below input.
+// Shared form atoms for onboarding. Clockout-influenced:
+// - softer borders, bigger touch targets, gold focus glow
+// - chip / radio variants feel like physical tappable pills
+// - all accept an `error` prop and render inline error below input
+
+const inputBase =
+  'w-full px-4 py-3 text-base bg-white rounded-2xl border border-(--color-border) ' +
+  'placeholder:text-(--color-fg-subtle) ' +
+  'transition-all duration-200 ' +
+  'hover:border-(--color-border-strong) ' +
+  'focus:outline-none focus:border-(--color-gold) focus:ring-4 focus:ring-(--color-gold)/15 ' +
+  'aria-[invalid=true]:border-(--color-danger) aria-[invalid=true]:ring-(--color-danger)/15';
+
+const labelBase = 'text-sm font-semibold text-(--color-fg) block mb-2';
+const errorBase = 'text-xs text-(--color-danger) mt-1.5 block';
 
 export function Field({
   label, name, type = 'text', required, placeholder, defaultValue, error,
@@ -13,18 +26,16 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium block mb-1.5">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <span className={labelBase}>
+        {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <input
         name={name} type={type} placeholder={placeholder}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
-        className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-(--color-gold) ${
-          error ? 'border-red-500' : ''
-        }`}
+        className={inputBase}
       />
-      {error && <span className="text-xs text-red-600 mt-1 block">{error}</span>}
+      {error && <span className={errorBase}>{error}</span>}
     </label>
   );
 }
@@ -37,20 +48,24 @@ export function Select({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium block mb-1.5">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <span className={labelBase}>
+        {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <select
         name={name}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
-        className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-(--color-gold) bg-white ${
-          error ? 'border-red-500' : ''
-        }`}
+        className={inputBase + ' appearance-none cursor-pointer pr-10'}
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='none' stroke='%2394A0B0' stroke-width='2' d='M1 1l5 5 5-5'/></svg>\")",
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 16px center',
+        }}
       >
         {options.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
       </select>
-      {error && <span className="text-xs text-red-600 mt-1 block">{error}</span>}
+      {error && <span className={errorBase}>{error}</span>}
     </label>
   );
 }
@@ -63,16 +78,16 @@ export function Textarea({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium block mb-1.5">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <span className={labelBase}>
+        {label}{required && <span className="text-(--color-gold-dark) ml-0.5">*</span>}
       </span>
       <textarea
         name={name} rows={rows} placeholder={placeholder}
         defaultValue={defaultValue ?? ''}
         aria-invalid={!!error}
-        className={`w-full px-4 py-2.5 border rounded-lg ${error ? 'border-red-500' : ''}`}
+        className={inputBase + ' resize-y leading-relaxed'}
       />
-      {error && <span className="text-xs text-red-600 mt-1 block">{error}</span>}
+      {error && <span className={errorBase}>{error}</span>}
     </label>
   );
 }
@@ -85,25 +100,32 @@ export function RadioGroup({
 }) {
   return (
     <fieldset>
-      <legend className="text-sm font-medium mb-2">{label}</legend>
+      <legend className={labelBase}>{label}</legend>
       <div className={`grid gap-2 ${columns === 1 ? '' : 'grid-cols-2'}`}>
         {options.map(([value, title]) => (
           <label
             key={value}
-            className={`flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer hover:bg-(--color-muted-bg) ${
-              error ? 'border-red-500' : ''
-            }`}
+            className="group relative cursor-pointer"
           >
             <input
               type="radio" name={name} value={value}
               defaultChecked={defaultValue === value}
-              className="w-4 h-4"
+              className="peer sr-only"
             />
-            <span className="text-sm">{title}</span>
+            <span className={`
+              flex items-center justify-center gap-2 px-4 py-3 rounded-2xl
+              border-2 border-(--color-border) bg-white text-sm font-medium
+              transition-all duration-200
+              hover:border-(--color-gold)/40 hover:bg-(--color-bg-muted)/50
+              peer-checked:bg-(--color-gold) peer-checked:border-(--color-gold) peer-checked:text-(--color-deep) peer-checked:font-semibold
+              peer-focus-visible:ring-4 peer-focus-visible:ring-(--color-gold)/30
+            `}>
+              {title}
+            </span>
           </label>
         ))}
       </div>
-      {error && <span className="text-xs text-red-600 mt-1 block">{error}</span>}
+      {error && <span className={errorBase}>{error}</span>}
     </fieldset>
   );
 }
@@ -119,16 +141,23 @@ export function ChipCheckboxes({
   const set = new Set(defaultValues);
   return (
     <fieldset>
-      <legend className="text-sm font-medium mb-2">{label}</legend>
+      <legend className={labelBase}>{label}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((key) => (
           <label key={key} className="cursor-pointer">
             <input
               type="checkbox" name={name} value={key}
               defaultChecked={set.has(key)}
-              className="peer hidden"
+              className="peer sr-only"
             />
-            <span className="px-4 py-2 rounded-full border text-sm peer-checked:bg-(--color-gold) peer-checked:border-(--color-gold) inline-block">
+            <span className={`
+              inline-block px-4 py-2 rounded-full text-sm font-medium
+              border-2 border-(--color-border) bg-white text-(--color-fg-muted)
+              transition-all duration-200
+              hover:border-(--color-gold)/40 hover:text-(--color-deep)
+              peer-checked:bg-(--color-gold) peer-checked:border-(--color-gold) peer-checked:text-(--color-deep)
+              peer-focus-visible:ring-4 peer-focus-visible:ring-(--color-gold)/30
+            `}>
               {labels[key]}
             </span>
           </label>
@@ -142,9 +171,17 @@ export function Check({
   name, label, defaultChecked,
 }: { name: string; label: string; defaultChecked?: boolean }) {
   return (
-    <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-(--color-muted-bg)">
-      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="w-4 h-4" />
-      <span className="text-sm">{label}</span>
+    <label className="
+      group flex items-center gap-3 p-4 rounded-2xl border-2 border-(--color-border) bg-white
+      cursor-pointer transition-all duration-200
+      hover:border-(--color-gold)/40 hover:bg-(--color-bg-muted)/50
+      has-[input:checked]:bg-(--color-gold-soft)/40 has-[input:checked]:border-(--color-gold)
+    ">
+      <input
+        type="checkbox" name={name} defaultChecked={defaultChecked}
+        className="w-5 h-5 accent-(--color-gold)"
+      />
+      <span className="text-sm font-medium">{label}</span>
     </label>
   );
 }
@@ -152,7 +189,7 @@ export function Check({
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+    <div className="px-4 py-3 bg-(--color-danger-soft) border border-(--color-danger)/30 rounded-2xl text-sm text-(--color-danger) spring-in">
       {message}
     </div>
   );
@@ -162,27 +199,52 @@ export function SubmitButton({
   children, variant = 'dark',
 }: { children: React.ReactNode; variant?: 'dark' | 'gold' }) {
   const { pending } = useFormStatus();
-  const base = 'px-8 py-3 rounded-full font-semibold disabled:opacity-50';
   const styles = variant === 'gold'
-    ? 'bg-(--color-gold) text-(--color-deep)'
-    : 'bg-(--color-deep) text-white';
+    ? 'bg-(--color-gold) text-(--color-deep) shadow-[var(--shadow-gold)]'
+    : 'bg-(--color-deep) text-white shadow-[var(--shadow-md)]';
   return (
-    <button type="submit" disabled={pending} className={`${base} ${styles} hover:opacity-90`}>
-      {pending ? '...' : children}
+    <button
+      type="submit"
+      disabled={pending}
+      className={`
+        ${styles}
+        w-full h-14 rounded-full font-semibold text-base
+        transition-all duration-200
+        hover:opacity-95 hover:shadow-[var(--shadow-lg)]
+        active:scale-[0.98]
+        disabled:opacity-50 disabled:pointer-events-none
+        focus-visible:outline-(--color-gold) focus-visible:outline-offset-2
+      `}
+    >
+      {pending ? (
+        <span className="inline-flex items-center gap-2">
+          <span className="w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
+          Сохраняю
+        </span>
+      ) : (
+        <>
+          {children} <span className="inline-block ml-1">→</span>
+        </>
+      )}
     </button>
   );
 }
 
-export function SkipButton({ children = 'Пропустить →' }: { children?: React.ReactNode }) {
+export function SkipButton({ children = 'Пропустить' }: { children?: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
       formNoValidate
       disabled={pending}
-      className="px-6 py-3 text-(--color-muted) text-sm hover:text-(--color-deep) disabled:opacity-50"
+      className="
+        w-full h-12 rounded-full text-sm font-medium text-(--color-fg-muted)
+        hover:text-(--color-deep) hover:bg-(--color-bg-muted)/50
+        transition-all duration-200
+        disabled:opacity-50
+      "
     >
-      {children}
+      {children} →
     </button>
   );
 }
