@@ -30,6 +30,7 @@ const ME: MenuItem[] = [
 ];
 
 const ADMIN: MenuItem[] = [
+  { href: '/dashboard/assistant',      icon: '✦', label: 'AI Ассистент',  hint: 'Голос · CRM · задачи', highlight: true },
   { href: '/dashboard/members',        icon: '✓', label: 'Заявки и доступ' },
   { href: '/dashboard/invitations',    icon: '✉️', label: 'Приглашения' },
 ];

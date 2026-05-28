@@ -52,7 +52,7 @@ const ALLOWED_COMMUNITY_IDS = 'X-Hasura-Allowed-Community-Ids';
 // ─── Column inventory per table ──────────────────────────────────────────────
 const COLUMNS = {
   communities: ['id','slug','name','city','country_code','timezone','hebrew_calendar','branding','settings','created_at','updated_at'],
-  users: ['id','email','email_verified_at','name','image_url','locale','onboarding_step','onboarded_at','tutorial_completed','first_signup_path','last_seen_at','deactivated_at','jewish_id_token','jewish_id_enabled','jewish_id_regenerated_at','created_at','updated_at'],
+  users: ['id','email','email_verified_at','name','image_url','locale','onboarding_step','onboarded_at','tutorial_completed','first_signup_path','last_seen_at','deactivated_at','jewish_id_token','jewish_id_enabled','jewish_id_regenerated_at','ical_subscription_token','created_at','updated_at'],
   accounts: ['id','user_id','provider','provider_account_id','type','access_token','refresh_token','id_token','expires_at','token_type','scope','session_state','created_at','updated_at'],
   user_profiles: ['user_id','legal_first_name','legal_last_name','hebrew_name','gender','date_of_birth','phone_e164','marital_status','has_children','children_ages','spouse_hebrew_name','denomination','observance_level','kashrut_level','interests','languages','bio','profile_visibility','notification_prefs','custom_fields','updated_at'],
   memberships: ['id','user_id','community_id','role','status','entry_method','request_message','invited_by','approved_by','rejected_by','community_role','member_since','family_id','prayer_config','onboarding_done','joined_at','rejected_at','rejected_reason','suspended_at','left_at','created_at','updated_at'],
@@ -73,6 +73,8 @@ const COLUMNS = {
   ai_conversations: ['id','user_id','community_id','scenario','title','last_message_at','message_count','total_tokens_input','total_tokens_output','archived_at','created_at','updated_at'],
   ai_messages: ['id','conversation_id','role','content','tokens_input','tokens_output','model','created_at'],
   inspiration_bookmarks: ['id','user_id','item_slug','item_kind','created_at'],
+  member_notes: ['id','community_id','member_user_id','author_user_id','body','source','created_at','updated_at'],
+  rabbi_tasks: ['id','community_id','created_by_user_id','assigned_to_user_id','title','body','due_date','due_at','status','priority','related_member_user_id','related_event_id','related_program_id','completed_at','completed_by_user_id','source','created_at','updated_at'],
 };
 
 // ─── Relationships ───────────────────────────────────────────────────────────
@@ -224,6 +226,24 @@ const REL = {
   inspiration_bookmarks: {
     obj: [
       ['user', 'user_id'],
+    ],
+  },
+  member_notes: {
+    obj: [
+      ['community', 'community_id'],
+      ['member',    'member_user_id'],
+      ['author',    'author_user_id'],
+    ],
+  },
+  rabbi_tasks: {
+    obj: [
+      ['community',       'community_id'],
+      ['creator',         'created_by_user_id'],
+      ['assignee',        'assigned_to_user_id'],
+      ['related_member',  'related_member_user_id'],
+      ['related_event',   'related_event_id'],
+      ['related_program', 'related_program_id'],
+      ['completer',       'completed_by_user_id'],
     ],
   },
 };
@@ -846,6 +866,51 @@ function permissionsFor(table) {
 
       // DELETE: own bookmarks (unbookmark)
       out.delete.push(deletePerm('member', selfFilter));
+      break;
+    }
+
+    // ── member_notes (rabbi-only, private from member) ───────────────────
+    case 'member_notes': {
+      const ownCommunityFilter = { community_id: { _in: ALLOWED_COMMUNITY_IDS } };
+      // Rabbi sees notes in own community.
+      out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
+      // Members NEVER see notes (even about themselves) — no member select perm.
+
+      out.insert.push(insertPerm('rabbi',
+        ['member_user_id', 'body', 'source'],
+        ownCommunityFilter,
+        { community_id: 'X-Hasura-Community-Id', author_user_id: USER_ID },
+      ));
+      out.update.push(updatePerm('rabbi',
+        ['body'],
+        { _and: [ownCommunityFilter, { author_user_id: { _eq: USER_ID } }] },
+        { _and: [ownCommunityFilter, { author_user_id: { _eq: USER_ID } }] },
+      ));
+      out.delete.push(deletePerm('rabbi', { _and: [ownCommunityFilter, { author_user_id: { _eq: USER_ID } }] }));
+      break;
+    }
+
+    // ── rabbi_tasks ──────────────────────────────────────────────────────
+    case 'rabbi_tasks': {
+      const ownCommunityFilter = { community_id: { _in: ALLOWED_COMMUNITY_IDS } };
+      // Rabbi: all tasks in own community
+      out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
+
+      out.insert.push(insertPerm('rabbi',
+        ['title','body','due_date','due_at','priority','assigned_to_user_id',
+         'related_member_user_id','related_event_id','related_program_id','source'],
+        ownCommunityFilter,
+        { community_id: 'X-Hasura-Community-Id', created_by_user_id: USER_ID },
+      ));
+
+      out.update.push(updatePerm('rabbi',
+        ['title','body','due_date','due_at','priority','status','assigned_to_user_id',
+         'related_member_user_id','related_event_id','related_program_id',
+         'completed_at','completed_by_user_id'],
+        ownCommunityFilter, ownCommunityFilter,
+      ));
+
+      out.delete.push(deletePerm('rabbi', ownCommunityFilter));
       break;
     }
   }
