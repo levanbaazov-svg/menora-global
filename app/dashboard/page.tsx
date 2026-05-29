@@ -1,27 +1,23 @@
-// Dashboard home — rebuilt on shadcn + motion.
-// Composition (top → bottom):
-//   1. Greeting hero (warm intro)
-//   2. AI Rabbi scenario tiles (6, conversational entry)
-//   3. Daily AI suggestion card (proactive)
-//   4. Two-column: My community + Hebrew calendar
-//   5. Quick actions grid
-//   6. Profile snapshot + Jewish ID promo
+// Dashboard home — Apple-native rebuild.
+// Pattern: large title + sectioned lists (like iOS Settings).
+// One accent color, dense info, no decorative empty space, no pastel tiles.
 
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
+import { ListSection, ListRow } from '@/components/ui/list-section';
+import { Reveal } from '@/components/motion/Reveal';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { HebrewCalendarCard } from './_HebrewCalendarCard';
+import { ShabbatHero } from './_ShabbatHero';
 import { DailyHomeCard } from '@/app/_components/ai/DailyHomeCard';
-import { StaggerChildren, Reveal } from '@/components/motion/Reveal';
 import {
-  Compass, HandHeart, Flame, Users, ChevronRight,
-  Building2, ScanLine, Sparkles,
+  Building2, Sparkles, Bot, BookHeart, HandHeart,
+  Users, Calendar, ScanLine, Bell, ShieldCheck, MailPlus,
+  ChevronRight, BookOpenText,
 } from 'lucide-react';
 
+// ── Data ────────────────────────────────────────────────────────────────
 const FETCH_DASHBOARD = /* GraphQL */ `
   query Dashboard($user_id: uuid!) {
     user_profiles_by_pk(user_id: $user_id) {
@@ -31,54 +27,84 @@ const FETCH_DASHBOARD = /* GraphQL */ `
       role
       community { id slug name city country_code timezone }
     }
-    pending: memberships_aggregate(
+    pending_membership: memberships_aggregate(
       where: { user_id: { _eq: $user_id }, status: { _eq: pending } }
+    ) { aggregate { count } }
+
+    next_event: events(
+      where: { status: { _eq: published }, starts_at: { _gte: "now()" } }
+      order_by: { starts_at: asc } limit: 1
+    ) { id title type starts_at location_text attendee_count_cached max_attendees }
+
+    upcoming_events_count: events_aggregate(
+      where: { status: { _eq: published }, starts_at: { _gte: "now()" } }
+    ) { aggregate { count } }
+
+    open_requests_count: requests_aggregate(
+      where: { status: { _eq: open } }
+    ) { aggregate { count } }
+
+    pending_places_count: places_aggregate(
+      where: { submission_status: { _eq: pending } }
+    ) { aggregate { count } }
+
+    rabbi_open_tasks_count: rabbi_tasks_aggregate(
+      where: { status: { _eq: open } }
+    ) { aggregate { count } }
+
+    members_count: memberships_aggregate(
+      where: { status: { _eq: active } }
+    ) { aggregate { count } }
+
+    pending_join_count: memberships_aggregate(
+      where: { status: { _eq: pending } }
     ) { aggregate { count } }
   }
 `;
 
+interface AggCount { aggregate: { count: number } | null }
+interface EventRow {
+  id: string; title: string; type: string;
+  starts_at: string; location_text: string | null;
+  attendee_count_cached: number; max_attendees: number | null;
+}
 interface DashboardData {
   user_profiles_by_pk: {
-    legal_first_name: string | null;
-    hebrew_name: string | null;
-    denomination: string | null;
-    observance_level: string | null;
+    legal_first_name: string | null; hebrew_name: string | null;
+    denomination: string | null; observance_level: string | null;
   } | null;
   memberships: Array<{
     role: 'member' | 'rabbi' | 'admin';
     community: { id: string; slug: string; name: string; city: string | null; country_code: string | null; timezone: string };
   }>;
-  pending: { aggregate: { count: number } | null };
+  pending_membership: AggCount;
+  next_event: EventRow[];
+  upcoming_events_count: AggCount;
+  open_requests_count: AggCount;
+  pending_places_count: AggCount;
+  rabbi_open_tasks_count: AggCount;
+  members_count: AggCount;
+  pending_join_count: AggCount;
 }
 
-// ── Scenarios — emotional entry-points to AI Rabbi ──────────────────────
-const SCENARIOS = [
-  { href: '/dashboard/ai-rabbi/purpose',       tint: 'amber',   emoji: '🌟', title: 'Найти себя',          subtitle: 'Духовный диалог' },
-  { href: '/dashboard/ai-rabbi/shabbat',       tint: 'violet',  emoji: '🕯', title: 'Спланировать Шаббат', subtitle: 'Ужины рядом с тобой' },
-  { href: '/dashboard/ai-rabbi/hebrew-school', tint: 'emerald', emoji: '👶', title: 'Hebrew school',       subtitle: 'Школа для детей' },
-  { href: '/dashboard/ai-rabbi/parsha',        tint: 'rose',    emoji: '📖', title: 'Парша недели',        subtitle: '5-минутная мудрость' },
-  { href: '/dashboard/ai-rabbi/meet-people',   tint: 'sky',     emoji: '🤝', title: 'Найти своих',         subtitle: 'Знакомства и встречи' },
-  { href: '/dashboard/ai-rabbi/struggling',    tint: 'orange',  emoji: '💙', title: 'Мне тяжело',          subtitle: 'Безопасное пространство' },
-] as const;
-
-const TINT_BG: Record<string, string> = {
-  amber:   'bg-amber-100/60 hover:bg-amber-100',
-  violet:  'bg-violet-100/60 hover:bg-violet-100',
-  emerald: 'bg-emerald-100/60 hover:bg-emerald-100',
-  rose:    'bg-rose-100/60 hover:bg-rose-100',
-  sky:     'bg-sky-100/60 hover:bg-sky-100',
-  orange:  'bg-orange-100/60 hover:bg-orange-100',
-};
-
-function getGreeting(): { text: string; emoji: string } {
+// ── Helpers ─────────────────────────────────────────────────────────────
+function getGreeting(): string {
   const h = new Date().getHours();
-  if (h < 5)  return { text: 'Глубокая ночь', emoji: '🌙' };
-  if (h < 12) return { text: 'Доброе утро',  emoji: '☀️' };
-  if (h < 17) return { text: 'Добрый день',  emoji: '🌤' };
-  if (h < 21) return { text: 'Добрый вечер', emoji: '🌇' };
-  return { text: 'Доброй ночи', emoji: '✨' };
+  if (h < 5)  return 'Глубокая ночь';
+  if (h < 12) return 'Доброе утро';
+  if (h < 17) return 'Добрый день';
+  if (h < 21) return 'Добрый вечер';
+  return 'Доброй ночи';
 }
 
+function formatEventTime(iso: string, tz: string): string {
+  return new Date(iso).toLocaleString('ru-RU', {
+    timeZone: tz, weekday: 'short', day: 'numeric', month: 'short',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+// ── Page ────────────────────────────────────────────────────────────────
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
@@ -88,236 +114,226 @@ export default async function DashboardPage() {
   );
   const profile = data.user_profiles_by_pk;
   const memberships = data.memberships;
-  const pendingCount = data.pending.aggregate?.count ?? 0;
   const firstName = profile?.legal_first_name ?? session.user.name?.split(' ')[0] ?? 'друг';
-  const greeting = getGreeting();
   const myCommunity = memberships[0]?.community;
   const myRole = memberships[0]?.role;
   const isStaff = myRole === 'rabbi' || myRole === 'admin';
 
+  const nextEvent = data.next_event[0];
+  const upcomingCount = data.upcoming_events_count.aggregate?.count ?? 0;
+  const requestsCount = data.open_requests_count.aggregate?.count ?? 0;
+  const pendingPlacesCount = data.pending_places_count.aggregate?.count ?? 0;
+  const openTasksCount = data.rabbi_open_tasks_count.aggregate?.count ?? 0;
+  const membersCount = data.members_count.aggregate?.count ?? 0;
+  const pendingJoinCount = data.pending_join_count.aggregate?.count ?? 0;
+
   return (
-    <div className="container mx-auto max-w-6xl px-4 md:px-6 pt-6 pb-12 space-y-10">
-      {/* ── Greeting ─────────────────────────────────────────────────── */}
+    <div className="container mx-auto max-w-2xl px-4 md:px-6 pt-6 pb-12 space-y-6">
+      {/* ── Large title ──────────────────────────────────────────────── */}
       <Reveal>
-        <div>
-          <div className="flex items-center gap-1.5 text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2">
-            <span>{greeting.emoji}</span>
-            <span>{greeting.text}</span>
+        <header className="px-1">
+          <div className="text-xs text-muted-foreground mb-1.5">
+            {getGreeting()}
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.05] tracking-tight">
+          <h1 className="font-serif text-4xl md:text-[40px] font-semibold leading-[1.05] tracking-tight">
             Шалом,{' '}
             <em className="italic font-normal text-primary">{firstName}</em>
           </h1>
-        </div>
+        </header>
       </Reveal>
 
-      {/* ── AI Rabbi scenarios ───────────────────────────────────────── */}
-      <section>
-        <Reveal delay={0.08}>
-          <div className="mb-5 flex items-end justify-between gap-3">
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold leading-tight">
-              Что у тебя на душе сегодня?
-            </h2>
-            <Button asChild variant="ghost" size="sm" className="shrink-0">
-              <Link href="/dashboard/ai-rabbi">
-                Все
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
+      {/* ── 1. Two-up hero: Shabbat + AI suggestion ──────────────────── */}
+      {myCommunity && (
+        <Reveal delay={0.06}>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <ShabbatHero community={myCommunity} />
+            <DailyHomeCard userId={session.user.id} />
           </div>
-        </Reveal>
-
-        <StaggerChildren
-          delayStart={0.12}
-          step={0.04}
-          className="grid grid-cols-2 lg:grid-cols-3 gap-3"
-        >
-          {SCENARIOS.map((s) => (
-            <Link
-              key={s.href}
-              href={s.href}
-              className={`group relative rounded-3xl p-5 min-h-[140px] flex flex-col justify-between
-                          transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]
-                          ${TINT_BG[s.tint]}`}
-            >
-              <div className="absolute top-4 right-4 text-2xl drop-shadow-sm">{s.emoji}</div>
-              <div>
-                <div className="font-serif text-lg font-semibold leading-tight pr-8">
-                  {s.title}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">{s.subtitle}</div>
-              </div>
-              <div className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background text-sm transition-transform duration-300 group-hover:translate-x-1">
-                <ChevronRight className="h-4 w-4" />
-              </div>
-            </Link>
-          ))}
-        </StaggerChildren>
-      </section>
-
-      {/* ── Daily AI suggestion ──────────────────────────────────────── */}
-      <Reveal delay={0.2}>
-        <section>
-          <DailyHomeCard userId={session.user.id} />
-        </section>
-      </Reveal>
-
-      {/* ── My community + Calendar ──────────────────────────────────── */}
-      {memberships.length > 0 && myCommunity && (
-        <Reveal delay={0.25}>
-          <section className="grid gap-4 md:grid-cols-[1fr_320px]">
-            <Card className="overflow-hidden">
-              <Link
-                href="/dashboard/community"
-                className="block p-5 hover:bg-muted/40 transition-colors"
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center"
-                    style={{
-                      background: 'linear-gradient(135deg, var(--color-gold-soft), var(--color-pastel-yellow))',
-                    }}
-                  >
-                    <Building2 className="h-6 w-6 text-amber-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-serif text-xl font-semibold leading-tight">{myCommunity.name}</h3>
-                      <Badge variant={isStaff ? 'default' : 'secondary'} className="text-[10px] uppercase">
-                        {myRole}
-                      </Badge>
-                    </div>
-                    {myCommunity.city && (
-                      <p className="text-sm text-muted-foreground">{myCommunity.city}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Открыть город-гид · места, программы, события →
-                    </p>
-                  </div>
-                </div>
-                {pendingCount > 0 && (
-                  <p className="text-xs text-amber-700 mt-3 ml-[3.75rem]">
-                    {pendingCount} {pendingCount === 1 ? 'заявка ожидает' : 'заявок ожидают'} рассмотрения
-                  </p>
-                )}
-              </Link>
-            </Card>
-
-            <HebrewCalendarCard community={myCommunity} />
-          </section>
         </Reveal>
       )}
 
-      {/* ── Quick actions ────────────────────────────────────────────── */}
-      <Reveal delay={0.3}>
-        <section>
-          <h2 className="font-serif text-xl font-semibold mb-4">Дальше</h2>
-          <StaggerChildren
-            step={0.04}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3"
+      {/* ── 2. Next event (if any) ───────────────────────────────────── */}
+      {nextEvent && myCommunity && (
+        <Reveal delay={0.1}>
+          <ListSection
+            label="Ближайшее событие"
+            action={
+              upcomingCount > 1 && (
+                <Link
+                  href="/dashboard/events"
+                  className="text-xs text-primary hover:text-primary/80 transition-colors"
+                >
+                  Все {upcomingCount} →
+                </Link>
+              )
+            }
           >
-            <ActionTile href="/dashboard/events"    Icon={Compass}    label="События"   hint="RSVP · создать" />
-            <ActionTile href="/dashboard/requests"  Icon={HandHeart}  label="Просьбы"   hint="Помоги · попроси" />
-            <ActionTile href="/dashboard/routines"  Icon={Flame}      label="Рутины"    hint="Молитвы · стрик" />
-            <ActionTile href="/dashboard/people"    Icon={Users}      label="Участники" hint="Кто в общине" />
-          </StaggerChildren>
-        </section>
-      </Reveal>
-
-      {/* ── Profile + Jewish ID promo ────────────────────────────────── */}
-      <Reveal delay={0.35}>
-        <section className="grid gap-4 md:grid-cols-2">
-          {/* Profile snapshot */}
-          <Card>
-            <CardContent className="p-5">
-              <div className="flex items-end justify-between mb-3">
-                <h2 className="font-serif text-lg font-semibold">Мой профиль</h2>
-                <Button asChild variant="ghost" size="sm" className="h-auto -mr-2 -mt-1">
-                  <Link href="/dashboard/me">Открыть<ChevronRight className="h-3.5 w-3.5" /></Link>
-                </Button>
-              </div>
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
-                <Field label="Еврейское имя" value={profile?.hebrew_name} serif />
-                <Field label="Направление"   value={profile?.denomination} />
-                <Field label="Соблюдение"    value={profile?.observance_level} />
-              </dl>
-            </CardContent>
-          </Card>
-
-          {/* Jewish ID — dark cinematic card */}
-          <Link
-            href="/dashboard/me/jewish-id"
-            className="group relative block rounded-2xl overflow-hidden p-5 text-white shadow-md hover:shadow-lg transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #14181F 0%, #232838 45%, #C99B43 130%)',
-            }}
-          >
-            <div
-              aria-hidden
-              className="absolute -top-12 -right-10 w-40 h-40 rounded-full opacity-40 pointer-events-none"
-              style={{ background: 'radial-gradient(circle, #C99B43 0%, transparent 70%)' }}
+            <ListRow
+              href={`/dashboard/events/${nextEvent.id}`}
+              Icon={Calendar}
+              tone="primary"
+              title={nextEvent.title}
+              subtitle={`${formatEventTime(nextEvent.starts_at, myCommunity.timezone)}${nextEvent.location_text ? ` · ${nextEvent.location_text}` : ''}`}
+              meta={
+                <Badge variant="secondary" className="font-mono text-[10px]">
+                  {nextEvent.attendee_count_cached}{nextEvent.max_attendees ? ` / ${nextEvent.max_attendees}` : ''}
+                </Badge>
+              }
             />
-            <div className="relative flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-xl bg-white/10 backdrop-blur flex items-center justify-center">
-                <ScanLine className="h-5 w-5 text-amber-300" />
-              </div>
-              <div className="flex-1">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-amber-300 font-semibold mb-1">
-                  ✦ Цифровой паспорт
-                </div>
-                <div className="font-serif text-lg font-semibold leading-snug mb-1">
-                  Jewish ID
-                </div>
-                <p className="text-sm leading-relaxed opacity-90 mb-3">
-                  QR для подтверждения членства в любой общине Menorah.
-                </p>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold transition-transform group-hover:translate-x-1">
-                  Открыть карту
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </div>
-          </Link>
-        </section>
+          </ListSection>
+        </Reveal>
+      )}
+
+      {/* ── 3. AI Rabbi: 6 scenarios as a list ──────────────────────── */}
+      <Reveal delay={0.14}>
+        <ListSection
+          label="AI Раввин"
+          action={
+            <Link
+              href="/dashboard/ai-rabbi"
+              className="text-xs text-primary hover:text-primary/80 transition-colors"
+            >
+              Открыть →
+            </Link>
+          }
+        >
+          <ListRow href="/dashboard/ai-rabbi/purpose"       Icon={Sparkles}   title="Найти себя"           subtitle="Духовный диалог" />
+          <ListRow href="/dashboard/ai-rabbi/shabbat"       Icon={Sparkles}   title="Спланировать Шаббат"  subtitle="Ужины рядом" />
+          <ListRow href="/dashboard/ai-rabbi/parsha"        Icon={BookOpenText} title="Парша недели"       subtitle="5-минутная мудрость" />
+          <ListRow href="/dashboard/ai-rabbi/meet-people"   Icon={Users}      title="Найти своих"          subtitle="Знакомства и встречи" />
+        </ListSection>
       </Reveal>
+
+      {/* ── 4. Community + Inspire row ───────────────────────────────── */}
+      {myCommunity && (
+        <Reveal delay={0.18}>
+          <ListSection label="Активность">
+            <ListRow
+              href="/dashboard/community"
+              Icon={Building2}
+              tone="primary"
+              title={myCommunity.name}
+              subtitle={[myCommunity.city, `${membersCount} ${membersCount === 1 ? 'участник' : 'участников'}`].filter(Boolean).join(' · ')}
+              meta={isStaff && (
+                <Badge variant="secondary" className="text-[10px] uppercase">{myRole}</Badge>
+              )}
+            />
+            <ListRow
+              href="/dashboard/inspire"
+              Icon={BookHeart}
+              title="Inspire"
+              subtitle="Праздники, мудрости, истории"
+            />
+            <ListRow
+              href="/dashboard/connect"
+              Icon={Users}
+              title="Группы по интересам"
+              subtitle="Учёба, мамы, кулинария…"
+            />
+          </ListSection>
+        </Reveal>
+      )}
+
+      {/* ── 5. Личное ────────────────────────────────────────────────── */}
+      <Reveal delay={0.22}>
+        <ListSection label="Личное">
+          <ListRow
+            href="/dashboard/me/jewish-id"
+            Icon={ScanLine}
+            tone="primary"
+            title="Jewish ID"
+            subtitle="Цифровой паспорт с QR"
+          />
+          <ListRow
+            href="/dashboard/routines"
+            Icon={BookHeart}
+            title="Мои рутины"
+            subtitle="Молитвы и стрик"
+          />
+          <ListRow
+            href="/dashboard/requests"
+            Icon={HandHeart}
+            title="Просьбы общины"
+            meta={requestsCount > 0 ? (
+              <Badge variant="default" className="h-5 min-w-5 rounded-full px-1.5 text-[10px]">
+                {requestsCount}
+              </Badge>
+            ) : undefined}
+          />
+          <ListRow
+            href="/dashboard/notifications"
+            Icon={Bell}
+            title="Уведомления"
+          />
+          <ListRow
+            href="/dashboard/me"
+            Icon={Users}
+            title="Мой профиль"
+            subtitle={profile?.hebrew_name ?? undefined}
+          />
+        </ListSection>
+      </Reveal>
+
+      {/* ── 6. Управление (rabbi/admin) ─────────────────────────────── */}
+      {isStaff && (
+        <Reveal delay={0.26}>
+          <ListSection
+            label="Управление"
+            footnote="Только для раввинов и админов общины."
+          >
+            <ListRow
+              href="/dashboard/assistant"
+              Icon={Bot}
+              tone="primary"
+              title="AI Ассистент"
+              subtitle="Голосовой CRM"
+              meta={openTasksCount > 0 ? (
+                <Badge variant="secondary" className="text-[10px]">{openTasksCount} задач</Badge>
+              ) : undefined}
+            />
+            <ListRow
+              href="/dashboard/community/pending"
+              Icon={ShieldCheck}
+              title="Модерация мест"
+              meta={pendingPlacesCount > 0 ? (
+                <Badge variant="default" className="h-5 min-w-5 rounded-full px-1.5 text-[10px]">
+                  {pendingPlacesCount}
+                </Badge>
+              ) : undefined}
+            />
+            <ListRow
+              href="/dashboard/members"
+              Icon={Users}
+              title="Заявки на вступление"
+              meta={pendingJoinCount > 0 ? (
+                <Badge variant="default" className="h-5 min-w-5 rounded-full px-1.5 text-[10px]">
+                  {pendingJoinCount}
+                </Badge>
+              ) : undefined}
+            />
+            <ListRow
+              href="/dashboard/invitations"
+              Icon={MailPlus}
+              title="Приглашения"
+            />
+            <ListRow
+              href="/dashboard/community/manage"
+              Icon={Building2}
+              title="Управление общиной"
+              subtitle="Места и программы"
+            />
+          </ListSection>
+        </Reveal>
+      )}
+
+      {/* ── 7. Footer hint ──────────────────────────────────────────── */}
+      {data.pending_membership.aggregate?.count ? (
+        <Reveal delay={0.3}>
+          <div className="text-center text-xs text-muted-foreground px-1 pt-2">
+            У тебя {data.pending_membership.aggregate.count} ожидающих заявок на вступление в другие общины
+          </div>
+        </Reveal>
+      ) : null}
     </div>
-  );
-}
-
-// ── helpers ──────────────────────────────────────────────────────────────
-function Field({ label, value, serif }: { label: string; value: string | null | undefined; serif?: boolean }) {
-  return (
-    <>
-      <dt className="text-muted-foreground text-xs uppercase tracking-wider">{label}</dt>
-      <dd className={`font-medium ${serif ? 'font-serif' : ''}`}>{value ?? '—'}</dd>
-    </>
-  );
-}
-
-function ActionTile({
-  href, Icon, label, hint,
-}: {
-  href: string;
-  Icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  hint: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group block rounded-2xl bg-card border border-border/60 p-4
-                 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5
-                 active:translate-y-0 transition-all"
-    >
-      <div className="flex flex-col items-start gap-2.5">
-        <div className="w-10 h-10 rounded-xl bg-muted group-hover:bg-accent flex items-center justify-center transition-colors">
-          <Icon className="h-5 w-5 text-muted-foreground group-hover:text-accent-foreground" />
-        </div>
-        <div>
-          <div className="font-semibold text-sm">{label}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">{hint}</div>
-        </div>
-      </div>
-    </Link>
   );
 }
