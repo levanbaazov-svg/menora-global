@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import { Fraunces, Inter, Geist } from 'next/font/google';
 import './globals.css';
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 // Display serif for headings — emotional, warm, magazine-like.
 // Fraunces is latin-only; Russian headings will fall back to Inter (Cyrillic).
@@ -50,8 +56,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" className={`${fraunces.variable} ${inter.variable}`}>
-      <body>{children}</body>
+    <html lang="ru" className={cn(fraunces.variable, inter.variable, "font-sans", geist.variable)}>
+      <body>
+        <TooltipProvider delayDuration={300}>
+          {children}
+        </TooltipProvider>
+        <Toaster richColors position="top-center" />
+      </body>
     </html>
   );
 }

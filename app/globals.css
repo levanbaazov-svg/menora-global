@@ -1,41 +1,66 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-/* ──────────────────────────────────────────────────────────────────────────
- * Menorah Global · Design Tokens
- * Premium-warm aesthetic. Light-mode default. Dark mode in v1.1.
- * ────────────────────────────────────────────────────────────────────────── */
+@custom-variant dark (&:is(.dark *));
+
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Menorah Global — Design System
+ *  Built on shadcn/ui tokens, warm Menorah brand layered on top.
+ *  Apple-grade composition: generous whitespace, gold accent, deep neutral text.
+ * ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Surfaces ─────────────────────────────────────────────────────────── */
-  --color-bg: #FBF8F3;             /* warm cream — page background */
-  --color-bg-elevated: #FFFFFF;    /* card background */
-  --color-bg-muted: #F4EFE7;       /* hover, subtle wash */
-  --color-bg-overlay: rgba(15, 23, 42, 0.04);
+  /* ── shadcn tokens, Menorah brand mapped ────────────────────────────────── */
+  --background:          oklch(0.985 0.008 80);       /* warm cream */
+  --foreground:          oklch(0.18 0.02 250);        /* deep near-black w/ navy hint */
+  --card:                oklch(1 0 0);                /* pure white card */
+  --card-foreground:     var(--foreground);
+  --popover:             oklch(1 0 0);
+  --popover-foreground:  var(--foreground);
+  --primary:             oklch(0.71 0.13 75);         /* Menorah gold #C99B43 */
+  --primary-foreground:  oklch(0.18 0.02 250);        /* dark on gold */
+  --secondary:           oklch(0.95 0.012 80);        /* very light warm */
+  --secondary-foreground:var(--foreground);
+  --muted:               oklch(0.95 0.012 80);
+  --muted-foreground:    oklch(0.51 0.014 250);       /* secondary text */
+  --accent:              oklch(0.93 0.04 80);         /* gold-soft */
+  --accent-foreground:   oklch(0.30 0.07 75);         /* gold-dark */
+  --destructive:         oklch(0.58 0.22 27);
+  --border:              oklch(0.91 0.012 80);        /* warm warm-gray */
+  --input:               oklch(0.91 0.012 80);
+  --ring:                oklch(0.71 0.13 75);         /* gold ring */
 
-  /* ── Text ─────────────────────────────────────────────────────────────── */
-  --color-fg: #14181F;             /* near-black deep navy */
-  --color-fg-muted: #5C6371;       /* secondary */
-  --color-fg-subtle: #94A0B0;      /* hints, captions */
-  --color-fg-inverse: #FBF8F3;
+  --chart-1: oklch(0.71 0.13 75);                     /* gold */
+  --chart-2: oklch(0.55 0.08 220);                    /* torah blue */
+  --chart-3: oklch(0.55 0.12 25);                     /* tehilim red */
+  --chart-4: oklch(0.65 0.10 145);                    /* mint */
+  --chart-5: oklch(0.50 0.13 290);                    /* lavender */
 
-  /* ── Brand ────────────────────────────────────────────────────────────── */
-  --color-gold: #C99B43;           /* tighter, richer gold */
+  --radius: 1rem;                                     /* 16px — generous Apple-style */
+
+  --sidebar:                       oklch(0.985 0.008 80);
+  --sidebar-foreground:            var(--foreground);
+  --sidebar-primary:               var(--primary);
+  --sidebar-primary-foreground:    var(--primary-foreground);
+  --sidebar-accent:                oklch(0.95 0.012 80);
+  --sidebar-accent-foreground:     var(--foreground);
+  --sidebar-border:                var(--border);
+  --sidebar-ring:                  var(--ring);
+
+  /* ── Menorah brand extras (used in custom components, gradients) ──────── */
+  --color-gold: #C99B43;
   --color-gold-soft: #F1E3BE;
   --color-gold-dark: #8F6A1F;
   --color-deep: #14181F;
   --color-deep-soft: #232838;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-muted: #F4EFE7;
+  --color-fg: #14181F;
+  --color-fg-muted: #5C6371;
+  --color-fg-subtle: #94A0B0;
 
-  /* ── Semantic ─────────────────────────────────────────────────────────── */
-  --color-success: #16A34A;
-  --color-success-soft: #DCFCE7;
-  --color-warning: #D97706;
-  --color-warning-soft: #FEF3C7;
-  --color-danger: #DC2626;
-  --color-danger-soft: #FEE2E2;
-  --color-info: #2563EB;
-  --color-info-soft: #DBEAFE;
-
-  /* ── Scenario pastels (AI Rabbi cards, Discover heroes) ───────────────── */
+  /* Pastels for scenario cards / inspire heroes (kept for content) */
   --color-pastel-yellow:   #FCF3D6;
   --color-pastel-lavender: #ECE5F5;
   --color-pastel-mint:     #DDF2E8;
@@ -43,16 +68,12 @@
   --color-pastel-sky:      #DCEBF7;
   --color-pastel-cream:    #FAF1E0;
 
-  /* ── Borders ──────────────────────────────────────────────────────────── */
-  --color-border: #E8E1D2;          /* warm gray — harmonizes with cream bg */
-  --color-border-strong: #D1C9B7;
-
-  /* ── Hebrew/Jewish accents ───────────────────────────────────────────── */
+  /* Hebrew/Jewish accents */
   --color-shabbat: #C7A862;
   --color-torah:   #4A6B8A;
   --color-tehilim: #9A3F3F;
 
-  /* ── Shadows — layered, warm-tinted ──────────────────────────────────── */
+  /* Layered warm shadows */
   --shadow-xs: 0 1px 2px rgba(20, 24, 31, 0.04);
   --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.05), 0 1px 1px rgba(20, 24, 31, 0.03);
   --shadow-md: 0 4px 14px -2px rgba(20, 24, 31, 0.08), 0 2px 4px -1px rgba(20, 24, 31, 0.04);
@@ -60,105 +81,165 @@
   --shadow-xl: 0 24px 48px -8px rgba(20, 24, 31, 0.12), 0 8px 18px -4px rgba(20, 24, 31, 0.06);
   --shadow-gold: 0 10px 28px -8px rgba(201, 155, 67, 0.40);
 
-  /* ── Radii ────────────────────────────────────────────────────────────── */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
-  --radius-2xl: 28px;
-  --radius-pill: 9999px;
-
-  /* ── Animation timing ────────────────────────────────────────────────── */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);          /* snappy, app-like */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);    /* playful overshoot */
-  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);          /* default, smooth */
+  /* Easing curves */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
- * Tailwind v4 theme bridge — exposes tokens as Tailwind utilities
- * ────────────────────────────────────────────────────────────────────────── */
+/* Dark mode reserved for v1.1 */
+.dark {
+  --background:          oklch(0.16 0.015 250);
+  --foreground:          oklch(0.97 0.008 80);
+  --card:                oklch(0.21 0.015 250);
+  --card-foreground:     var(--foreground);
+  --popover:             oklch(0.21 0.015 250);
+  --popover-foreground:  var(--foreground);
+  --primary:             oklch(0.78 0.14 75);
+  --primary-foreground:  oklch(0.18 0.02 250);
+  --secondary:           oklch(0.27 0.015 250);
+  --secondary-foreground:var(--foreground);
+  --muted:               oklch(0.27 0.015 250);
+  --muted-foreground:    oklch(0.70 0.012 80);
+  --accent:              oklch(0.32 0.05 75);
+  --accent-foreground:   oklch(0.97 0.008 80);
+  --destructive:         oklch(0.65 0.20 27);
+  --border:              oklch(0.30 0.015 250);
+  --input:               oklch(0.30 0.015 250);
+  --ring:                oklch(0.78 0.14 75);
+  --color-bg-elevated:   #1f2535;
+  --color-bg-muted:      #232838;
+  --color-fg:            #FBF8F3;
+  --color-fg-muted:      #B0B8C5;
+  --color-fg-subtle:     #6B7585;
+  --color-border:        #2F3545;
+}
 
-@theme {
-  --color-bg: var(--color-bg);
-  --color-fg: var(--color-fg);
-  --color-muted: var(--color-fg-muted);
-  --color-subtle: var(--color-fg-subtle);
-  --color-gold: var(--color-gold);
-  --color-gold-soft: var(--color-gold-soft);
-  --color-gold-dark: var(--color-gold-dark);
-  --color-deep: var(--color-deep);
-  --color-deep-soft: var(--color-deep-soft);
-  --color-border: var(--color-border);
-  --color-muted-bg: var(--color-bg-muted);
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-danger: var(--color-danger);
-  --color-shabbat: var(--color-shabbat);
-  --color-torah: var(--color-torah);
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Tailwind v4 theme bridge
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  /* shadcn tokens exposed as Tailwind classes */
+  --color-background:           var(--background);
+  --color-foreground:           var(--foreground);
+  --color-card:                 var(--card);
+  --color-card-foreground:      var(--card-foreground);
+  --color-popover:              var(--popover);
+  --color-popover-foreground:   var(--popover-foreground);
+  --color-primary:              var(--primary);
+  --color-primary-foreground:   var(--primary-foreground);
+  --color-secondary:            var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+  --color-accent:               var(--accent);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-destructive:          var(--destructive);
+  --color-border:               var(--border);
+  --color-input:                var(--input);
+  --color-ring:                 var(--ring);
+
+  --color-sidebar:                       var(--sidebar);
+  --color-sidebar-foreground:            var(--sidebar-foreground);
+  --color-sidebar-primary:               var(--sidebar-primary);
+  --color-sidebar-primary-foreground:    var(--sidebar-primary-foreground);
+  --color-sidebar-accent:                var(--sidebar-accent);
+  --color-sidebar-accent-foreground:     var(--sidebar-accent-foreground);
+  --color-sidebar-border:                var(--sidebar-border);
+  --color-sidebar-ring:                  var(--sidebar-ring);
+
+  /* Menorah brand (kept for existing pages — gradually deprecated) */
+  --color-bg:                   var(--background);
+  --color-fg:                   var(--foreground);
+  --color-muted-fg:             var(--muted-foreground);
+  --color-subtle:               var(--color-fg-subtle);
+  --color-gold:                 var(--color-gold);
+  --color-gold-soft:            var(--color-gold-soft);
+  --color-gold-dark:            var(--color-gold-dark);
+  --color-deep:                 var(--color-deep);
+  --color-deep-soft:            var(--color-deep-soft);
+  --color-bg-elevated:          var(--color-bg-elevated);
+  --color-bg-muted:             var(--color-bg-muted);
+  --color-muted-bg:             var(--color-bg-muted);
+  --color-fg-muted:             var(--color-fg-muted);
+  --color-fg-subtle:            var(--color-fg-subtle);
+  --color-shabbat:              var(--color-shabbat);
+  --color-torah:                var(--color-torah);
+  --color-success:              #16A34A;
+  --color-success-soft:         #DCFCE7;
+  --color-warning:              #D97706;
+  --color-warning-soft:         #FEF3C7;
+  --color-danger:               var(--destructive);
+  --color-danger-soft:          #FEE2E2;
+  --color-info:                 #2563EB;
+  --color-info-soft:            #DBEAFE;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 12px);
 
   --font-sans: var(--font-inter, ui-sans-serif), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-fraunces, ui-serif), Georgia, serif;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
- * Base resets + global behavior
- * ────────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Base resets + global behavior
+ * ════════════════════════════════════════════════════════════════════════════ */
 
-html, body {
-  background: var(--color-bg);
-  color: var(--color-fg);
-  scroll-behavior: smooth;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    background: var(--background);
+    color: var(--foreground);
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01', 'ss03', 'cv05';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.005em;
+  }
+  h1, h2, h3, h4, .font-serif {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    font-feature-settings: 'liga', 'kern';
+  }
+  h1 { line-height: 1.05; }
+  h2 { line-height: 1.15; }
+  h3 { line-height: 1.25; }
+  p { line-height: 1.55; }
+
+  /* Focus states */
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button:focus-visible, a:focus-visible { outline-offset: 3px; }
+  input:focus, textarea:focus, select:focus { outline: none; }
+
+  /* Selection */
+  ::selection {
+    background: rgba(201, 155, 67, 0.28);
+    color: var(--foreground);
+  }
+
+  /* Tap highlight */
+  button, a { -webkit-tap-highlight-color: transparent; }
 }
 
-body {
-  font-family: var(--font-sans);
-  font-feature-settings: 'cv11', 'ss01', 'ss03', 'cv05';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  /* Slightly tighter for app feel */
-  letter-spacing: -0.005em;
-}
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Utilities — shared helpers used across pages
+ * ════════════════════════════════════════════════════════════════════════════ */
 
-/* Headings: serif with negative tracking for premium magazine feel */
-h1, h2, h3, h4, .font-serif {
-  font-family: var(--font-serif);
-  letter-spacing: -0.02em;
-  font-feature-settings: 'liga', 'kern';
-}
-
-h1 { line-height: 1.05; }
-h2 { line-height: 1.15; }
-h3 { line-height: 1.25; }
-
-/* Body text comfortable line-height */
-p { line-height: 1.55; }
-
-/* ── Focus states ─────────────────────────────────────────────────────── */
-*:focus-visible {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-button:focus-visible, a:focus-visible {
-  outline-offset: 3px;
-}
-
-/* Remove default focus on form fields — we handle ring ourselves */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-}
-
-/* ── Selection ────────────────────────────────────────────────────────── */
-::selection {
-  background: rgba(201, 155, 67, 0.28);
-  color: var(--color-fg);
-}
-
-/* ── Scroll affordances ─────────────────────────────────────────────────── */
+/* Scroll affordances */
 .scroll-x-snap {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -166,11 +247,10 @@ select:focus {
 }
 .scroll-x-snap::-webkit-scrollbar { display: none; }
 .scroll-x-snap > * { scroll-snap-align: start; }
-
 .scrollbar-hide { scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* ── Photo card gradient overlay ───────────────────────────────────────── */
+/* Photo card gradient overlay */
 .photo-overlay::after {
   content: '';
   position: absolute;
@@ -185,29 +265,43 @@ select:focus {
   pointer-events: none;
 }
 
-/* ── Glass / blur ───────────────────────────────────────────────────────── */
+/* Glass / blur */
 .glass {
-  background: rgba(251, 248, 243, 0.82);
+  background: color-mix(in oklch, var(--background) 82%, transparent);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
 }
-
 .glass-dark {
   background: rgba(20, 24, 31, 0.65);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
- * Animations — entry, micro-interactions
- * ────────────────────────────────────────────────────────────────────────── */
+/* iOS safe areas */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-top    { padding-top: env(safe-area-inset-top); }
 
-/* Hero concentric pulse rings — for landing / empty heroes */
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Prose styles (Inspire body)
+ * ════════════════════════════════════════════════════════════════════════════ */
+.prose-content {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--foreground);
+}
+.prose-content p { margin: 0; }
+.prose-content strong { font-weight: 600; color: var(--foreground); }
+.prose-content em { font-style: italic; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Animations — legacy classes still used in some places; motion/react owns
+ *  most new entries
+ * ════════════════════════════════════════════════════════════════════════════ */
+
 @keyframes pulse-ring {
   0%, 100% { opacity: 0.35; transform: scale(1); }
   50%      { opacity: 0.65; transform: scale(1.06); }
 }
-
 .hero-pulse {
   position: relative;
   isolation: isolate;
@@ -234,15 +328,12 @@ select:focus {
   animation: pulse-ring 6s ease-in-out infinite 1.5s;
 }
 
-/* Default page entry — gentle rise + fade */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up { animation: fade-up 0.5s var(--ease-out) both; }
 
-/* Staggered children — apply .fade-up-stagger to a parent;
-   first 6 children get sequenced delays. */
 .fade-up-stagger > * { animation: fade-up 0.5s var(--ease-out) both; }
 .fade-up-stagger > *:nth-child(1) { animation-delay: 0ms; }
 .fade-up-stagger > *:nth-child(2) { animation-delay: 60ms; }
@@ -251,7 +342,6 @@ select:focus {
 .fade-up-stagger > *:nth-child(5) { animation-delay: 240ms; }
 .fade-up-stagger > *:nth-child(6) { animation-delay: 300ms; }
 
-/* Spring-in for badges / pop-ins */
 @keyframes spring-in {
   0%   { transform: scale(0.85); opacity: 0; }
   60%  { transform: scale(1.04); opacity: 1; }
@@ -259,80 +349,22 @@ select:focus {
 }
 .spring-in { animation: spring-in 0.45s var(--ease-spring) both; }
 
-/* Soft float — perfect for hero illustrations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-6px); }
 }
 .float { animation: float 4s ease-in-out infinite; }
 
-/* Gentle shine sweep — for premium gold elements */
-@keyframes shine {
-  0%   { background-position: -100% 0; }
-  100% { background-position: 200% 0; }
-}
-.shine-overlay {
-  position: relative;
-  overflow: hidden;
-}
-.shine-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 80%
-  );
-  background-size: 200% 100%;
-  animation: shine 3.5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Skeleton loader */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, var(--color-bg-muted) 0%, #EDE5D5 50%, var(--color-bg-muted) 100%);
+  background: linear-gradient(90deg, var(--muted) 0%, color-mix(in oklch, var(--muted) 50%, white) 50%, var(--muted) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
   border-radius: var(--radius-md);
 }
-
-/* ──────────────────────────────────────────────────────────────────────────
- * Mobile / safe-area helpers
- * ────────────────────────────────────────────────────────────────────────── */
-
-.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-.safe-top    { padding-top: env(safe-area-inset-top); }
-
-/* Tap highlight cleanup — iOS / Android */
-button, a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
- * Prose styles — used in Inspire content body
- * ────────────────────────────────────────────────────────────────────────── */
-
-.prose-content {
-  font-size: 1.0625rem;       /* 17px */
-  line-height: 1.7;
-  color: var(--color-fg);
-}
-.prose-content p { margin: 0; }
-.prose-content strong {
-  font-weight: 600;
-  color: var(--color-fg);
-}
-.prose-content em { font-style: italic; }
-
-/* ──────────────────────────────────────────────────────────────────────────
- * Accessibility — reduce motion
- * ────────────────────────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -2,8 +2,11 @@ import { auth, signOut } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { hasuraAdmin } from '@/lib/hasura';
 import { getOnboardingInfo } from '@/lib/onboarding/server';
-import { AppHeader } from '@/app/_components/layout/AppHeader';
-import { BottomNav } from '@/app/_components/layout/BottomNav';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/layout/AppSidebar';
+import { AppTopBar } from '@/components/layout/AppTopBar';
+import { AppBottomNav } from '@/components/layout/AppBottomNav';
+import { PageTransition } from '@/components/motion/PageTransition';
 import type { UserDisplay } from '@/lib/profile/display';
 
 const HEADER_DATA = /* GraphQL */ `
@@ -29,7 +32,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const session = await auth();
   if (!session?.user) redirect('/');
 
-  // DB-fresh check — bounces user mid-onboarding back to the wizard.
   const info = await getOnboardingInfo(session.user.id);
   if (!info.done) redirect(info.redirectTarget);
 
@@ -38,20 +40,29 @@ export default async function DashboardLayout({ children }: { children: React.Re
     memberships: Array<{ community: { id: string; name: string } }>;
   }>(HEADER_DATA, { user_id: session.user.id });
 
-  const user = data.users_by_pk ?? { id: session.user.id, email: session.user.email, name: session.user.name };
+  const user = data.users_by_pk ?? {
+    id: session.user.id,
+    email: session.user.email,
+    name: session.user.name,
+  };
   const communityName = data.memberships[0]?.community?.name;
-  const role = session.hasura.default_role;
+  const role = session.hasura.default_role as 'member' | 'rabbi' | 'admin';
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <AppHeader
+    <SidebarProvider>
+      <AppSidebar
         user={user}
         role={role}
         communityName={communityName}
         signOutAction={signOutAction}
       />
-      <main className="flex-1 pb-20 md:pb-8">{children}</main>
-      <BottomNav />
-    </div>
+      <SidebarInset>
+        <AppTopBar />
+        <main className="flex-1 pb-24 md:pb-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
+      </SidebarInset>
+      <AppBottomNav />
+    </SidebarProvider>
   );
 }
