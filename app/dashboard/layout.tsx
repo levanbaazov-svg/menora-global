@@ -2,10 +2,8 @@ import { auth, signOut } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { hasuraAdmin } from '@/lib/hasura';
 import { getOnboardingInfo } from '@/lib/onboarding/server';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/layout/AppSidebar';
-import { AppTopBar } from '@/components/layout/AppTopBar';
-import { AppBottomNav } from '@/components/layout/AppBottomNav';
+import { AppHeader } from '@/app/_components/layout/AppHeader';
+import { BottomNav } from '@/app/_components/layout/BottomNav';
 import { PageTransition } from '@/components/motion/PageTransition';
 import type { UserDisplay } from '@/lib/profile/display';
 
@@ -49,20 +47,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const role = session.hasura.default_role as 'member' | 'rabbi' | 'admin';
 
   return (
-    <SidebarProvider>
-      <AppSidebar
+    <div className="min-h-screen flex flex-col bg-background">
+      <AppHeader
         user={user}
         role={role}
         communityName={communityName}
         signOutAction={signOutAction}
       />
-      <SidebarInset>
-        <AppTopBar />
-        <main className="flex-1 pb-24 md:pb-8">
-          <PageTransition>{children}</PageTransition>
-        </main>
-      </SidebarInset>
-      <AppBottomNav />
-    </SidebarProvider>
+      <main className="flex-1 pb-28 md:pb-12">
+        <PageTransition>{children}</PageTransition>
+      </main>
+      <BottomNav />
+    </div>
   );
 }
