@@ -69,7 +69,7 @@ export function AppHeader({ user, role, communityName, signOutAction }: Props) {
               aria-label="Поиск"
               className="rounded-full h-9 w-9 text-foreground/70 hover:text-foreground"
             >
-              <Link href="/dashboard/discover">
+              <Link href="/dashboard/community/discover">
                 <Search size={18} strokeWidth={1.9} />
               </Link>
             </Button>
