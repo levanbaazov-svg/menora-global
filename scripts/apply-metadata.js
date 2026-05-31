@@ -58,7 +58,7 @@ const COLUMNS = {
   memberships: ['id','user_id','community_id','role','status','entry_method','request_message','invited_by','approved_by','rejected_by','community_role','member_since','family_id','prayer_config','onboarding_done','joined_at','rejected_at','rejected_reason','suspended_at','left_at','created_at','updated_at'],
   invitations: ['id','community_id','email','role','token_hash','invited_by','message','expires_at','accepted_at','accepted_by','revoked_at','revoked_by','created_at','updated_at'],
   audit_log: ['id','actor_user_id','community_id','action','resource_type','resource_id','metadata','ip','user_agent','created_at'],
-  events: ['id','community_id','host_user_id','title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','attendee_count_cached','published_at','cancelled_at','cancellation_reason','created_at','updated_at'],
+  events: ['id','community_id','host_user_id','title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','attendee_count_cached','is_free','price_amount','price_currency','published_at','cancelled_at','cancellation_reason','created_at','updated_at'],
   rsvps: ['id','event_id','user_id','status','plus_ones','plus_ones_info','dietary_notes','note_to_host','approved_by','approved_at','declined_reason','cancelled_at','created_at','updated_at'],
   requests: ['id','community_id','user_id','category','urgency','title','body','status','accepted_reply_id','expires_at','fulfilled_at','cancelled_at','reply_count_cached','created_at','updated_at'],
   request_replies: ['id','request_id','user_id','body','contact_method','contact_phone','contact_email','withdrawn_at','created_at','updated_at'],
@@ -496,7 +496,7 @@ function permissionsFor(table) {
       out.select.push(selectPerm('rabbi', C, ownCommunityFilter, { allow_aggregations: true }));
       // Insert: member can create draft in own community.
       out.insert.push(insertPerm('member',
-        ['community_id','title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status'],
+        ['community_id','title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','is_free','price_amount','price_currency'],
         { _and: [
           ownCommunityFilter,
           { host_user_id: { _eq: USER_ID } },
@@ -506,12 +506,12 @@ function permissionsFor(table) {
       ));
       // Update own events.
       out.update.push(updatePerm('member',
-        ['title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','published_at','cancelled_at','cancellation_reason'],
+        ['title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','is_free','price_amount','price_currency','published_at','cancelled_at','cancellation_reason'],
         ownEventFilter, ownEventFilter,
       ));
       // Rabbi: edit/publish/cancel any in community.
       out.update.push(updatePerm('rabbi',
-        ['title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','published_at','cancelled_at','cancellation_reason'],
+        ['title','description','type','visibility','starts_at','ends_at','timezone','all_day','location_text','location_address','location_visibility','max_attendees','waitlist_enabled','requires_approval','cover_image_url','shabbat_meal_details','tags','status','is_free','price_amount','price_currency','published_at','cancelled_at','cancellation_reason'],
         ownCommunityFilter, ownCommunityFilter,
       ));
       // Delete: host only (rabbi cancels instead).
