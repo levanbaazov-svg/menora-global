@@ -1,44 +1,53 @@
-// Server component — renders today's AI-generated home card.
-// Rebuilt on shadcn Card with motion-friendly hover state.
+// Lovable-style proactive AI card for the dashboard home.
+// Dark surface, gold inner ring, single primary CTA.
 
 import Link from 'next/link';
 import { Sparkles, ChevronRight } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Reveal } from '@/components/motion/Reveal';
 import { getDailyHomeSuggestion } from '@/lib/ai/suggestions';
 
 export async function DailyHomeCard({ userId }: { userId: string }) {
   const s = await getDailyHomeSuggestion(userId);
 
   return (
-    <Link href={s.cta_href} className="block group">
-      <Card className="relative p-5 md:p-6 hover:ring-primary/40 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
-        {/* Gold radial glow */}
+    <Reveal delay={0.05}>
+      <Link
+        href={s.cta_href}
+        className="
+          group block relative rounded-2xl overflow-hidden p-5
+          bg-foreground text-background
+          shadow-[0_8px_24px_-4px_rgba(20,24,31,0.18)]
+          transition-shadow duration-200 hover:shadow-[0_12px_32px_-6px_rgba(20,24,31,0.28)]
+        "
+      >
+        {/* Soft gold radial in the corner */}
         <div
           aria-hidden
-          className="absolute -top-12 -right-12 w-44 h-44 rounded-full opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, var(--color-gold-soft) 0%, transparent 70%)' }}
+          className="absolute -top-16 -right-16 w-56 h-56 rounded-full pointer-events-none opacity-50"
+          style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 70%)' }}
         />
 
-        <div className="relative flex items-start gap-4">
-          <div className="shrink-0 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100/60 text-2xl">
-            {s.emoji}
+        <div className="relative flex items-start gap-3">
+          <div className="shrink-0 w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+            <Sparkles size={16} strokeWidth={2} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-amber-700 font-semibold mb-1.5">
-              <Sparkles className="h-3 w-3" />
-              AI · сегодня для тебя
+            <div className="text-[10px] uppercase tracking-[0.18em] text-primary font-semibold mb-1.5">
+              AI Раввин · сегодня для тебя
             </div>
-            <h3 className="font-serif text-lg md:text-xl font-semibold leading-snug mb-1">
+            <h3 className="font-serif text-lg font-semibold leading-snug mb-1.5">
               {s.title}
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
-            <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold transition-transform duration-200 group-hover:translate-x-0.5">
+            <p className="text-sm text-background/80 leading-relaxed line-clamp-3">
+              {s.body}
+            </p>
+            <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary transition-transform group-hover:translate-x-0.5">
               <span>{s.cta_label}</span>
-              <ChevronRight className="h-3.5 w-3.5" />
+              <ChevronRight size={14} strokeWidth={2.2} />
             </div>
           </div>
         </div>
-      </Card>
-    </Link>
+      </Link>
+    </Reveal>
   );
 }

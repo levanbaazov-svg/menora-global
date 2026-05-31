@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Bell } from 'lucide-react';
 
 interface NotificationItem {
   id: string; type: string; title: string; body: string | null; link: string | null;
@@ -84,13 +85,13 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative w-9 h-9 rounded-full hover:bg-(--color-muted-bg) flex items-center justify-center text-lg"
-        title="Уведомления"
+        aria-label="Уведомления"
+        className="relative w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
       >
-        🔔
+        <Bell size={18} strokeWidth={1.9} />
         {count > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
-            {count > 99 ? '99+' : count}
+          <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white text-[9px] font-bold flex items-center justify-center leading-none">
+            {count > 9 ? '9+' : count}
           </span>
         )}
       </button>

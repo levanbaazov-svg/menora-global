@@ -36,7 +36,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Bottom navigation"
-      className="md:hidden fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
+      className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
     >
       {/* Wrap with extra bottom padding so the floating pill sits above the home indicator */}
       <div className="px-3 pb-3 pt-2 flex justify-center">
