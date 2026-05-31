@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
-  ChevronRight, Search, CalendarDays, BookOpen, Flame, AtSign,
+  ChevronRight, Search, CalendarDays, BookOpenText, Flame, AtSign,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
@@ -251,7 +251,7 @@ export default async function CommunityPage({
               <Reveal delay={0.1}>
                 <Section title="Программы" action={<SeeAll href="/dashboard/community/manage" label="Управление" />}>
                   {data.programs.length === 0 ? (
-                    <EmptyHint Icon={BookOpen} text="Программ пока нет" />
+                    <EmptyHint Icon={BookOpenText} text="Программ пока нет" />
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
                       {data.programs.map((p) => (

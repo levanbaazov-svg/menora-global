@@ -1,5 +1,5 @@
-// Visitor view of another community — full profile, read-only + join CTA.
-// Mirrors the member community page design. Uses admin secret (public-safe data).
+// Visitor view of another community — tabbed full profile (Инфо/Гид/Контакты)
+// + sticky join CTA. Uses admin secret (public-safe data only).
 
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
@@ -7,11 +7,12 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
-  ChevronRight, ChevronLeft, CalendarDays, BookOpen,
+  ChevronRight, ChevronLeft, CalendarDays, AtSign,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
-import { Button } from '@/components/ui/button';
+import { CommunityTabs } from '../../CommunityTabs';
+import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 const FETCH = /* GraphQL */ `
   query VisitorCommunity($slug: citext!) {
@@ -35,8 +36,8 @@ const FETCH_DATA = /* GraphQL */ `
     events(
       where: { community_id: { _eq: $cid }, status: { _eq: published },
                visibility: { _in: [community, public_in_app] }, starts_at: { _gte: "now()" } }
-      order_by: { starts_at: asc } limit: 4
-    ) { id title starts_at location_text attendee_count_cached }
+      order_by: { starts_at: asc } limit: 6
+    ) { id title starts_at location_text cover_image_url attendee_count_cached }
     programs(
       where: { community_id: { _eq: $cid }, status: { _eq: active } }
       order_by: [{ category: asc }] limit: 6
@@ -45,6 +46,10 @@ const FETCH_DATA = /* GraphQL */ `
       where: { community_id: { _eq: $cid }, status: { _eq: active } }
       order_by: { joined_at: asc } limit: 12
     ) { user { id name image_url } }
+    places(
+      where: { community_id: { _eq: $cid }, submission_status: { _eq: approved }, archived_at: { _is_null: true } }
+      order_by: { type: asc }
+    ) { id type name photo_url address }
     my_membership: memberships(
       where: { community_id: { _eq: $cid }, user_id: { _eq: $user_id } } limit: 1
     ) { status }
@@ -53,36 +58,43 @@ const FETCH_DATA = /* GraphQL */ `
 
 const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Администратор' };
 
+interface CommunityRow {
+  id: string; slug: string; name: string; city: string | null; country_code: string | null;
+  timezone: string; denomination: string | null; description: string | null;
+  hero_image_url: string | null; founded_year: number | null; address: string | null;
+  contact_phone: string | null; contact_email: string | null; website_url: string | null;
+  whatsapp_url: string | null; instagram_url: string | null; member_count_cached: number;
+}
+interface PlaceRow { id: string; type: PlaceType; name: string; photo_url: string | null; address: string | null; }
+
 export default async function VisitorCommunityPage({
-  params,
+  params, searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { slug } = await params;
+  const tab = (await searchParams).tab ?? 'info';
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
-  const found = await hasuraAdmin.request<{ communities: Array<Record<string, unknown>> }>(FETCH, { slug });
-  const c = found.communities[0] as {
-    id: string; slug: string; name: string; city: string | null; country_code: string | null;
-    timezone: string; denomination: string | null; description: string | null;
-    hero_image_url: string | null; founded_year: number | null; address: string | null;
-    contact_phone: string | null; contact_email: string | null; website_url: string | null;
-    whatsapp_url: string | null; instagram_url: string | null; member_count_cached: number;
-  } | undefined;
+  const found = await hasuraAdmin.request<{ communities: CommunityRow[] }>(FETCH, { slug });
+  const c = found.communities[0];
   if (!c) notFound();
 
   if (c.id === session.hasura.community_id) redirect('/dashboard/community');
 
   const data = await hasuraAdmin.request<{
     leaders: Array<{ role: string; community_role: string | null; user: { id: string; name: string | null; image_url: string | null } | null }>;
-    events: Array<{ id: string; title: string; starts_at: string; location_text: string | null; attendee_count_cached: number }>;
+    events: Array<{ id: string; title: string; starts_at: string; location_text: string | null; cover_image_url: string | null; attendee_count_cached: number }>;
     programs: Array<{ id: string; name: string; photo_url: string | null; schedule_text: string | null }>;
     members: Array<{ user: { id: string; name: string | null; image_url: string | null } | null }>;
+    places: PlaceRow[];
     my_membership: Array<{ status: string }>;
   }>(FETCH_DATA, { cid: c.id, user_id: session.user.id });
 
   const membership = data.my_membership[0];
+  const base = `/dashboard/community/c/${c.slug}`;
 
   return (
     <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-32">
@@ -124,140 +136,214 @@ export default async function VisitorCommunityPage({
         </section>
       </Reveal>
 
-      <div className="px-4 md:px-0 space-y-6 mt-5">
-        {/* Contacts */}
-        <Reveal delay={0.04}>
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            {c.contact_phone && <ContactBtn href={`tel:${c.contact_phone}`} Icon={Phone} label="Позвонить" />}
-            {c.whatsapp_url && <ContactBtn href={c.whatsapp_url} Icon={MessageCircle} label="WhatsApp" external />}
-            {c.contact_email && <ContactBtn href={`mailto:${c.contact_email}`} Icon={Mail} label="Email" />}
-            {c.website_url && <ContactBtn href={c.website_url} Icon={Globe} label="Сайт" external />}
-            {c.address && <ContactBtn href={`https://maps.google.com/?q=${encodeURIComponent(c.address)}`} Icon={Navigation} label="Маршрут" external />}
-          </div>
-        </Reveal>
+      <div className="px-4 md:px-0 mt-4">
+        <CommunityTabs basePath={base} />
 
-        {/* About */}
-        {c.description && (
-          <Reveal delay={0.06}>
-            <section>
-              <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
-              {(c.founded_year || c.address) && (
-                <div className="mt-3 flex flex-col gap-1.5 text-xs text-muted-foreground">
-                  {c.founded_year && <div>Основана в {c.founded_year}</div>}
-                  {c.address && <div className="inline-flex items-center gap-1.5"><MapPin size={12} className="shrink-0" />{c.address}</div>}
-                </div>
+        <div className="mt-5 space-y-6">
+          {tab === 'info' && (
+            <>
+              {c.description && (
+                <Reveal delay={0.04}>
+                  <section>
+                    <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
+                    {c.founded_year && <div className="mt-3 text-xs text-muted-foreground">Основана в {c.founded_year}</div>}
+                  </section>
+                </Reveal>
               )}
-            </section>
-          </Reveal>
-        )}
 
-        {/* Leaders */}
-        {data.leaders.length > 0 && (
-          <Reveal delay={0.08}>
-            <Sect title="Руководство">
-              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-                {data.leaders.map((l) => (
-                  <div key={l.user?.id} className="shrink-0 w-20 text-center">
-                    <div className="mx-auto mb-1.5">
-                      <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
+              {data.leaders.length > 0 && (
+                <Reveal delay={0.06}>
+                  <Sect title="Руководство">
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+                      {data.leaders.map((l) => (
+                        <div key={l.user?.id} className="shrink-0 w-20 text-center">
+                          <div className="mx-auto mb-1.5">
+                            <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
+                          </div>
+                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? 'Без имени'}</div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5 truncate">{l.community_role ?? ROLE_TITLE[l.role] ?? l.role}</div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? 'Без имени'}</div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5 truncate">{l.community_role ?? ROLE_TITLE[l.role] ?? l.role}</div>
-                  </div>
-                ))}
-              </div>
-            </Sect>
-          </Reveal>
-        )}
+                  </Sect>
+                </Reveal>
+              )}
 
-        {/* Events */}
-        {data.events.length > 0 && (
-          <Reveal delay={0.1}>
-            <Sect title="Ближайшие события">
-              <div className="space-y-2">
-                {data.events.map((e) => (
-                  <div key={e.id} className="flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3">
-                    <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
-                      <CalendarDays size={16} strokeWidth={1.9} />
+              {data.events.length > 0 && (
+                <Reveal delay={0.08}>
+                  <Sect title="Ближайшие события">
+                    <div className="grid grid-cols-2 gap-3">
+                      {data.events.map((e) => (
+                        <div key={e.id} className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
+                          <div className="relative h-24 overflow-hidden">
+                            {e.cover_image_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={e.cover_image_url} alt={e.title} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <div className="text-sm font-medium leading-tight line-clamp-2">{e.title}</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">
+                              {new Date(e.starts_at).toLocaleDateString('ru-RU', { timeZone: c.timezone || undefined, day: 'numeric', month: 'short' })}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium leading-tight truncate">{e.title}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {new Date(e.starts_at).toLocaleString('ru-RU', { timeZone: c.timezone, weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                        {e.location_text ? ` · ${e.location_text}` : ''}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Sect>
-          </Reveal>
-        )}
+                  </Sect>
+                </Reveal>
+              )}
 
-        {/* Programs */}
-        {data.programs.length > 0 && (
-          <Reveal delay={0.12}>
-            <Sect title="Программы">
-              <div className="grid grid-cols-2 gap-3">
-                {data.programs.map((p) => (
-                  <div key={p.id} className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
-                    <div className="relative h-24 overflow-hidden">
-                      {p.photo_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+              {data.programs.length > 0 && (
+                <Reveal delay={0.1}>
+                  <Sect title="Программы">
+                    <div className="grid grid-cols-2 gap-3">
+                      {data.programs.map((p) => (
+                        <div key={p.id} className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
+                          <div className="relative h-24 overflow-hidden">
+                            {p.photo_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
+                            {p.schedule_text && <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.schedule_text}</div>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Sect>
+                </Reveal>
+              )}
+
+              {data.members.length > 0 && (
+                <Reveal delay={0.12}>
+                  <Sect title="Участники">
+                    <div className="flex flex-wrap gap-2">
+                      {data.members.map((m) => (
+                        <Avatar key={m.user?.id} user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
+                      ))}
+                      {c.member_count_cached > data.members.length && (
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+                          +{c.member_count_cached - data.members.length}
+                        </span>
                       )}
                     </div>
-                    <div className="p-3">
-                      <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
-                      {p.schedule_text && <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.schedule_text}</div>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Sect>
-          </Reveal>
-        )}
+                  </Sect>
+                </Reveal>
+              )}
+            </>
+          )}
 
-        {/* Members */}
-        {data.members.length > 0 && (
-          <Reveal delay={0.14}>
-            <Sect title="Участники">
-              <div className="flex flex-wrap gap-2">
-                {data.members.map((m) => (
-                  <Avatar key={m.user?.id} user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
-                ))}
-                {c.member_count_cached > data.members.length && (
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                    +{c.member_count_cached - data.members.length}
-                  </span>
-                )}
-              </div>
-            </Sect>
-          </Reveal>
-        )}
+          {tab === 'guide' && <GuideTab places={data.places} />}
+          {tab === 'contacts' && <ContactsTab c={c} />}
+        </div>
       </div>
 
       {/* Sticky join CTA */}
       <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-24 md:pb-6 pt-3 bg-gradient-to-t from-background via-background to-transparent">
         <div className="container mx-auto max-w-xl">
           {!membership ? (
-            <Button asChild size="lg" className="w-full rounded-full h-13">
-              <Link href={`/onboarding/community_choice?community=${c.slug}`}>Подать заявку на вступление</Link>
-            </Button>
+            <Link href={`/onboarding/community_choice?community=${c.slug}`}
+              className="block w-full text-center rounded-full h-13 leading-[3.25rem] bg-primary text-primary-foreground font-semibold shadow-[var(--shadow-gold)]">
+              Подать заявку на вступление
+            </Link>
           ) : membership.status === 'pending' ? (
-            <Button disabled variant="secondary" size="lg" className="w-full rounded-full h-13">
+            <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
               ⏳ Заявка на рассмотрении
-            </Button>
+            </div>
           ) : (
-            <Button disabled variant="secondary" size="lg" className="w-full rounded-full h-13">
+            <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
               Вы участник
-            </Button>
+            </div>
           )}
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Guide tab ─────────────────────────────────────────────────────────────
+function GuideTab({ places }: { places: PlaceRow[] }) {
+  if (places.length === 0) {
+    return <EmptyHint Icon={MapPin} text="Места ещё не добавлены в город-гид" />;
+  }
+  const byType = new Map<PlaceType, PlaceRow[]>();
+  for (const p of places) {
+    const arr = byType.get(p.type) ?? [];
+    arr.push(p);
+    byType.set(p.type, arr);
+  }
+  return (
+    <div className="space-y-6">
+      {Array.from(byType.entries()).map(([type, items]) => (
+        <Reveal key={type} delay={0.04}>
+          <section>
+            <h2 className="font-serif text-base font-semibold mb-2.5">
+              {PLACE_TYPE_LABELS[type]?.ru ?? type}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {items.map((p) => (
+                <Link key={p.id} href={`/dashboard/community/places/${p.id}`}
+                  className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 transition-all">
+                  <div className="relative h-24 overflow-hidden">
+                    {p.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
+                    {p.address && <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.address}</div>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+
+// ── Contacts tab ──────────────────────────────────────────────────────────
+function ContactsTab({ c }: { c: CommunityRow }) {
+  const rows = [
+    c.contact_phone && { Icon: Phone, label: 'Телефон', value: c.contact_phone, href: `tel:${c.contact_phone}` },
+    c.whatsapp_url && { Icon: MessageCircle, label: 'WhatsApp', value: 'Написать в WhatsApp', href: c.whatsapp_url, external: true },
+    c.contact_email && { Icon: Mail, label: 'Email', value: c.contact_email, href: `mailto:${c.contact_email}` },
+    c.website_url && { Icon: Globe, label: 'Сайт', value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
+    c.instagram_url && { Icon: AtSign, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
+    c.address && { Icon: Navigation, label: 'Адрес', value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
+  ].filter(Boolean) as Array<{ Icon: typeof Phone; label: string; value: string; href: string; external?: boolean }>;
+
+  if (rows.length === 0) return <EmptyHint Icon={Phone} text="Контакты пока не указаны" />;
+  return (
+    <Reveal delay={0.04}>
+      <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
+        {rows.map((r) => (
+          <a key={r.label} href={r.href}
+            {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            className="flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors">
+            <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
+              <r.Icon size={16} strokeWidth={1.9} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{r.label}</div>
+              <div className="text-sm font-medium leading-tight truncate">{r.value}</div>
+            </div>
+            <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
+          </a>
+        ))}
+      </div>
+    </Reveal>
   );
 }
 
@@ -270,15 +356,11 @@ function Sect({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-function ContactBtn({ href, Icon, label, external }: { href: string; Icon: typeof Phone; label: string; external?: boolean }) {
+function EmptyHint({ Icon, text }: { Icon: typeof CalendarDays; text: string }) {
   return (
-    <a
-      href={href}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="shrink-0 inline-flex flex-col items-center gap-1 rounded-xl bg-card ring-1 ring-border/70 px-4 py-2.5 hover:ring-primary/30 transition-all min-w-[72px]"
-    >
-      <Icon size={17} strokeWidth={1.9} className="text-primary" />
-      <span className="text-[11px] font-medium text-foreground/80">{label}</span>
-    </a>
+    <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
+      <Icon size={18} strokeWidth={1.7} className="opacity-60" />
+      {text}
+    </div>
   );
 }

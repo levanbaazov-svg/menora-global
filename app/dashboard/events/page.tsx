@@ -1,12 +1,11 @@
-// Events list — compact cards with cover thumbnail, date, RSVP state.
+// Events list — poster-style cards (cover image hero + title overlay + meta).
 
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, MapPin, Users, ChevronRight, CalendarDays } from 'lucide-react';
+import { Plus, MapPin, Users, CalendarDays } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
-import { EVENT_TYPE_LABELS } from '@/lib/events/schema';
 
 const LIST_EVENTS = /* GraphQL */ `
   query ListEvents($community_id: uuid!) {
@@ -31,8 +30,6 @@ interface EventRow {
   host: { id: string; name: string | null } | null;
   rsvps: Array<{ user_id: string; status: string }>;
 }
-
-const RSVP_LABEL: Record<string, string> = { yes: 'Иду', maybe: 'Возможно', no: 'Не иду' };
 
 export default async function EventsListPage() {
   const session = await auth();
@@ -75,9 +72,9 @@ export default async function EventsListPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-6">
           {upcoming.length > 0 && (
-            <section className="space-y-2.5">
+            <section className="space-y-3">
               {upcoming.map((e, i) => (
                 <Reveal key={e.id} delay={0.03 * i}>
                   <EventCard e={e} userId={session.user.id} />
@@ -91,7 +88,7 @@ export default async function EventsListPage() {
               <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
                 Прошедшие
               </h2>
-              <div className="space-y-2.5 opacity-75">
+              <div className="space-y-3 opacity-70">
                 {past.map((e) => <EventCard key={e.id} e={e} userId={session.user.id} />)}
               </div>
             </section>
@@ -106,7 +103,7 @@ function EventCard({ e, userId }: { e: EventRow; userId: string }) {
   const myRsvp = e.rsvps.find((r) => r.user_id === userId)?.status;
   const isHost = e.host?.id === userId;
   const when = new Date(e.starts_at).toLocaleString('ru-RU', {
-    timeZone: e.timezone ?? undefined,
+    timeZone: e.timezone || undefined,
     weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
   const price = e.is_free || !e.price_amount ? null : `${e.price_amount} ${e.price_currency ?? ''}`;
@@ -114,47 +111,56 @@ function EventCard({ e, userId }: { e: EventRow; userId: string }) {
   return (
     <Link
       href={`/dashboard/events/${e.id}`}
-      className="group flex gap-3 rounded-2xl bg-card ring-1 ring-border/70 p-2.5 hover:ring-primary/30 hover:shadow-[0_6px_18px_-6px_rgba(20,24,31,0.12)] transition-all"
+      className="group block overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 hover:shadow-[0_10px_28px_-8px_rgba(20,24,31,0.16)] transition-all"
     >
-      {/* Thumbnail */}
-      <div className="shrink-0 w-[72px] h-[72px] rounded-xl overflow-hidden">
+      {/* Poster */}
+      <div className="relative h-44 overflow-hidden">
         {e.cover_image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={e.cover_image_url} alt={e.title} className="h-full w-full object-cover" />
+          <img
+            src={e.cover_image_url}
+            alt={e.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         ) : (
-          <div className="h-full w-full bg-gradient-to-br from-primary/25 to-foreground/30 flex items-center justify-center">
-            <CalendarDays size={22} className="text-white/80" strokeWidth={1.6} />
+          <div className="h-full w-full bg-gradient-to-br from-primary/30 to-foreground/40 flex items-center justify-center">
+            <CalendarDays size={40} className="text-white/70" strokeWidth={1.4} />
           </div>
         )}
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-      {/* Body */}
-      <div className="min-w-0 flex-1 py-0.5">
-        <div className="flex items-start gap-2">
-          <h3 className="font-medium text-sm leading-tight line-clamp-2 flex-1">{e.title}</h3>
+        <div className="absolute top-3 right-3 flex gap-1.5">
           {myRsvp === 'yes' && (
-            <span className="shrink-0 rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-semibold">Иду</span>
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm">Иду</span>
           )}
           {isHost && (
-            <span className="shrink-0 rounded-full bg-foreground text-background px-2 py-0.5 text-[10px] font-semibold">Хост</span>
+            <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-foreground shadow-sm">Хост</span>
           )}
         </div>
-        <div className="text-xs text-muted-foreground mt-1 capitalize">{when}</div>
-        <div className="flex items-center gap-2.5 text-[11px] text-muted-foreground mt-1">
-          {e.location_text && (
-            <span className="inline-flex items-center gap-0.5 truncate max-w-[140px]">
-              <MapPin size={11} strokeWidth={2} /> {e.location_text}
-            </span>
-          )}
-          <span className="inline-flex items-center gap-0.5">
-            <Users size={11} strokeWidth={2} />
-            {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
-          </span>
-          {price && <span className="text-foreground/70 font-medium">{price}</span>}
+
+        <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+          <h3 className="font-serif text-lg font-semibold leading-tight drop-shadow-sm line-clamp-2">
+            {e.title}
+          </h3>
+          <div className="mt-1 text-xs text-white/90 capitalize">{when}</div>
         </div>
       </div>
 
-      <ChevronRight size={16} className="shrink-0 self-center text-muted-foreground/40" />
+      {/* Meta strip */}
+      <div className="flex items-center gap-3 px-4 py-2.5 text-[11px] text-muted-foreground">
+        {e.location_text && (
+          <span className="inline-flex items-center gap-1 truncate max-w-[160px]">
+            <MapPin size={12} strokeWidth={2} /> {e.location_text}
+          </span>
+        )}
+        <span className="inline-flex items-center gap-1">
+          <Users size={12} strokeWidth={2} />
+          {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
+        </span>
+        <span className="ml-auto font-medium text-foreground/70">
+          {price ?? 'Бесплатно'}
+        </span>
+      </div>
     </Link>
   );
 }
