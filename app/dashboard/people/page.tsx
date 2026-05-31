@@ -1,60 +1,64 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
-import { PeopleDirectory } from './PeopleDirectory';
-import type { UserDisplay } from '@/lib/profile/display';
+import Link from 'next/link';
+import { Avatar } from '../_Avatar';
 
 const LIST = /* GraphQL */ `
-  query ListMembers($community_id: uuid!) {
+  query People($community_id: uuid!) {
     memberships(
       where: { community_id: { _eq: $community_id }, status: { _eq: active } }
-      order_by: [{ role: desc }, { joined_at: desc }]
+      order_by: { joined_at: asc }
     ) {
-      id user_id role joined_at member_since
-      user {
-        id email name image_url
-        profile {
-          legal_first_name legal_last_name hebrew_name
-          denomination observance_level kashrut_level
-          interests bio profile_visibility
-        }
-      }
+      role community_role
+      user { id name image_url }
     }
   }
 `;
 
 interface Row {
-  id: string; user_id: string;
-  role: 'member' | 'rabbi' | 'admin';
-  joined_at: string | null;
-  member_since: string | null;
-  user: UserDisplay;
+  role: string; community_role: string | null;
+  user: { id: string; name: string | null; image_url: string | null } | null;
 }
+
+const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Админ' };
 
 export default async function PeoplePage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
-
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const { memberships } = await client.request<{ memberships: Row[] }>(
     LIST, { community_id: session.hasura.community_id },
   );
 
-  const role = session.hasura.default_role;
-  const isStaff = role === 'rabbi' || role === 'admin';
-  const visible = memberships.filter((m) => {
-    if (m.user_id === session.user.id) return true;
-    if (isStaff) return true;
-    return m.user.profile?.profile_visibility !== 'private';
-  });
-
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="mb-6">
-        <h1 className="font-serif text-3xl font-semibold mb-1">Участники</h1>
-      </div>
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
+      <header className="mb-4 px-0.5">
+        <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
+          Участники
+        </h1>
+        <p className="text-sm text-muted-foreground mt-0.5">{memberships.length} человек в общине</p>
+      </header>
 
-      <PeopleDirectory members={visible} selfId={session.user.id} />
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+        {memberships.map((m) => (
+          <Link
+            key={m.user?.id}
+            href={`/dashboard/people/${m.user?.id}`}
+            className="group rounded-2xl bg-card ring-1 ring-border/70 p-3 text-center hover:ring-primary/30 transition-all"
+          >
+            <div className="flex justify-center mb-2">
+              <Avatar user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="lg" />
+            </div>
+            <div className="font-medium text-xs leading-tight truncate">{m.user?.name ?? 'Без имени'}</div>
+            {(m.community_role || ROLE_TITLE[m.role]) && (
+              <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                {m.community_role ?? ROLE_TITLE[m.role]}
+              </div>
+            )}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
