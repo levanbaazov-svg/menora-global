@@ -1,3 +1,5 @@
+'use client';
+
 // Lovable-style pastel scenario tile (NO emoji — lucide arrow corner badge).
 // Used on dashboard home for the 6 AI Rabbi scenarios.
 
