@@ -1,213 +1,214 @@
+// Routines + streaks. Stat header (current/longest/total) + today's checklist
+// grouped by time-of-day, with optimistic check toggles.
+
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ROUTINE_META, DAYS_OF_WEEK, type RoutineType } from '@/lib/routines/schema';
+import { Plus, Sunrise, Sun, Moon } from 'lucide-react';
+import { CheckinToggle } from './CheckinToggle';
+import { StreakHeader } from './StreakHeader';
+import { Reveal } from '@/components/motion/Reveal';
+import { ROUTINE_META, type RoutineType } from '@/lib/routines/schema';
 import { hebrewDate } from '@/lib/hebcal';
-import { CheckinButton } from './CheckinButton';
-import { ToggleEnabledButton, DeleteRoutineButton } from './RoutineActions';
 
-const LIST = /* GraphQL */ `
-  query ListRoutines($user_id: uuid!, $since: date!) {
+const FETCH = /* GraphQL */ `
+  query Routines($user_id: uuid!, $since: date!) {
     routines(
       where: { user_id: { _eq: $user_id } }
       order_by: [{ enabled: desc }, { target_time: asc }]
     ) {
-      id type custom_label target_time days_of_week enabled reminder_offset_minutes
-      checkins(
-        where: { gregorian_date: { _gte: $since } }
-        order_by: { gregorian_date: desc }
-      ) {
-        gregorian_date hebrew_date_text
+      id type custom_label target_time days_of_week enabled
+      checkins(where: { gregorian_date: { _gte: $since } }, order_by: { gregorian_date: desc }) {
+        gregorian_date
       }
     }
   }
 `;
 
 interface Routine {
-  id: string;
-  type: RoutineType;
-  custom_label: string | null;
-  target_time: string | null;          // 'HH:MM:SS'
-  days_of_week: number[] | null;       // null = every day
-  enabled: boolean;
-  reminder_offset_minutes: number;
-  checkins: Array<{ gregorian_date: string; hebrew_date_text: string | null }>;
+  id: string; type: RoutineType; custom_label: string | null;
+  target_time: string | null; days_of_week: number[] | null; enabled: boolean;
+  checkins: Array<{ gregorian_date: string }>;
 }
 
-function labelOf(r: Routine): string {
-  if (r.type === 'custom') return r.custom_label ?? 'Своя рутина';
-  return ROUTINE_META[r.type].label;
+function toISO(d: Date): string {
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
 }
 
-function emojiOf(r: Routine): string {
-  return ROUTINE_META[r.type].emoji;
-}
-
-function hhmm(t: string | null): string {
-  if (!t) return '—';
-  const [h, m] = t.split(':');
-  return `${h}:${m}`;
-}
-
-function daysLabel(dow: number[] | null): string {
-  if (!dow || dow.length === 0 || dow.length === 7) return 'каждый день';
-  const labels = dow.sort((a, b) => a - b).map((d) => DAYS_OF_WEEK[d].short);
-  return labels.join(' · ');
-}
-
-function isDueToday(r: Routine, today: Date): boolean {
-  if (!r.enabled) return false;
-  if (!r.days_of_week || r.days_of_week.length === 0) return true;
-  return r.days_of_week.includes(today.getDay());
-}
-
-/** Counts consecutive days with check-in ending today or yesterday. */
-function calcStreak(checkins: Array<{ gregorian_date: string }>, today: Date): number {
-  if (checkins.length === 0) return 0;
-  const dateSet = new Set(checkins.map((c) => c.gregorian_date));
-  const todayStr = today.toISOString().slice(0, 10);
-  const yesterday = new Date(today.getTime() - 86400_000);
-  const yesterdayStr = yesterday.toISOString().slice(0, 10);
-
-  let cursor: Date;
-  if (dateSet.has(todayStr)) cursor = today;
-  else if (dateSet.has(yesterdayStr)) cursor = yesterday;
-  else return 0;
-
+function calcStreak(dateSet: Set<string>, today: Date): number {
   let streak = 0;
-  while (dateSet.has(cursor.toISOString().slice(0, 10))) {
-    streak++;
-    cursor = new Date(cursor.getTime() - 86400_000);
+  const cursor = new Date(today);
+  if (!dateSet.has(toISO(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (dateSet.has(toISO(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
   }
   return streak;
 }
+
+function calcLongest(dates: string[]): number {
+  if (dates.length === 0) return 0;
+  const sorted = Array.from(new Set(dates)).sort();
+  let longest = 1, run = 1;
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = new Date(sorted[i - 1]);
+    const cur = new Date(sorted[i]);
+    const diff = Math.round((cur.getTime() - prev.getTime()) / 86_400_000);
+    run = diff === 1 ? run + 1 : 1;
+    longest = Math.max(longest, run);
+  }
+  return longest;
+}
+
+function timeBucket(t: string | null): 'morning' | 'day' | 'evening' {
+  if (!t) return 'day';
+  const h = parseInt(t.slice(0, 2), 10);
+  if (h < 11) return 'morning';
+  if (h < 17) return 'day';
+  return 'evening';
+}
+
+const BUCKETS = [
+  { key: 'morning', label: 'Утро', Icon: Sunrise },
+  { key: 'day',     label: 'День', Icon: Sun },
+  { key: 'evening', label: 'Вечер', Icon: Moon },
+] as const;
 
 export default async function RoutinesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const today = new Date();
-  const since = new Date(today.getTime() - 90 * 86400_000).toISOString().slice(0, 10);
-  const todayStr = today.toISOString().slice(0, 10);
+  const since = new Date(today.getTime() - 365 * 86_400_000);
+  const data = await client.request<{ routines: Routine[] }>(FETCH, {
+    user_id: session.user.id, since: toISO(since),
+  });
 
-  const client = await hasuraAsCurrentUser({ role: 'member' });
-  const { routines } = await client.request<{ routines: Routine[] }>(
-    LIST, { user_id: session.user.id, since },
+  const todayISO = toISO(today);
+  const todayDow = today.getDay();
+  const hebToday = hebrewDate(today, 'ru');
+
+  // Aggregate stats across all routines
+  const allDates: string[] = [];
+  for (const r of data.routines) for (const c of r.checkins) allDates.push(c.gregorian_date);
+  const allDateSet = new Set(allDates);
+  const currentStreak = calcStreak(allDateSet, today);
+  const longestStreak = calcLongest(allDates);
+  const totalCheckins = allDates.length;
+
+  const activeToday = data.routines.filter(
+    (r) => r.enabled && (!r.days_of_week || r.days_of_week.length === 0 || r.days_of_week.includes(todayDow)),
   );
+  const doneToday = activeToday.filter((r) => r.checkins.some((c) => c.gregorian_date === todayISO)).length;
 
-  const dueToday = routines.filter((r) => isDueToday(r, today));
-  const allActive = routines.filter((r) => r.enabled);
-  const paused = routines.filter((r) => !r.enabled);
+  // group active-today by time bucket
+  const byBucket = new Map<string, Routine[]>();
+  for (const r of activeToday) {
+    const b = timeBucket(r.target_time);
+    const arr = byBucket.get(b) ?? [];
+    arr.push(r);
+    byBucket.set(b, arr);
+  }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-3">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
+      <header className="flex items-start justify-between gap-3 mb-4 px-0.5">
         <div>
-          <h1 className="font-serif text-3xl font-semibold">Рутины</h1>
-          <p className="text-sm text-(--color-muted) mt-1">
-            {hebrewDate(today, 'ru')} · {hebrewDate(today, 'he')}
+          <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
+            Моя рутина
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5 capitalize">
+            {today.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}
+            <span className="text-muted-foreground/70"> · {hebToday}</span>
           </p>
         </div>
         <Link
           href="/dashboard/routines/new"
-          className="px-5 py-2.5 rounded-full bg-(--color-deep) text-white text-sm font-semibold hover:opacity-90"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-foreground text-background px-3.5 h-9 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
         >
-          + Добавить
+          <Plus size={15} strokeWidth={2.4} /> Рутина
         </Link>
-      </div>
+      </header>
 
-      {/* TODAY section */}
-      {dueToday.length > 0 ? (
-        <section className="mb-12">
-          <h2 className="font-serif text-xl font-semibold mb-4">Сегодня</h2>
-          <div className="space-y-3">
-            {dueToday.map((r) => {
-              const done = r.checkins.some((c) => c.gregorian_date === todayStr);
-              const streak = calcStreak(r.checkins, today);
-              return (
-                <div
-                  key={r.id}
-                  className={`flex items-center gap-4 border rounded-xl p-4 ${done ? 'bg-(--color-gold-soft) border-(--color-gold)' : ''}`}
-                >
-                  <CheckinButton routineId={r.id} done={done} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{emojiOf(r)}</span>
-                      <span className="font-semibold">{labelOf(r)}</span>
-                      {r.target_time && (
-                        <span className="text-sm text-(--color-muted)">в {hhmm(r.target_time)}</span>
-                      )}
-                    </div>
-                    {streak > 0 && (
-                      <div className="text-xs text-(--color-muted) mt-1">
-                        🔥 Стрик: {streak} {streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'}
-                      </div>
-                    )}
+      {data.routines.length === 0 ? (
+        <EmptyRoutines />
+      ) : (
+        <div className="space-y-6">
+          {/* Stats */}
+          <StreakHeader
+            current={currentStreak}
+            longest={longestStreak}
+            totalCheckins={totalCheckins}
+            doneToday={doneToday}
+            totalToday={activeToday.length}
+          />
+
+          {/* Today's checklist grouped by bucket */}
+          {BUCKETS.map((bucket) => {
+            const items = byBucket.get(bucket.key) ?? [];
+            if (items.length === 0) return null;
+            return (
+              <Reveal key={bucket.key} delay={0.05}>
+                <section>
+                  <h2 className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
+                    <bucket.Icon size={13} strokeWidth={2} /> {bucket.label}
+                  </h2>
+                  <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
+                    {items.map((r) => {
+                      const checked = r.checkins.some((c) => c.gregorian_date === todayISO);
+                      const rDates = new Set(r.checkins.map((c) => c.gregorian_date));
+                      const rStreak = calcStreak(rDates, today);
+                      return (
+                        <div key={r.id} className="flex items-center gap-3 px-3.5 py-2.5">
+                          <CheckinToggle routineId={r.id} checked={checked} />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium leading-tight">
+                              {r.custom_label ?? ROUTINE_META[r.type].label}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                              {r.target_time?.slice(0, 5) ?? 'Любое время'}
+                              {rStreak > 0 && (
+                                <span className="text-orange-600 font-medium">🔥 {rStreak}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      ) : routines.length === 0 ? (
-        <div className="border-2 border-dashed rounded-xl p-12 text-center mb-12">
-          <p className="text-(--color-muted) mb-4">У тебя ещё нет рутин.</p>
+                </section>
+              </Reveal>
+            );
+          })}
+
+          {/* Disabled / all routines manager link */}
           <Link
             href="/dashboard/routines/new"
-            className="px-5 py-2.5 rounded-full bg-(--color-gold) text-(--color-deep) text-sm font-semibold hover:scale-105 inline-block transition-transform"
+            className="block rounded-2xl border border-dashed border-border px-4 py-3 text-center text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
           >
-            Добавить первую
+            + Добавить ещё рутину
           </Link>
         </div>
-      ) : (
-        <p className="text-sm text-(--color-muted) mb-12">Сегодня ничего не запланировано — отдыхаешь.</p>
-      )}
-
-      {/* MANAGEMENT section */}
-      {allActive.length > 0 && (
-        <section className="mb-10">
-          <h2 className="font-serif text-base font-semibold mb-3 text-(--color-muted) uppercase tracking-wide">
-            Все рутины
-          </h2>
-          <div className="border rounded-xl overflow-hidden divide-y">
-            {allActive.map((r) => (
-              <RoutineRow key={r.id} r={r} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {paused.length > 0 && (
-        <section>
-          <h2 className="font-serif text-base font-semibold mb-3 text-(--color-muted) uppercase tracking-wide">
-            На паузе
-          </h2>
-          <div className="border rounded-xl overflow-hidden divide-y opacity-60">
-            {paused.map((r) => (
-              <RoutineRow key={r.id} r={r} />
-            ))}
-          </div>
-        </section>
       )}
     </div>
   );
 }
 
-function RoutineRow({ r }: { r: Routine }) {
+function EmptyRoutines() {
   return (
-    <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-lg">{emojiOf(r)}</span>
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm">{labelOf(r)}</div>
-        <div className="text-xs text-(--color-muted) mt-0.5">
-          {hhmm(r.target_time)} · {daysLabel(r.days_of_week)}
-        </div>
-      </div>
-      <div className="flex gap-2">
-        <ToggleEnabledButton id={r.id} enabled={r.enabled} />
-        <DeleteRoutineButton id={r.id} label={labelOf(r)} />
-      </div>
+    <div className="rounded-2xl border border-dashed border-border px-4 py-10 text-center">
+      <div className="text-4xl mb-3">🔥</div>
+      <p className="text-sm text-muted-foreground mb-4 max-w-xs mx-auto">
+        Добавь молитвы и привычки — каждый день отмечай выполнение и собирай серию.
+      </p>
+      <Link
+        href="/dashboard/routines/new"
+        className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold"
+      >
+        Создать первую
+      </Link>
     </div>
   );
 }

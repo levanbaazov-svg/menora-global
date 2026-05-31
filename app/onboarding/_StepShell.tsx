@@ -2,10 +2,15 @@
 // warm hero with emoji "subject", progress dots instead of a bar, soft back/skip.
 
 import Link from 'next/link';
+import { Hand, Users, Flame, Sparkles, Building2, Lock, type LucideIcon } from 'lucide-react';
 import {
   ONBOARDING_STEPS, STEP_META,
-  type OnboardingStep,
+  type OnboardingStep, type StepIcon,
 } from '@/lib/onboarding/steps';
+
+const STEP_ICON: Record<StepIcon, LucideIcon> = {
+  hand: Hand, family: Users, flame: Flame, sparkles: Sparkles, building: Building2, lock: Lock,
+};
 
 interface StepShellProps {
   step: OnboardingStep;
@@ -91,8 +96,8 @@ export function StepShell({ step, hasMembership, children }: StepShellProps) {
           className={`absolute inset-x-0 top-0 h-72 -z-10 bg-gradient-to-b ${tintClass} opacity-60`}
         />
         <div className="max-w-xl mx-auto text-center fade-up">
-          <div className="text-6xl md:text-7xl mb-5 float inline-block leading-none drop-shadow-sm">
-            {meta.emoji}
+          <div className="mb-5 inline-flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-3xl bg-white shadow-[0_8px_24px_-6px_rgba(20,24,31,0.16)] ring-1 ring-black/[0.03] float">
+            {(() => { const Icon = STEP_ICON[meta.icon]; return <Icon className="text-(--color-gold-dark)" size={34} strokeWidth={1.7} />; })()}
           </div>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-[1.1] tracking-tight mb-3">
             {meta.question}
