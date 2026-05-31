@@ -1,451 +1,421 @@
-// Community detail page — JewGo-style city guide.
-// Default tab is determined by ?cat= query param (synagogue, restaurant, programs, events, people).
+// Full community profile page (member's own community).
+// If the user has no active community → redirect to the Discover feed.
+//
+// Sections: hero · about · contacts · leaders · upcoming events · programs
+// · city-guide link · members. "Поиск другой общины" lives in the hero.
 
 import { auth } from '@/lib/auth';
-import { hasuraAsCurrentUser } from '@/lib/hasura';
+import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { CategoryNav } from './CategoryNav';
-import { PlaceCard } from './PlaceCard';
-import { ProgramCard } from './ProgramCard';
-import { EmptyState } from '@/app/_components/ui/EmptyState';
-import { LinkButton } from '@/app/_components/ui/Button';
-import { Chip } from '@/app/_components/ui/Card';
-import {
-  PLACE_TYPES, PLACE_TYPE_LABELS, PROGRAM_CATEGORY_LABELS,
-  type PlaceType, type KashrutLevel, type ProgramCategory,
-} from '@/lib/places/schema';
-import { upcomingShabbat, communityLocation } from '@/lib/hebcal';
-import { resolveLocation } from '@/lib/hebcal/timezone';
 import { cookies } from 'next/headers';
+import {
+  MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
+  ChevronRight, Search, CalendarDays, BookOpen, Flame, Compass,
+} from 'lucide-react';
+import { Reveal } from '@/components/motion/Reveal';
+import { Avatar } from '@/app/dashboard/_Avatar';
+import { upcomingShabbat } from '@/lib/hebcal';
+import { resolveLocation } from '@/lib/hebcal/timezone';
 import { COOKIE_NAME as TZ_COOKIE } from '@/app/api/me/timezone/route';
 
-// ── GraphQL ──────────────────────────────────────────────────────────────────
 const FETCH = /* GraphQL */ `
-  query CommunityDetail($community_id: uuid!) {
-    communities_by_pk(id: $community_id) {
-      id slug name city country_code timezone branding settings
+  query OwnCommunity($cid: uuid!) {
+    communities_by_pk(id: $cid) {
+      id slug name city country_code timezone denomination description
+      hero_image_url founded_year address contact_phone contact_email
+      website_url whatsapp_url instagram_url member_count_cached
     }
-    places(
+    leaders: memberships(
       where: {
-        community_id: { _eq: $community_id }
-        submission_status: { _eq: approved }
-        archived_at: { _is_null: true }
+        community_id: { _eq: $cid }
+        status: { _eq: active }
+        role: { _in: [rabbi, admin] }
       }
+      order_by: { role: asc }
+      limit: 6
     ) {
-      id type name description photo_url address
-      kashrut_level kashrut_authority price_level
-      cuisine_tags dietary_tags
-    }
-    programs(
-      where: { community_id: { _eq: $community_id }, status: { _eq: active } }
-      order_by: [{ category: asc }, { name: asc }]
-    ) {
-      id category name description photo_url schedule_text
-      age_min age_max price_amount price_currency price_period
-      enrolled_count_cached max_capacity
+      role community_role
+      user { id name image_url profile { hebrew_name } }
     }
     events(
-      where: {
-        community_id: { _eq: $community_id }
-        status: { _eq: published }
-        starts_at: { _gte: "now()" }
-      }
+      where: { community_id: { _eq: $cid }, status: { _eq: published }, starts_at: { _gte: "now()" } }
       order_by: { starts_at: asc }
-      limit: 12
+      limit: 4
     ) {
-      id title type starts_at location_text attendee_count_cached
+      id title type starts_at location_text attendee_count_cached max_attendees
     }
-    memberships_aggregate(
-      where: { community_id: { _eq: $community_id }, status: { _eq: active } }
+    programs(
+      where: { community_id: { _eq: $cid }, status: { _eq: active } }
+      order_by: [{ category: asc }, { name: asc }]
+      limit: 6
+    ) {
+      id category name photo_url schedule_text enrolled_count_cached
+    }
+    members: memberships(
+      where: { community_id: { _eq: $cid }, status: { _eq: active } }
+      order_by: { joined_at: asc }
+      limit: 14
+    ) {
+      user { id name image_url }
+    }
+    places_aggregate(
+      where: { community_id: { _eq: $cid }, submission_status: { _eq: approved }, archived_at: { _is_null: true } }
     ) { aggregate { count } }
   }
 `;
 
-interface Community {
-  id: string; slug: string; name: string;
-  city: string | null; country_code: string | null; timezone: string;
+interface Leader {
+  role: string;
+  community_role: string | null;
+  user: { id: string; name: string | null; image_url: string | null; profile: { hebrew_name: string | null } | null } | null;
 }
-
-interface Place {
-  id: string; type: PlaceType; name: string;
-  description: string | null; photo_url: string | null; address: string | null;
-  kashrut_level: KashrutLevel | null; kashrut_authority: string | null;
-  price_level: string | null;
-  cuisine_tags: string[]; dietary_tags: string[];
-}
-
-interface Program {
-  id: string; category: ProgramCategory; name: string;
-  description: string | null; photo_url: string | null;
-  schedule_text: string | null;
-  age_min: number | null; age_max: number | null;
-  price_amount: number | null; price_currency: string | null; price_period: string | null;
-  enrolled_count_cached: number; max_capacity: number | null;
-}
-
 interface EventRow {
-  id: string; title: string; type: string;
-  starts_at: string; location_text: string | null;
-  attendee_count_cached: number;
+  id: string; title: string; type: string; starts_at: string;
+  location_text: string | null; attendee_count_cached: number; max_attendees: number | null;
+}
+interface ProgramRow {
+  id: string; category: string; name: string; photo_url: string | null;
+  schedule_text: string | null; enrolled_count_cached: number;
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
-export default async function CommunityPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ cat?: string }>;
-}) {
+const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Администратор' };
+
+export default async function CommunityPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
-  const activeCategory = (await searchParams).cat ?? 'programs';
-
-  // We currently support only single-community focus. Multi-community switcher in v2.
-  const communityId = session.hasura.community_id;
-  if (!communityId || communityId === '00000000-0000-0000-0000-000000000000') {
-    return <NoActiveCommunity />;
+  const cid = session.hasura.community_id;
+  if (!cid || cid === '00000000-0000-0000-0000-000000000000') {
+    redirect('/dashboard/community/discover');
   }
 
-  const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
-  const data = await client.request<{
-    communities_by_pk: Community | null;
-    places: Place[];
-    programs: Program[];
+  const data = await hasuraAdmin.request<{
+    communities_by_pk: {
+      id: string; slug: string; name: string; city: string | null; country_code: string | null;
+      timezone: string; denomination: string | null; description: string | null;
+      hero_image_url: string | null; founded_year: number | null; address: string | null;
+      contact_phone: string | null; contact_email: string | null; website_url: string | null;
+      whatsapp_url: string | null; instagram_url: string | null; member_count_cached: number;
+    } | null;
+    leaders: Leader[];
     events: EventRow[];
-    memberships_aggregate: { aggregate: { count: number } | null };
-  }>(FETCH, { community_id: communityId });
+    programs: ProgramRow[];
+    members: Array<{ user: { id: string; name: string | null; image_url: string | null } | null }>;
+    places_aggregate: { aggregate: { count: number } | null };
+  }>(FETCH, { cid });
 
-  const community = data.communities_by_pk;
-  if (!community) return <NoActiveCommunity />;
+  const c = data.communities_by_pk;
+  if (!c) redirect('/dashboard/community/discover');
 
-  // Group places by type for counts
-  const placesByType = new Map<PlaceType, Place[]>();
-  for (const p of data.places) {
-    const arr = placesByType.get(p.type) ?? [];
-    arr.push(p);
-    placesByType.set(p.type, arr);
-  }
-
-  const foodPlaces = [
-    ...(placesByType.get('restaurant') ?? []),
-    ...(placesByType.get('cafe') ?? []),
-  ];
-
-  const counts = {
-    ...Object.fromEntries(
-      PLACE_TYPES.map((t) => [t, placesByType.get(t)?.length ?? 0]),
-    ) as Record<PlaceType, number>,
-    food: foodPlaces.length,
-    programs: data.programs.length,
-    events: data.events.length,
-    people: data.memberships_aggregate.aggregate?.count ?? 0,
-  };
-
-  // Shabbat times
+  // Shabbat time for hero chip
   const cookieStore = await cookies();
   const userTz = cookieStore.get(TZ_COOKIE)?.value ?? null;
-  const resolved = resolveLocation(userTz, community);
+  const resolved = resolveLocation(userTz, c);
   const shabbat = resolved ? upcomingShabbat(resolved.location) : null;
+  const candle = shabbat?.candleLighting
+    ? shabbat.candleLighting.toLocaleTimeString('ru-RU', {
+        timeZone: resolved!.location.getTzid(), hour: '2-digit', minute: '2-digit',
+      })
+    : null;
 
-  const isStaff = session.hasura.default_role === 'rabbi' || session.hasura.default_role === 'admin';
+  const placesCount = data.places_aggregate.aggregate?.count ?? 0;
 
   return (
-    <div className="max-w-5xl mx-auto px-5 md:px-6 pt-2 pb-12">
-      {/* Hero */}
-      <section className="-mx-5 md:mx-0 mb-6 md:mb-8">
-        <div
-          className="relative h-48 md:h-56 md:rounded-2xl overflow-hidden flex items-end p-5 md:p-7 text-white"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(15,23,42,0.85), rgba(212,162,60,0.4)), url(/community-hero-fallback.svg) center/cover',
-          }}
-        >
-          <div>
-            <div className="text-xs uppercase tracking-widest opacity-80 mb-1">Моя община</div>
-            <h1 className="font-serif text-3xl md:text-4xl font-semibold">{community.name}</h1>
-            {(community.city || community.country_code) && (
-              <p className="text-sm opacity-90 mt-1">
-                📍 {[community.city, community.country_code].filter(Boolean).join(', ')}
-              </p>
+    <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-8">
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <Reveal>
+        <section className="relative">
+          <div className="relative h-56 md:h-64 md:rounded-2xl overflow-hidden">
+            {c.hero_image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={c.hero_image_url} alt={c.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-primary/40 to-foreground/50" />
             )}
-            <div className="flex items-center gap-3 mt-3 text-xs">
-              <Chip tone="dark" size="xs">👥 {counts.people} участников</Chip>
-              {shabbat && shabbat.candleLighting && (
-                <Chip tone="gold" size="xs">
-                  🕯 Свечи {shabbat.candleLighting.toLocaleTimeString('ru-RU', {
-                    timeZone: resolved!.location.getTzid(),
-                    hour: '2-digit', minute: '2-digit',
-                  })}
-                </Chip>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />
+
+            {/* Search other community — top right */}
+            <Link
+              href="/dashboard/community/discover"
+              className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
+            >
+              <Search size={13} strokeWidth={2} />
+              Другая община
+            </Link>
+
+            {/* Title block */}
+            <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+              <div className="text-[10px] uppercase tracking-[0.15em] text-white/80 mb-1">
+                {c.denomination ?? 'Моя община'}
+              </div>
+              <h1 className="font-serif text-3xl font-semibold leading-tight drop-shadow-sm">
+                {c.name}
+              </h1>
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-white/90">
+                {(c.city || c.country_code) && (
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin size={12} strokeWidth={2} />
+                    {[c.city, c.country_code].filter(Boolean).join(', ')}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1">
+                  <Users size={12} strokeWidth={2} />
+                  {c.member_count_cached} участников
+                </span>
+                {candle && (
+                  <span className="inline-flex items-center gap-1 text-primary-foreground/95">
+                    <Flame size={12} strokeWidth={2} />
+                    Свечи {candle}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      </Reveal>
+
+      <div className="px-4 md:px-0 space-y-6 mt-5">
+        {/* ── Contacts quick row ─────────────────────────────────────── */}
+        <Reveal delay={0.04}>
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            {c.contact_phone && (
+              <ContactButton href={`tel:${c.contact_phone}`} Icon={Phone} label="Позвонить" />
+            )}
+            {c.whatsapp_url && (
+              <ContactButton href={c.whatsapp_url} Icon={MessageCircle} label="WhatsApp" external />
+            )}
+            {c.contact_email && (
+              <ContactButton href={`mailto:${c.contact_email}`} Icon={Mail} label="Email" />
+            )}
+            {c.website_url && (
+              <ContactButton href={c.website_url} Icon={Globe} label="Сайт" external />
+            )}
+            {c.address && (
+              <ContactButton
+                href={`https://maps.google.com/?q=${encodeURIComponent(c.address)}`}
+                Icon={Navigation} label="Маршрут" external
+              />
+            )}
+          </div>
+        </Reveal>
+
+        {/* ── About ──────────────────────────────────────────────────── */}
+        {c.description && (
+          <Reveal delay={0.06}>
+            <section>
+              <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
+              {(c.founded_year || c.address) && (
+                <div className="mt-3 flex flex-col gap-1.5 text-xs text-muted-foreground">
+                  {c.founded_year && <div>Основана в {c.founded_year}</div>}
+                  {c.address && (
+                    <div className="inline-flex items-center gap-1.5">
+                      <MapPin size={12} strokeWidth={2} className="shrink-0" />
+                      {c.address}
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+          </Reveal>
+        )}
+
+        {/* ── Leaders ────────────────────────────────────────────────── */}
+        {data.leaders.length > 0 && (
+          <Reveal delay={0.08}>
+            <Section title="Руководство">
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+                {data.leaders.map((l) => (
+                  <Link
+                    key={l.user?.id}
+                    href={`/dashboard/people/${l.user?.id}`}
+                    className="shrink-0 w-20 text-center group"
+                  >
+                    <div className="mx-auto mb-1.5 transition-transform group-hover:scale-105">
+                      <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
+                    </div>
+                    <div className="text-xs font-medium leading-tight truncate">
+                      {l.user?.name ?? 'Без имени'}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                      {l.community_role ?? ROLE_TITLE[l.role] ?? l.role}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </Section>
+          </Reveal>
+        )}
+
+        {/* ── Upcoming events ────────────────────────────────────────── */}
+        <Reveal delay={0.1}>
+          <Section
+            title="Ближайшие события"
+            action={<SeeAll href="/dashboard/events" />}
+          >
+            {data.events.length === 0 ? (
+              <EmptyHint Icon={CalendarDays} text="Пока нет запланированных событий" />
+            ) : (
+              <div className="space-y-2">
+                {data.events.map((e) => (
+                  <Link
+                    key={e.id}
+                    href={`/dashboard/events/${e.id}`}
+                    className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3 hover:ring-primary/30 transition-all"
+                  >
+                    <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
+                      <CalendarDays size={16} strokeWidth={1.9} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium leading-tight truncate">{e.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {new Date(e.starts_at).toLocaleString('ru-RU', {
+                          timeZone: c.timezone, weekday: 'short', day: 'numeric', month: 'short',
+                          hour: '2-digit', minute: '2-digit',
+                        })}
+                        {e.location_text ? ` · ${e.location_text}` : ''}
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                      {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
+                    </span>
+                    <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Section>
+        </Reveal>
+
+        {/* ── Programs ───────────────────────────────────────────────── */}
+        <Reveal delay={0.12}>
+          <Section
+            title="Программы"
+            action={<SeeAll href="/dashboard/community/manage" label="Управление" />}
+          >
+            {data.programs.length === 0 ? (
+              <EmptyHint Icon={BookOpen} text="Программ пока нет" />
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {data.programs.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/dashboard/community/programs/${p.id}`}
+                    className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 transition-all"
+                  >
+                    <div className="relative h-24 overflow-hidden">
+                      {p.photo_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
+                      {p.schedule_text && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
+                          {p.schedule_text}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Section>
+        </Reveal>
+
+        {/* ── City guide link (places) ───────────────────────────────── */}
+        <Reveal delay={0.14}>
+          <Link
+            href="/dashboard/community/places-guide"
+            className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3.5 hover:ring-primary/30 transition-all"
+          >
+            <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
+              <Compass size={16} strokeWidth={1.9} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-medium leading-tight">Город-гид</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Синагоги, кошерные кафе и магазины · {placesCount}
+              </div>
+            </div>
+            <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
+          </Link>
+        </Reveal>
+
+        {/* ── Members ────────────────────────────────────────────────── */}
+        <Reveal delay={0.16}>
+          <Section
+            title="Участники"
+            action={<SeeAll href="/dashboard/people" />}
+          >
+            <div className="flex flex-wrap gap-2">
+              {data.members.map((m) => (
+                <Link key={m.user?.id} href={`/dashboard/people/${m.user?.id}`} title={m.user?.name ?? ''}>
+                  <Avatar user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
+                </Link>
+              ))}
+              {c.member_count_cached > data.members.length && (
+                <Link
+                  href="/dashboard/people"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground hover:bg-muted/70"
+                >
+                  +{c.member_count_cached - data.members.length}
+                </Link>
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Category nav (JewGo-style horizontal scroll) */}
-      <CategoryNav counts={counts} isStaff={isStaff} />
-
-      {/* Active category content */}
-      <section className="mt-6">
-        {activeCategory === 'food' ? (
-          <FoodList places={foodPlaces} isStaff={isStaff} />
-        ) : PLACE_TYPES.includes(activeCategory as PlaceType) ? (
-          <PlaceList
-            type={activeCategory as PlaceType}
-            places={placesByType.get(activeCategory as PlaceType) ?? []}
-            isStaff={isStaff}
-          />
-        ) : activeCategory === 'programs' ? (
-          <ProgramList programs={data.programs} isStaff={isStaff} />
-        ) : activeCategory === 'events' ? (
-          <EventList events={data.events} />
-        ) : activeCategory === 'people' ? (
-          <PeopleStub />
-        ) : null}
-      </section>
-
-      {/* Staff-only: link to admin tools */}
-      {isStaff && (
-        <section className="mt-8 grid sm:grid-cols-2 gap-3">
-          <Link
-            href="/dashboard/community/manage"
-            className="block rounded-2xl border border-(--color-gold)/30 bg-(--color-gold-soft)/40 p-4 hover:bg-(--color-gold-soft)/70 transition-colors"
-          >
-            <div className="text-xs uppercase tracking-wider text-(--color-gold-dark) mb-1">Управление</div>
-            <div className="font-semibold">Добавить место или программу</div>
-            <div className="text-xs text-(--color-fg-muted) mt-1">Заполнить city-guide для общины</div>
-          </Link>
-          <Link
-            href="/dashboard/community/pending"
-            className="block rounded-2xl border border-(--color-border) bg-(--color-bg-elevated) p-4 hover:border-(--color-gold)/40 transition-colors"
-          >
-            <div className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-1">Модерация</div>
-            <div className="font-semibold">Предложенные места</div>
-            <div className="text-xs text-(--color-fg-muted) mt-1">Одобрить от участников</div>
-          </Link>
-        </section>
-      )}
-
-      {/* Travelling/Moving CTA — discover other communities */}
-      <section className="mt-10">
-        <Link
-          href="/dashboard/community/discover"
-          className="block rounded-2xl bg-gradient-to-br from-(--color-deep) to-(--color-deep-soft) text-white p-6 md:p-7 hover:scale-[1.01] transition-transform relative overflow-hidden"
-        >
-          <div
-            aria-hidden
-            className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full opacity-25"
-            style={{ background: 'radial-gradient(circle, var(--color-gold), transparent)' }}
-          />
-          <div className="relative">
-            <div className="text-xs uppercase tracking-widest text-(--color-gold) mb-2">
-              ✈️ Путешествуешь? Переезжаешь?
-            </div>
-            <h3 className="font-serif text-2xl font-semibold mb-2">
-              Найди свою еврейскую жизнь в другом городе
-            </h3>
-            <p className="text-sm opacity-85 mb-3 max-w-md">
-              Шаббатные ужины в Бангкоке, синагога в Берлине, школа для детей в Тель-Авиве —
-              все общины в одном месте.
-            </p>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              Открыть карту общин →
-            </span>
-          </div>
-        </Link>
-      </section>
+          </Section>
+        </Reveal>
+      </div>
     </div>
   );
 }
 
-// ── Sub-views ────────────────────────────────────────────────────────────────
-function FoodList({ places, isStaff }: { places: Place[]; isStaff: boolean }) {
+// ── Sub-components ────────────────────────────────────────────────────────
+function Section({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold">🍽 Кафе и рестораны</h2>
-          <p className="text-sm text-(--color-fg-muted)">{places.length} {places.length === 1 ? 'место' : 'мест'}</p>
-        </div>
-        {isStaff && (
-          <LinkButton href="/dashboard/community/places/new?type=restaurant" variant="gold" size="sm">
-            + Добавить
-          </LinkButton>
-        )}
+    <section>
+      <div className="flex items-end justify-between mb-3">
+        <h2 className="font-serif text-lg font-semibold leading-tight">{title}</h2>
+        {action}
       </div>
-
-      {places.length === 0 ? (
-        <EmptyState
-          emoji="🍽"
-          title="Пока нет кошерных мест"
-          description={isStaff
-            ? 'Добавь первое — другие участники сразу его увидят.'
-            : 'Знаешь подходящее? Предложи место через кнопку «Подать заявку».'}
-          action={
-            <LinkButton
-              href="/dashboard/community/places/new?type=restaurant"
-              variant="gold" size="sm"
-            >
-              {isStaff ? 'Добавить место' : 'Предложить место'}
-            </LinkButton>
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {places.map((p) => <PlaceCard key={p.id} {...p} />)}
-        </div>
-      )}
-    </>
+      {children}
+    </section>
   );
 }
 
-function PlaceList({ type, places, isStaff }: { type: PlaceType; places: Place[]; isStaff: boolean }) {
-  const meta = PLACE_TYPE_LABELS[type];
+function SeeAll({ href, label = 'Все' }: { href: string; label?: string }) {
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold">{meta.emoji} {meta.ru}</h2>
-          <p className="text-sm text-(--color-fg-muted)">{places.length} {places.length === 1 ? 'место' : 'мест'}</p>
-        </div>
-        {isStaff && (
-          <LinkButton href={`/dashboard/community/places/new?type=${type}`} variant="gold" size="sm">
-            + Добавить
-          </LinkButton>
-        )}
-      </div>
-
-      {places.length === 0 ? (
-        <EmptyState
-          emoji={meta.emoji}
-          title={`Пока нет ${meta.ru.toLowerCase()} в общине`}
-          description={isStaff
-            ? 'Добавь первое место — другие участники сразу его увидят.'
-            : 'Знаешь подходящее место? Предложи его через кнопку «Подать заявку».'}
-          action={
-            <LinkButton
-              href={`/dashboard/community/places/new?type=${type}`}
-              variant="gold" size="sm"
-            >
-              {isStaff ? 'Добавить место' : 'Предложить место'}
-            </LinkButton>
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {places.map((p) => <PlaceCard key={p.id} {...p} />)}
-        </div>
-      )}
-    </>
+    <Link href={href} className="text-xs text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-0.5">
+      {label} <ChevronRight size={13} />
+    </Link>
   );
 }
 
-function ProgramList({ programs, isStaff }: { programs: Program[]; isStaff: boolean }) {
+function ContactButton({
+  href, Icon, label, external,
+}: {
+  href: string; Icon: typeof Phone; label: string; external?: boolean;
+}) {
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold">📖 Программы</h2>
-          <p className="text-sm text-(--color-fg-muted)">{programs.length} активных</p>
-        </div>
-        {isStaff && (
-          <LinkButton href="/dashboard/community/programs/new" variant="gold" size="sm">
-            + Добавить
-          </LinkButton>
-        )}
-      </div>
-
-      {programs.length === 0 ? (
-        <EmptyState
-          emoji="📖"
-          title="Пока нет программ"
-          description={isStaff
-            ? 'Создай первую программу — например Hebrew school или Couples learning.'
-            : 'Раввин ещё не добавил программы для этой общины.'}
-          action={isStaff
-            ? <LinkButton href="/dashboard/community/programs/new" variant="gold" size="sm">Создать программу</LinkButton>
-            : null}
-        />
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {programs.map((p) => <ProgramCard key={p.id} {...p} />)}
-        </div>
-      )}
-    </>
+    <a
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="shrink-0 inline-flex flex-col items-center gap-1 rounded-xl bg-card ring-1 ring-border/70 px-4 py-2.5 hover:ring-primary/30 transition-all min-w-[72px]"
+    >
+      <Icon size={17} strokeWidth={1.9} className="text-primary" />
+      <span className="text-[11px] font-medium text-foreground/80">{label}</span>
+    </a>
   );
 }
 
-function EventList({ events }: { events: EventRow[] }) {
+function EmptyHint({ Icon, text }: { Icon: typeof CalendarDays; text: string }) {
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold">📅 События</h2>
-          <p className="text-sm text-(--color-fg-muted)">{events.length} ближайших</p>
-        </div>
-        <LinkButton href="/dashboard/events" variant="ghost" size="sm">
-          Все события →
-        </LinkButton>
-      </div>
-
-      {events.length === 0 ? (
-        <EmptyState
-          emoji="📅"
-          title="Ближайших событий нет"
-          description="Создай первое или подожди когда раввин опубликует."
-          action={<LinkButton href="/dashboard/events/new" variant="gold" size="sm">Создать событие</LinkButton>}
-        />
-      ) : (
-        <div className="space-y-2">
-          {events.map((e) => (
-            <Link
-              key={e.id}
-              href={`/dashboard/events/${e.id}`}
-              className="block rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/60 p-4 hover:border-(--color-gold)/40 transition-colors"
-            >
-              <div className="font-semibold">{e.title}</div>
-              <div className="text-xs text-(--color-fg-muted) mt-1">
-                {new Date(e.starts_at).toLocaleString('ru-RU', {
-                  weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
-                })}
-                {e.location_text && ` · ${e.location_text}`}
-                {' · '}{e.attendee_count_cached} идут
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-    </>
-  );
-}
-
-function PeopleStub() {
-  return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-serif text-2xl font-semibold">👥 Участники</h2>
-        <LinkButton href="/dashboard/people" variant="ghost" size="sm">
-          Открыть directory →
-        </LinkButton>
-      </div>
-      <p className="text-sm text-(--color-fg-muted)">
-        Полный список с поиском и фильтрами — по ссылке «Открыть directory».
-      </p>
-    </>
-  );
-}
-
-function NoActiveCommunity() {
-  return (
-    <div className="max-w-2xl mx-auto px-5 md:px-6 pt-12 pb-12">
-      <EmptyState
-        emoji="🕍"
-        title="Ты ещё не в общине"
-        description="Прими приглашение или подай заявку — и здесь появится твой город-гид."
-        action={<LinkButton href="/onboarding/community_choice" variant="gold">Найти общину</LinkButton>}
-      />
+    <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
+      <Icon size={18} strokeWidth={1.7} className="opacity-60" />
+      {text}
     </div>
   );
 }
