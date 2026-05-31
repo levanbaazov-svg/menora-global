@@ -104,7 +104,7 @@ const PLACES = [
   { type: 'synagogue', name: 'Синагога «Золотая Роза»', photo: photo('golden-rose-shul'),
     description: 'Историческая хоральная синагога Днепра, восстановленная в 2000 году. Сердце общины — ежедневные миньяны, шаббатние и праздничные службы.',
     address: 'ул. Шолом-Алейхема, 4', kashrut_level: 'glatt', kashrut_authority: 'Дніпро Бейт Дін',
-    has_women_section: true, denomination: 'Chabad' },
+    has_women_section: true },
   { type: 'restaurant', name: 'Ресторан «Менора»', photo: photo('menorah-restaurant'),
     description: 'Кошерный мясной ресторан в комплексе «Менора». Европейская и израильская кухня, банкеты, шаббатние ужины.',
     address: 'ул. Шолом-Алейхема, 4, 2 этаж', kashrut_level: 'glatt', kashrut_authority: 'Дніпро Бейт Дін',
@@ -219,7 +219,6 @@ async function findOrInsert(findQ, insertQ, findVars, obj, label) {
       cuisine_tags: p.cuisine_tags ? `{${p.cuisine_tags.join(',')}}` : '{}',
       dietary_tags: p.dietary_tags ? `{${p.dietary_tags.join(',')}}` : '{}',
       has_women_section: p.has_women_section ?? false,
-      denomination: p.denomination,
       submission_status: 'approved',
     }, p.name);
   }
