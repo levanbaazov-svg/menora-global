@@ -72,14 +72,15 @@ export default async function EventDetailPage({
   const isHost = e.host?.id === session.user.id;
   const typeLabel = EVENT_TYPE_LABELS[e.type] ?? e.type;
 
+  const tz = e.timezone || undefined;
   const start = new Date(e.starts_at);
   const dateStr = start.toLocaleDateString('ru-RU', {
-    timeZone: e.timezone, weekday: 'long', day: 'numeric', month: 'long',
+    timeZone: tz, weekday: 'long', day: 'numeric', month: 'long',
   });
   const timeStr = e.all_day
     ? 'Весь день'
-    : start.toLocaleTimeString('ru-RU', { timeZone: e.timezone, hour: '2-digit', minute: '2-digit' })
-      + (e.ends_at ? `–${new Date(e.ends_at).toLocaleTimeString('ru-RU', { timeZone: e.timezone, hour: '2-digit', minute: '2-digit' })}` : '');
+    : start.toLocaleTimeString('ru-RU', { timeZone: tz, hour: '2-digit', minute: '2-digit' })
+      + (e.ends_at ? `–${new Date(e.ends_at).toLocaleTimeString('ru-RU', { timeZone: tz, hour: '2-digit', minute: '2-digit' })}` : '');
 
   const priceStr = e.is_free || e.price_amount == null || e.price_amount === 0
     ? 'Бесплатно'

@@ -60,7 +60,7 @@ export default async function EventsListPage() {
         </div>
         <Link
           href="/dashboard/events/new"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-foreground text-background px-3.5 h-9 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
           <Plus size={15} strokeWidth={2.4} /> Создать
         </Link>
@@ -91,7 +91,7 @@ export default async function EventsListPage() {
               <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
                 Прошедшие
               </h2>
-              <div className="space-y-2.5 opacity-60">
+              <div className="space-y-2.5 opacity-75">
                 {past.map((e) => <EventCard key={e.id} e={e} userId={session.user.id} />)}
               </div>
             </section>

@@ -1,8 +1,8 @@
-// Full community profile page (member's own community).
+// Full community profile page (member's own community), with tabs:
+//   Инфо     — about · leaders · upcoming events · programs · members
+//   Гид      — kosher city guide (places grouped by type)
+//   Контакты — phone / whatsapp / email / website / address
 // If the user has no active community → redirect to the Discover feed.
-//
-// Sections: hero · about · contacts · leaders · upcoming events · programs
-// · city-guide link · members. "Поиск другой общины" lives in the hero.
 
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
@@ -11,10 +11,12 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
-  ChevronRight, Search, CalendarDays, BookOpen, Flame, Compass,
+  ChevronRight, Search, CalendarDays, BookOpen, Flame, Instagram,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
+import { CommunityTabs } from './CommunityTabs';
+import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 import { upcomingShabbat } from '@/lib/hebcal';
 import { resolveLocation } from '@/lib/hebcal/timezone';
 import { COOKIE_NAME as TZ_COOKIE } from '@/app/api/me/timezone/route';
@@ -27,47 +29,41 @@ const FETCH = /* GraphQL */ `
       website_url whatsapp_url instagram_url member_count_cached
     }
     leaders: memberships(
-      where: {
-        community_id: { _eq: $cid }
-        status: { _eq: active }
-        role: { _in: [rabbi, admin] }
-      }
-      order_by: { role: asc }
-      limit: 6
+      where: { community_id: { _eq: $cid }, status: { _eq: active }, role: { _in: [rabbi, admin] } }
+      order_by: { role: asc } limit: 6
     ) {
       role community_role
       user { id name image_url profile { hebrew_name } }
     }
     events(
       where: { community_id: { _eq: $cid }, status: { _eq: published }, starts_at: { _gte: "now()" } }
-      order_by: { starts_at: asc }
-      limit: 4
+      order_by: { starts_at: asc } limit: 4
     ) {
       id title type starts_at location_text attendee_count_cached max_attendees
     }
     programs(
       where: { community_id: { _eq: $cid }, status: { _eq: active } }
-      order_by: [{ category: asc }, { name: asc }]
-      limit: 6
+      order_by: [{ category: asc }, { name: asc }] limit: 6
     ) {
       id category name photo_url schedule_text enrolled_count_cached
     }
     members: memberships(
       where: { community_id: { _eq: $cid }, status: { _eq: active } }
-      order_by: { joined_at: asc }
-      limit: 14
+      order_by: { joined_at: asc } limit: 14
     ) {
       user { id name image_url }
     }
-    places_aggregate(
+    places(
       where: { community_id: { _eq: $cid }, submission_status: { _eq: approved }, archived_at: { _is_null: true } }
-    ) { aggregate { count } }
+      order_by: { type: asc }
+    ) {
+      id type name description photo_url address kashrut_level
+    }
   }
 `;
 
 interface Leader {
-  role: string;
-  community_role: string | null;
+  role: string; community_role: string | null;
   user: { id: string; name: string | null; image_url: string | null; profile: { hebrew_name: string | null } | null } | null;
 }
 interface EventRow {
@@ -78,12 +74,22 @@ interface ProgramRow {
   id: string; category: string; name: string; photo_url: string | null;
   schedule_text: string | null; enrolled_count_cached: number;
 }
+interface PlaceRow {
+  id: string; type: PlaceType; name: string; description: string | null;
+  photo_url: string | null; address: string | null; kashrut_level: string | null;
+}
 
 const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Администратор' };
 
-export default async function CommunityPage() {
+export default async function CommunityPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const tab = (await searchParams).tab ?? 'info';
 
   const cid = session.hasura.community_id;
   if (!cid || cid === '00000000-0000-0000-0000-000000000000') {
@@ -102,13 +108,12 @@ export default async function CommunityPage() {
     events: EventRow[];
     programs: ProgramRow[];
     members: Array<{ user: { id: string; name: string | null; image_url: string | null } | null }>;
-    places_aggregate: { aggregate: { count: number } | null };
+    places: PlaceRow[];
   }>(FETCH, { cid });
 
   const c = data.communities_by_pk;
   if (!c) redirect('/dashboard/community/discover');
 
-  // Shabbat time for hero chip
   const cookieStore = await cookies();
   const userTz = cookieStore.get(TZ_COOKIE)?.value ?? null;
   const resolved = resolveLocation(userTz, c);
@@ -118,8 +123,6 @@ export default async function CommunityPage() {
         timeZone: resolved!.location.getTzid(), hour: '2-digit', minute: '2-digit',
       })
     : null;
-
-  const placesCount = data.places_aggregate.aggregate?.count ?? 0;
 
   return (
     <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-8">
@@ -135,7 +138,6 @@ export default async function CommunityPage() {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />
 
-            {/* Search other community — top right */}
             <Link
               href="/dashboard/community/discover"
               className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
@@ -144,7 +146,6 @@ export default async function CommunityPage() {
               Другая община
             </Link>
 
-            {/* Title block */}
             <div className="absolute inset-x-0 bottom-0 p-5 text-white">
               <div className="text-[10px] uppercase tracking-[0.15em] text-white/80 mb-1">
                 {c.denomination ?? 'Моя община'}
@@ -164,7 +165,7 @@ export default async function CommunityPage() {
                   {c.member_count_cached} участников
                 </span>
                 {candle && (
-                  <span className="inline-flex items-center gap-1 text-primary-foreground/95">
+                  <span className="inline-flex items-center gap-1 text-white">
                     <Flame size={12} strokeWidth={2} />
                     Свечи {candle}
                   </span>
@@ -175,205 +176,225 @@ export default async function CommunityPage() {
         </section>
       </Reveal>
 
-      <div className="px-4 md:px-0 space-y-6 mt-5">
-        {/* ── Contacts quick row ─────────────────────────────────────── */}
-        <Reveal delay={0.04}>
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            {c.contact_phone && (
-              <ContactButton href={`tel:${c.contact_phone}`} Icon={Phone} label="Позвонить" />
-            )}
-            {c.whatsapp_url && (
-              <ContactButton href={c.whatsapp_url} Icon={MessageCircle} label="WhatsApp" external />
-            )}
-            {c.contact_email && (
-              <ContactButton href={`mailto:${c.contact_email}`} Icon={Mail} label="Email" />
-            )}
-            {c.website_url && (
-              <ContactButton href={c.website_url} Icon={Globe} label="Сайт" external />
-            )}
-            {c.address && (
-              <ContactButton
-                href={`https://maps.google.com/?q=${encodeURIComponent(c.address)}`}
-                Icon={Navigation} label="Маршрут" external
-              />
-            )}
-          </div>
-        </Reveal>
+      <div className="px-4 md:px-0 mt-4">
+        {/* Tabs */}
+        <CommunityTabs />
 
-        {/* ── About ──────────────────────────────────────────────────── */}
-        {c.description && (
-          <Reveal delay={0.06}>
-            <section>
-              <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
-              {(c.founded_year || c.address) && (
-                <div className="mt-3 flex flex-col gap-1.5 text-xs text-muted-foreground">
-                  {c.founded_year && <div>Основана в {c.founded_year}</div>}
-                  {c.address && (
-                    <div className="inline-flex items-center gap-1.5">
-                      <MapPin size={12} strokeWidth={2} className="shrink-0" />
-                      {c.address}
+        {/* ── Tab content ─────────────────────────────────────────────── */}
+        <div className="mt-5 space-y-6">
+          {tab === 'info' && (
+            <>
+              {c.description && (
+                <Reveal delay={0.04}>
+                  <section>
+                    <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
+                    {c.founded_year && (
+                      <div className="mt-3 text-xs text-muted-foreground">Основана в {c.founded_year}</div>
+                    )}
+                  </section>
+                </Reveal>
+              )}
+
+              {data.leaders.length > 0 && (
+                <Reveal delay={0.06}>
+                  <Section title="Руководство">
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+                      {data.leaders.map((l) => (
+                        <Link key={l.user?.id} href={`/dashboard/people/${l.user?.id}`} className="shrink-0 w-20 text-center group">
+                          <div className="mx-auto mb-1.5 transition-transform group-hover:scale-105">
+                            <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
+                          </div>
+                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? 'Без имени'}</div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                            {l.community_role ?? ROLE_TITLE[l.role] ?? l.role}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </Section>
+                </Reveal>
+              )}
+
+              <Reveal delay={0.08}>
+                <Section title="Ближайшие события" action={<SeeAll href="/dashboard/events" />}>
+                  {data.events.length === 0 ? (
+                    <EmptyHint Icon={CalendarDays} text="Пока нет запланированных событий" />
+                  ) : (
+                    <div className="space-y-2">
+                      {data.events.map((e) => (
+                        <Link key={e.id} href={`/dashboard/events/${e.id}`}
+                          className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3 hover:ring-primary/30 transition-all">
+                          <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
+                            <CalendarDays size={16} strokeWidth={1.9} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium leading-tight truncate">{e.title}</div>
+                            <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                              {new Date(e.starts_at).toLocaleString('ru-RU', {
+                                timeZone: c.timezone || undefined, weekday: 'short', day: 'numeric', month: 'short',
+                                hour: '2-digit', minute: '2-digit',
+                              })}
+                              {e.location_text ? ` · ${e.location_text}` : ''}
+                            </div>
+                          </div>
+                          <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                            {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
+                          </span>
+                          <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
+                        </Link>
+                      ))}
                     </div>
                   )}
-                </div>
-              )}
-            </section>
-          </Reveal>
-        )}
+                </Section>
+              </Reveal>
 
-        {/* ── Leaders ────────────────────────────────────────────────── */}
-        {data.leaders.length > 0 && (
-          <Reveal delay={0.08}>
-            <Section title="Руководство">
-              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-                {data.leaders.map((l) => (
-                  <Link
-                    key={l.user?.id}
-                    href={`/dashboard/people/${l.user?.id}`}
-                    className="shrink-0 w-20 text-center group"
-                  >
-                    <div className="mx-auto mb-1.5 transition-transform group-hover:scale-105">
-                      <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
+              <Reveal delay={0.1}>
+                <Section title="Программы" action={<SeeAll href="/dashboard/community/manage" label="Управление" />}>
+                  {data.programs.length === 0 ? (
+                    <EmptyHint Icon={BookOpen} text="Программ пока нет" />
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {data.programs.map((p) => (
+                        <Link key={p.id} href={`/dashboard/community/programs/${p.id}`}
+                          className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 transition-all">
+                          <div className="relative h-24 overflow-hidden">
+                            {p.photo_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                            ) : (
+                              <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
+                            {p.schedule_text && (
+                              <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.schedule_text}</div>
+                            )}
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    <div className="text-xs font-medium leading-tight truncate">
-                      {l.user?.name ?? 'Без имени'}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                      {l.community_role ?? ROLE_TITLE[l.role] ?? l.role}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </Section>
-          </Reveal>
-        )}
+                  )}
+                </Section>
+              </Reveal>
 
-        {/* ── Upcoming events ────────────────────────────────────────── */}
-        <Reveal delay={0.1}>
-          <Section
-            title="Ближайшие события"
-            action={<SeeAll href="/dashboard/events" />}
-          >
-            {data.events.length === 0 ? (
-              <EmptyHint Icon={CalendarDays} text="Пока нет запланированных событий" />
-            ) : (
-              <div className="space-y-2">
-                {data.events.map((e) => (
-                  <Link
-                    key={e.id}
-                    href={`/dashboard/events/${e.id}`}
-                    className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3 hover:ring-primary/30 transition-all"
-                  >
-                    <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
-                      <CalendarDays size={16} strokeWidth={1.9} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium leading-tight truncate">{e.title}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {new Date(e.starts_at).toLocaleString('ru-RU', {
-                          timeZone: c.timezone, weekday: 'short', day: 'numeric', month: 'short',
-                          hour: '2-digit', minute: '2-digit',
-                        })}
-                        {e.location_text ? ` · ${e.location_text}` : ''}
-                      </div>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
-                    </span>
-                    <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
-                  </Link>
-                ))}
-              </div>
-            )}
-          </Section>
-        </Reveal>
+              <Reveal delay={0.12}>
+                <Section title="Участники" action={<SeeAll href="/dashboard/people" />}>
+                  <div className="flex flex-wrap gap-2">
+                    {data.members.map((m) => (
+                      <Link key={m.user?.id} href={`/dashboard/people/${m.user?.id}`} title={m.user?.name ?? ''}>
+                        <Avatar user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
+                      </Link>
+                    ))}
+                    {c.member_count_cached > data.members.length && (
+                      <Link href="/dashboard/people"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground hover:bg-muted/70">
+                        +{c.member_count_cached - data.members.length}
+                      </Link>
+                    )}
+                  </div>
+                </Section>
+              </Reveal>
+            </>
+          )}
 
-        {/* ── Programs ───────────────────────────────────────────────── */}
-        <Reveal delay={0.12}>
-          <Section
-            title="Программы"
-            action={<SeeAll href="/dashboard/community/manage" label="Управление" />}
-          >
-            {data.programs.length === 0 ? (
-              <EmptyHint Icon={BookOpen} text="Программ пока нет" />
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {data.programs.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/dashboard/community/programs/${p.id}`}
-                    className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 transition-all"
-                  >
-                    <div className="relative h-24 overflow-hidden">
-                      {p.photo_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
-                      {p.schedule_text && (
-                        <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
-                          {p.schedule_text}
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </Section>
-        </Reveal>
+          {tab === 'guide' && <GuideTab places={data.places} />}
 
-        {/* ── City guide link (places) ───────────────────────────────── */}
-        <Reveal delay={0.14}>
-          <Link
-            href="/dashboard/community/places-guide"
-            className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3.5 hover:ring-primary/30 transition-all"
-          >
-            <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
-              <Compass size={16} strokeWidth={1.9} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium leading-tight">Город-гид</div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                Синагоги, кошерные кафе и магазины · {placesCount}
-              </div>
-            </div>
-            <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
-          </Link>
-        </Reveal>
-
-        {/* ── Members ────────────────────────────────────────────────── */}
-        <Reveal delay={0.16}>
-          <Section
-            title="Участники"
-            action={<SeeAll href="/dashboard/people" />}
-          >
-            <div className="flex flex-wrap gap-2">
-              {data.members.map((m) => (
-                <Link key={m.user?.id} href={`/dashboard/people/${m.user?.id}`} title={m.user?.name ?? ''}>
-                  <Avatar user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
-                </Link>
-              ))}
-              {c.member_count_cached > data.members.length && (
-                <Link
-                  href="/dashboard/people"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground hover:bg-muted/70"
-                >
-                  +{c.member_count_cached - data.members.length}
-                </Link>
-              )}
-            </div>
-          </Section>
-        </Reveal>
+          {tab === 'contacts' && <ContactsTab c={c} />}
+        </div>
       </div>
     </div>
   );
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────
+// ── Guide tab ─────────────────────────────────────────────────────────────
+function GuideTab({ places }: { places: PlaceRow[] }) {
+  if (places.length === 0) {
+    return <EmptyHint Icon={MapPin} text="Места ещё не добавлены в город-гид" />;
+  }
+  // Group by type
+  const byType = new Map<PlaceType, PlaceRow[]>();
+  for (const p of places) {
+    const arr = byType.get(p.type) ?? [];
+    arr.push(p);
+    byType.set(p.type, arr);
+  }
+  return (
+    <div className="space-y-6">
+      {Array.from(byType.entries()).map(([type, items]) => (
+        <Reveal key={type} delay={0.04}>
+          <section>
+            <h2 className="font-serif text-base font-semibold mb-2.5">
+              {PLACE_TYPE_LABELS[type]?.ru ?? type}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {items.map((p) => (
+                <Link key={p.id} href={`/dashboard/community/places/${p.id}`}
+                  className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/70 hover:ring-primary/30 transition-all">
+                  <div className="relative h-24 overflow-hidden">
+                    {p.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <div className="text-sm font-medium leading-tight line-clamp-1">{p.name}</div>
+                    {p.address && (
+                      <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{p.address}</div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+
+// ── Contacts tab ──────────────────────────────────────────────────────────
+function ContactsTab({ c }: { c: {
+  contact_phone: string | null; whatsapp_url: string | null; contact_email: string | null;
+  website_url: string | null; instagram_url: string | null; address: string | null;
+} }) {
+  const rows = [
+    c.contact_phone && { Icon: Phone, label: 'Телефон', value: c.contact_phone, href: `tel:${c.contact_phone}` },
+    c.whatsapp_url && { Icon: MessageCircle, label: 'WhatsApp', value: 'Написать в WhatsApp', href: c.whatsapp_url, external: true },
+    c.contact_email && { Icon: Mail, label: 'Email', value: c.contact_email, href: `mailto:${c.contact_email}` },
+    c.website_url && { Icon: Globe, label: 'Сайт', value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
+    c.instagram_url && { Icon: Instagram, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
+    c.address && { Icon: Navigation, label: 'Адрес', value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
+  ].filter(Boolean) as Array<{ Icon: typeof Phone; label: string; value: string; href: string; external?: boolean }>;
+
+  if (rows.length === 0) {
+    return <EmptyHint Icon={Phone} text="Контакты пока не указаны" />;
+  }
+  return (
+    <Reveal delay={0.04}>
+      <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
+        {rows.map((r) => (
+          <a key={r.label} href={r.href}
+            {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            className="flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors">
+            <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
+              <r.Icon size={16} strokeWidth={1.9} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{r.label}</div>
+              <div className="text-sm font-medium leading-tight truncate">{r.value}</div>
+            </div>
+            <ChevronRight size={15} className="shrink-0 text-muted-foreground/50" />
+          </a>
+        ))}
+      </div>
+    </Reveal>
+  );
+}
+
+// ── Shared sub-components ──────────────────────────────────────────────────
 function Section({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
     <section>
@@ -394,27 +415,10 @@ function SeeAll({ href, label = 'Все' }: { href: string; label?: string }) {
   );
 }
 
-function ContactButton({
-  href, Icon, label, external,
-}: {
-  href: string; Icon: typeof Phone; label: string; external?: boolean;
-}) {
-  return (
-    <a
-      href={href}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="shrink-0 inline-flex flex-col items-center gap-1 rounded-xl bg-card ring-1 ring-border/70 px-4 py-2.5 hover:ring-primary/30 transition-all min-w-[72px]"
-    >
-      <Icon size={17} strokeWidth={1.9} className="text-primary" />
-      <span className="text-[11px] font-medium text-foreground/80">{label}</span>
-    </a>
-  );
-}
-
 function EmptyHint({ Icon, text }: { Icon: typeof CalendarDays; text: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
-      <Icon size={18} strokeWidth={1.7} className="opacity-60" />
+      <Icon size={18} strokeWidth={1.9} className="opacity-60" />
       {text}
     </div>
   );

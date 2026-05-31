@@ -126,7 +126,7 @@ export default async function RoutinesPage() {
         </div>
         <Link
           href="/dashboard/routines/new"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-foreground text-background px-3.5 h-9 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
           <Plus size={15} strokeWidth={2.4} /> Рутина
         </Link>

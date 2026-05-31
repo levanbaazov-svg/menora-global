@@ -8,7 +8,6 @@
 
 import Link from 'next/link';
 import {
-  Home, Building2, MessageCircle, HandHeart, CalendarDays,
   Sparkles, Flame, BookOpenText, ScanLine, Bell, UserRound,
   Bot, ShieldCheck, MailPlus, Settings2, LogOut, ChevronRight,
   type LucideIcon,
@@ -29,14 +28,6 @@ interface MenuItem {
 
 // Items that DON'T duplicate the bottom-nav tabs.
 // Personal / utility / admin only.
-const PRIMARY: MenuItem[] = [
-  { href: '/dashboard',                Icon: Home,          label: 'Главная' },
-  { href: '/dashboard/community',      Icon: Building2,     label: 'Моя община' },
-  { href: '/dashboard/connect',        Icon: MessageCircle, label: 'Связь' },
-  { href: '/dashboard/requests',       Icon: HandHeart,     label: 'Просьбы' },
-  { href: '/dashboard/events',         Icon: CalendarDays,  label: 'События' },
-];
-
 const SPIRITUAL: MenuItem[] = [
   { href: '/dashboard/ai-rabbi',       Icon: Sparkles,      label: 'AI Раввин' },
   { href: '/dashboard/routines',       Icon: Flame,         label: 'Моя рутина' },

@@ -19,7 +19,7 @@ const LIST = /* GraphQL */ `
       order_by: [{ status: asc }, { created_at: desc }]
     ) {
       id title body category urgency status created_at reply_count_cached
-      user { id name image_url }
+      author { id name image_url }
     }
   }
 `;
@@ -28,7 +28,7 @@ interface RequestRow {
   id: string; title: string; body: string;
   category: RequestCategory; urgency: RequestUrgency; status: string;
   created_at: string; reply_count_cached: number;
-  user: { id: string; name: string | null; image_url: string | null } | null;
+  author: { id: string; name: string | null; image_url: string | null } | null;
 }
 
 const URGENCY_STYLE: Record<string, string> = {
@@ -69,7 +69,7 @@ export default async function RequestsPage() {
         </div>
         <Link
           href="/dashboard/requests/new"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-foreground text-background px-3.5 h-9 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
           <Plus size={15} strokeWidth={2.4} /> Создать
         </Link>
@@ -93,7 +93,7 @@ export default async function RequestsPage() {
           {resolved.length > 0 && (
             <section>
               <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">Решённые</h2>
-              <div className="space-y-2.5 opacity-55">
+              <div className="space-y-2.5 opacity-70">
                 {resolved.map((r) => <RequestCard key={r.id} r={r} />)}
               </div>
             </section>
@@ -123,7 +123,7 @@ function RequestCard({ r }: { r: RequestRow }) {
         <span className="rounded-full bg-muted px-2 py-0.5 font-medium text-foreground/70">
           {REQUEST_CATEGORY_LABELS[r.category]}
         </span>
-        <span>{r.user?.name ?? 'Аноним'}</span>
+        <span>{r.author?.name ?? 'Аноним'}</span>
         <span>·</span>
         <span>{timeAgo(r.created_at)}</span>
         <span className="ml-auto inline-flex items-center gap-1">
