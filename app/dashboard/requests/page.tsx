@@ -7,10 +7,10 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, MessageCircle, ChevronRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
-import {
-  REQUEST_CATEGORY_LABELS, REQUEST_URGENCY_LABELS,
-  type RequestCategory, type RequestUrgency,
-} from '@/lib/requests/schema';
+import { REQUEST_CATEGORY_LABELS, URGENCY_LABELS } from '@/lib/requests/schema';
+
+type RequestCategory = keyof typeof REQUEST_CATEGORY_LABELS;
+type RequestUrgency = keyof typeof URGENCY_LABELS;
 
 const LIST = /* GraphQL */ `
   query ListRequests($community_id: uuid!) {
@@ -112,9 +112,9 @@ function RequestCard({ r }: { r: RequestRow }) {
     >
       <div className="flex items-start gap-2 mb-1.5">
         <h3 className="font-medium text-sm leading-tight flex-1">{r.title}</h3>
-        {r.urgency !== 'normal' && r.urgency !== 'low' && (
+        {r.urgency === 'high' && (
           <span className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide ${URGENCY_STYLE[r.urgency]}`}>
-            {REQUEST_URGENCY_LABELS[r.urgency]}
+            {URGENCY_LABELS[r.urgency]}
           </span>
         )}
       </div>

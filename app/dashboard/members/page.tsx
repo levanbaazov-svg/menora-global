@@ -84,9 +84,9 @@ export default async function MembersPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="container mx-auto max-w-2xl px-4 md:px-6 pt-3 pb-8">
       <div className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold mb-1">Участники</h1>
+        <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">Участники</h1>
         <p className="text-sm text-(--color-muted)">
           Всего {memberships.length}.
           {groups.pending.length > 0 && (

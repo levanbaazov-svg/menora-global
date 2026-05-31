@@ -72,6 +72,6 @@ export async function GET(req: Request) {
     events: data.events ?? [],
     interest_groups: data.interest_groups ?? [],
     requests: data.requests ?? [],
-    people: (data.memberships ?? []).map((m: { user: unknown }) => m.user).filter(Boolean),
+    people: ((data.memberships ?? []) as Array<{ user: unknown }>).map((m) => m.user).filter(Boolean),
   });
 }

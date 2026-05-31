@@ -50,8 +50,10 @@ export const STEP_TITLES: Record<OnboardingStep, string> = {
  * Used by the new onboarding shell — big emoji + a question instead of a label,
  * + an optional tagline that sets emotional context.
  */
+export type StepIcon = 'hand' | 'family' | 'flame' | 'sparkles' | 'building' | 'lock';
+
 export interface StepMeta {
-  emoji: string;
+  icon: StepIcon;
   /** Big serif question, asked TO the user */
   question: string;
   /** Tagline under the question (optional) */
@@ -62,37 +64,37 @@ export interface StepMeta {
 
 export const STEP_META: Record<OnboardingStep, StepMeta> = {
   identity: {
-    emoji: '👋',
+    icon: 'hand',
     question: 'Давай знакомиться',
     tagline: 'Несколько базовых вопросов — и мы найдём твою общину.',
     tint: 'yellow',
   },
   family: {
-    emoji: '👨‍👩‍👧',
+    icon: 'family',
     question: 'Расскажи про семью',
     tagline: 'Это поможет подобрать программы и события — для детей, пар, родителей.',
     tint: 'rose',
   },
   religious: {
-    emoji: '🕯',
+    icon: 'flame',
     question: 'Как у тебя с традицией?',
     tagline: 'Никакого осуждения. Любой ответ — ок. Это поможет показать релевантное.',
     tint: 'cream',
   },
   interests: {
-    emoji: '✦',
+    icon: 'sparkles',
     question: 'Что тебе близко?',
     tagline: 'Тора, шаббат, спорт, искусство… выбери что откликается.',
     tint: 'mint',
   },
   community_choice: {
-    emoji: '🕍',
+    icon: 'building',
     question: 'Найди свою общину',
     tagline: 'Открой карту или подай заявку напрямую раввину.',
     tint: 'sky',
   },
   privacy: {
-    emoji: '🔒',
+    icon: 'lock',
     question: 'Кто видит твой профиль?',
     tagline: 'Можешь поменять в любой момент в настройках.',
     tint: 'lavender',

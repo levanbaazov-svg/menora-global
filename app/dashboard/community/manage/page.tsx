@@ -53,7 +53,7 @@ export default async function ManagePage() {
   const programsCount = data.programs_count.aggregate?.count ?? 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-5 md:px-6 pt-2 pb-12">
+    <div className="container mx-auto max-w-2xl px-4 md:px-6 pt-3 pb-8">
       <Link
         href="/dashboard/community"
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
@@ -65,7 +65,7 @@ export default async function ManagePage() {
         <div className="text-xs uppercase tracking-widest text-(--color-gold) mb-1">
           Управление общиной
         </div>
-        <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-tight">
+        <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
           Что добавить?
         </h1>
         <p className="text-sm text-(--color-fg-muted) mt-2 max-w-xl">

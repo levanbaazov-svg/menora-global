@@ -78,7 +78,7 @@ export default async function MyProfilePage() {
   const checkinsCount = data.checkins_30.aggregate?.count ?? 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <Link href="/dashboard" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-6 inline-block">
         ← К дашборду
       </Link>
@@ -86,7 +86,7 @@ export default async function MyProfilePage() {
       <header className="flex items-start gap-5 mb-8">
         <Avatar user={user} size="xl" />
         <div className="flex-1 min-w-0">
-          <h1 className="font-serif text-3xl font-semibold mb-1">{name}</h1>
+          <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">{name}</h1>
           {p?.hebrew_name && <p className="text-(--color-muted) mb-2">{p.hebrew_name}</p>}
           <p className="text-sm text-(--color-muted)">{user.email}</p>
         </div>

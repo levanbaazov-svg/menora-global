@@ -55,11 +55,11 @@ export default async function EditProfilePage() {
   const cat = new Set(p?.notification_prefs?.categories ?? ['events', 'requests', 'prayers', 'community_news']);
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <Link href="/dashboard/me" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-6 inline-block">
         ← К моему профилю
       </Link>
-      <h1 className="font-serif text-3xl font-semibold mb-2">Редактировать профиль</h1>
+      <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-2">Редактировать профиль</h1>
       <p className="text-sm text-(--color-muted) mb-8">
         Каждый раздел сохраняется отдельно. После сохранения вернёшься на профиль.
       </p>
