@@ -11,31 +11,39 @@
  * ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── shadcn tokens — Apple-system feel, muted Menorah accent ────────────
-   *  Background: warm white-cream, kept (just slightly less saturated)
-   *  Cards: pure white with subtle ring
-   *  Text: neutral graphite, no navy hint (more Apple, less "designed")
-   *  Accent: muted gold — used SPARINGLY (primary CTA, brand mark, badges)
-   *  Everything else: system grays
+  /* ── shadcn tokens — Lovable warmth restored ─────────────────────────────
+   *  Background: warm cream
+   *  Cards: pure white
+   *  Text: deep near-black with a hint of navy (matches Lovable richness)
+   *  Primary: Menorah gold — used for active states + key CTAs
+   *  Pastel scenario tints expose as separate vars below (--scenario-*)
    * ──────────────────────────────────────────────────────────────────── */
-  --background:          oklch(0.985 0.004 80);       /* warm white */
-  --foreground:          oklch(0.18 0.005 250);       /* near-black graphite */
-  --card:                oklch(1 0 0);                /* pure white */
+  --background:          oklch(0.985 0.008 80);       /* warm cream */
+  --foreground:          oklch(0.18 0.02 250);        /* near-black w/ navy hint */
+  --card:                oklch(1 0 0);
   --card-foreground:     var(--foreground);
   --popover:             oklch(1 0 0);
   --popover-foreground:  var(--foreground);
-  --primary:             oklch(0.67 0.12 75);         /* muted Menorah gold */
-  --primary-foreground:  oklch(1 0 0);                /* white on gold */
-  --secondary:           oklch(0.96 0.005 80);
+  --primary:             oklch(0.71 0.13 75);         /* Menorah gold #C99B43 */
+  --primary-foreground:  oklch(1 0 0);
+  --secondary:           oklch(0.96 0.012 80);
   --secondary-foreground:var(--foreground);
-  --muted:               oklch(0.96 0.005 80);
-  --muted-foreground:    oklch(0.52 0.006 250);       /* iOS secondaryLabel */
-  --accent:              oklch(0.94 0.012 80);        /* very subtle warm */
-  --accent-foreground:   var(--foreground);
+  --muted:               oklch(0.95 0.012 80);
+  --muted-foreground:    oklch(0.50 0.014 250);
+  --accent:              oklch(0.94 0.04 80);         /* gold-soft */
+  --accent-foreground:   oklch(0.30 0.07 75);
   --destructive:         oklch(0.58 0.22 27);
-  --border:              oklch(0.92 0.005 80);        /* subtle warm-gray */
-  --input:               oklch(0.92 0.005 80);
-  --ring:                oklch(0.67 0.12 75);
+  --border:              oklch(0.91 0.012 80);
+  --input:               oklch(0.91 0.012 80);
+  --ring:                oklch(0.71 0.13 75);
+
+  /* ── Pastel scenario tints — Lovable home cards ──────────────────────── */
+  --scenario-yellow:     oklch(0.95 0.06 90);         /* find purpose */
+  --scenario-lavender:   oklch(0.92 0.05 295);        /* plan shabbat */
+  --scenario-mint:       oklch(0.93 0.05 160);        /* hebrew school */
+  --scenario-rose:       oklch(0.92 0.05 25);         /* parsha */
+  --scenario-sky:        oklch(0.93 0.04 230);        /* meet people */
+  --scenario-cream:      oklch(0.95 0.04 50);         /* struggling */
 
   --chart-1: oklch(0.71 0.13 75);                     /* gold */
   --chart-2: oklch(0.55 0.08 220);                    /* torah blue */
