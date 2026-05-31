@@ -191,9 +191,11 @@ async function findOrInsert(findQ, insertQ, findVars, obj, label) {
   console.log(`Community: ${cid}`);
 
   console.log('\nLeaders:');
+  let rabbiUid = null;
   for (const l of LEADERS) {
     const u = await c.request(UPSERT_USER, { email: l.email, name: l.name, image: l.image });
     const uid = u.insert_users_one.id;
+    if (l.role === 'rabbi') rabbiUid = uid;
     await c.request(UPSERT_PROFILE, { obj: {
       user_id: uid, hebrew_name: l.hebrew, bio: l.bio,
       legal_first_name: l.name.split(' ')[0], legal_last_name: l.name.split(' ').slice(1).join(' '),
@@ -237,7 +239,7 @@ async function findOrInsert(findQ, insertQ, findVars, obj, label) {
   console.log('\nEvents:');
   for (const e of EVENTS) {
     await findOrInsert(FIND_EVENT, INSERT_EVENT, { cid, title: e.title }, {
-      community_id: cid, title: e.title, type: e.type, description: e.description,
+      community_id: cid, host_user_id: rabbiUid, title: e.title, type: e.type, description: e.description,
       cover_image_url: e.cover, starts_at: e.starts_at, timezone: 'Europe/Kiev',
       location_text: e.location_text, location_address: e.location_address,
       max_attendees: e.max_attendees, is_free: e.is_free,
