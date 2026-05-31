@@ -84,12 +84,16 @@ const COLUMNS = {
 const REL = {
   communities: {
     arr: [
-      ['memberships', 'memberships', 'community_id'],
-      ['invitations', 'invitations', 'community_id'],
-      ['events',      'events',      'community_id'],
-      ['requests',    'requests',    'community_id'],
-      ['routines',    'routines',    'community_id'],
-      ['audit_logs',  'audit_log',   'community_id'],
+      ['memberships',     'memberships',     'community_id'],
+      ['invitations',     'invitations',     'community_id'],
+      ['events',          'events',          'community_id'],
+      ['requests',        'requests',        'community_id'],
+      ['routines',        'routines',        'community_id'],
+      ['audit_logs',      'audit_log',       'community_id'],
+      ['places',          'places',          'community_id'],
+      ['programs',        'programs',        'community_id'],
+      ['interest_groups', 'interest_groups', 'community_id'],
+      ['rabbi_tasks',     'rabbi_tasks',     'community_id'],
     ],
   },
   users: {
