@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
-  ChevronRight, Search, CalendarDays, BookOpen, Flame, Instagram,
+  ChevronRight, Search, CalendarDays, BookOpen, Flame, AtSign,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
@@ -365,7 +365,7 @@ function ContactsTab({ c }: { c: {
     c.whatsapp_url && { Icon: MessageCircle, label: 'WhatsApp', value: 'Написать в WhatsApp', href: c.whatsapp_url, external: true },
     c.contact_email && { Icon: Mail, label: 'Email', value: c.contact_email, href: `mailto:${c.contact_email}` },
     c.website_url && { Icon: Globe, label: 'Сайт', value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
-    c.instagram_url && { Icon: Instagram, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
+    c.instagram_url && { Icon: AtSign, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
     c.address && { Icon: Navigation, label: 'Адрес', value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
   ].filter(Boolean) as Array<{ Icon: typeof Phone; label: string; value: string; href: string; external?: boolean }>;
 

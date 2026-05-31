@@ -89,7 +89,6 @@ export function SideDrawer({ open, onClose, user, role, communityName, signOutAc
 
         {/* Scrollable middle */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-          <SectionList title="Навигация" items={PRIMARY} onClose={onClose} />
           <SectionList title="Духовное" items={SPIRITUAL} onClose={onClose} />
           <SectionList title="Личное" items={PERSONAL} onClose={onClose} />
           {isStaff && <SectionList title="Управление" items={ADMIN} onClose={onClose} />}
