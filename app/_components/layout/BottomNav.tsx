@@ -39,17 +39,16 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
     >
       {/* Wrap with extra bottom padding so the floating pill sits above the home indicator */}
-      <div className="px-3 pb-3 pt-2 flex justify-center">
+      <div className="px-4 pb-2.5 pt-2 flex justify-center">
         <div
           className="
             pointer-events-auto relative
-            flex items-center gap-1
-            rounded-[28px] px-2 py-1.5
-            bg-white/60 dark:bg-black/40
-            border border-white/40
-            shadow-[0_8px_32px_-4px_rgba(20,24,31,0.18),0_2px_8px_rgba(20,24,31,0.06)]
-            backdrop-blur-[24px] backdrop-saturate-[180%]
-            ring-1 ring-black/[0.02]
+            flex items-center gap-0.5
+            rounded-full px-1.5 py-1.5
+            bg-white/65 dark:bg-black/45
+            border border-white/50
+            shadow-[0_6px_24px_-6px_rgba(20,24,31,0.16),0_1px_4px_rgba(20,24,31,0.05)]
+            backdrop-blur-[28px] backdrop-saturate-[180%]
           "
         >
           {TABS.map((t) => {
@@ -61,29 +60,29 @@ export function BottomNav() {
                 href={t.href}
                 aria-current={active ? 'page' : undefined}
                 aria-label={t.label}
-                className="relative flex flex-col items-center justify-center gap-0.5 px-3 py-2 min-w-[56px] rounded-[20px] group transition-colors"
+                className="relative flex flex-col items-center justify-center gap-0.5 px-3.5 py-1.5 rounded-full group transition-colors"
               >
                 {active && (
                   <motion.span
                     layoutId="bottom-nav-pill"
-                    className="absolute inset-0 rounded-[20px] bg-foreground/[0.06]"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    className="absolute inset-0 rounded-full bg-primary/12"
+                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                   />
                 )}
                 <span
                   className={`relative z-10 transition-colors duration-200 ${
-                    active ? 'text-primary' : 'text-foreground/55 group-hover:text-foreground/80'
+                    active ? 'text-primary' : 'text-foreground/50 group-hover:text-foreground/75'
                   }`}
                 >
                   <Icon
-                    strokeWidth={active ? 2.2 : 1.8}
-                    className={`transition-transform duration-200 ${active ? 'scale-110' : ''}`}
-                    size={22}
+                    strokeWidth={active ? 2.3 : 1.9}
+                    className={`transition-transform duration-200 ${active ? 'scale-105' : ''}`}
+                    size={21}
                   />
                 </span>
                 <span
-                  className={`relative z-10 text-[10px] font-medium leading-none tracking-tight transition-colors ${
-                    active ? 'text-foreground' : 'text-foreground/55'
+                  className={`relative z-10 text-[9px] font-medium leading-none tracking-tight transition-colors ${
+                    active ? 'text-primary' : 'text-foreground/50'
                   }`}
                 >
                   {t.label}

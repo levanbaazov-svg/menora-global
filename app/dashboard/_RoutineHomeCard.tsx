@@ -114,21 +114,21 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
       "
     >
       {/* Header */}
-      <div className="px-4 pt-4 pb-3 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
-          <Flame size={16} strokeWidth={2} />
+      <div className="px-3.5 pt-3 pb-2 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+          <Flame size={15} strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-serif text-base font-semibold leading-tight">Моя рутина</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
-            {streak > 0 ? `${streak}-day streak` : 'Начни новый streak'} · {doneToday} of {totalToday} today
+          <div className="font-serif text-[15px] font-semibold leading-tight">Моя рутина</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">
+            {streak > 0 ? `${streak}-day streak` : 'Начни streak'} · {doneToday} of {totalToday} today
           </div>
         </div>
-        <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+        <ChevronRight size={15} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
       </div>
 
       {/* Routine pills row */}
-      <div className="px-4 pb-4 pt-1 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-3.5 pb-3 pt-0.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
         {next3.map((r) => {
           const label = r.custom_label ?? TYPE_LABELS[r.type] ?? r.type;
           const done = r.checkins.some((c) => c.gregorian_date === todayIso);
@@ -137,7 +137,7 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
             <div
               key={r.id}
               className={`
-                shrink-0 flex items-center gap-1.5 rounded-full pl-2 pr-3 py-1.5 text-xs font-medium
+                shrink-0 flex items-center gap-1.5 rounded-full pl-1.5 pr-2.5 py-1 text-[11px] font-medium
                 transition-colors
                 ${done
                   ? 'bg-orange-100 text-orange-700'
@@ -146,11 +146,11 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
             >
               <span
                 className={`
-                  inline-flex w-5 h-5 rounded-full items-center justify-center
+                  inline-flex w-4 h-4 rounded-full items-center justify-center
                   ${done ? 'bg-orange-500 text-white' : 'border border-foreground/20'}
                 `}
               >
-                {done && <Check size={12} strokeWidth={3} />}
+                {done && <Check size={10} strokeWidth={3} />}
               </span>
               {time && <span className="tabular-nums opacity-70">{time}</span>}
               <span>{label}</span>
