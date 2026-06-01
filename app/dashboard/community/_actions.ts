@@ -5,7 +5,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
-import { hasuraAsCurrentUser } from '@/lib/hasura';
+import { hasuraAsCurrentUser, hasuraAdmin } from '@/lib/hasura';
 import {
   createPlaceSchema, placeIdSchema, approvePlaceSchema, rejectPlaceSchema,
   createProgramSchema, enrollProgramSchema,
@@ -254,5 +254,56 @@ export async function updateCommunity(_prev: ActionState, formData: FormData): P
   } catch (e) {
     if (e && typeof e === 'object' && 'digest' in e) throw e;
     return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+// ── Join another community (in-app, post-onboarding) ───────────────────────
+const CHECK_MEMBERSHIP = /* GraphQL */ `
+  query CheckMembership($user_id: uuid!, $community_id: uuid!) {
+    memberships(where: { user_id: { _eq: $user_id }, community_id: { _eq: $community_id } }, limit: 1) {
+      id status
+    }
+  }
+`;
+
+const JOIN_REQUEST = /* GraphQL */ `
+  mutation JoinRequest($user_id: uuid!, $community_id: uuid!, $message: String!) {
+    insert_memberships_one(object: {
+      user_id: $user_id, community_id: $community_id,
+      entry_method: self_request, status: pending, role: member, request_message: $message
+    }) { id }
+  }
+`;
+
+/**
+ * Lets an already-onboarded member request to join an ADDITIONAL community
+ * (e.g. lives in Vienna + Miami) without re-running onboarding. Creates a
+ * pending membership the community's rabbi then approves.
+ */
+export async function requestJoinCommunity(
+  communityId: string,
+  message = '',
+): Promise<{ ok: boolean; error?: string; status?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'Не авторизован' };
+
+  try {
+    const existing = await hasuraAdmin.request<{ memberships: Array<{ id: string; status: string }> }>(
+      CHECK_MEMBERSHIP, { user_id: session.user.id, community_id: communityId },
+    );
+    const m = existing.memberships[0];
+    if (m) {
+      if (m.status === 'pending') return { ok: true, status: 'pending' };
+      if (m.status === 'active') return { ok: true, status: 'active' };
+      // rejected/left/suspended → allow re-request by updating below isn't trivial; report
+      return { ok: false, error: 'Заявка уже обрабатывалась', status: m.status };
+    }
+    await hasuraAdmin.request(JOIN_REQUEST, {
+      user_id: session.user.id, community_id: communityId, message: message.slice(0, 500),
+    });
+    revalidatePath('/dashboard/community', 'layout');
+    return { ok: true, status: 'pending' };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Ошибка' };
   }
 }

@@ -13,6 +13,7 @@ import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { CommunityTabs } from '../../CommunityTabs';
 import { SwitchToCommunityButton } from './SwitchToCommunityButton';
+import { JoinCommunityButton } from './JoinCommunityButton';
 import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 const FETCH = /* GraphQL */ `
@@ -250,10 +251,7 @@ export default async function VisitorCommunityPage({
       <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-24 md:pb-6 pt-3 bg-gradient-to-t from-background via-background to-transparent">
         <div className="container mx-auto max-w-xl">
           {!membership ? (
-            <Link href={`/onboarding/community_choice?community=${c.slug}`}
-              className="block w-full text-center rounded-full h-13 leading-[3.25rem] bg-primary text-primary-foreground font-semibold shadow-[var(--shadow-gold)]">
-              Подать заявку на вступление
-            </Link>
+            <JoinCommunityButton communityId={c.id} />
           ) : membership.status === 'pending' ? (
             <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
               ⏳ Заявка на рассмотрении
