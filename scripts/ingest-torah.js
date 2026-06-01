@@ -73,8 +73,9 @@ function tanyaRefs() {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchSefaria(ref) {
-  // v3 API: /texts/<ref>?version=english&version=hebrew
-  const url = `${SEFARIA}/${encodeURIComponent(ref)}?return_format=text_only`;
+  // v3 API: request the English translation explicitly (the default version is
+  // often Hebrew, which would pollute text_en).
+  const url = `${SEFARIA}/${encodeURIComponent(ref)}?version=english&return_format=text_only`;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const res = await fetch(url, { headers: { Accept: 'application/json' } });
