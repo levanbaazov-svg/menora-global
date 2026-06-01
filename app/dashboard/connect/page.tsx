@@ -4,6 +4,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { GroupCard, type GroupCardData } from './GroupCard';
@@ -11,6 +12,7 @@ import { EmptyState } from '@/app/_components/ui/EmptyState';
 import {
   GROUP_CATEGORIES, GROUP_CATEGORY_LABELS, type GroupCategory,
 } from '@/lib/groups/schema';
+import { type Locale } from '@/i18n/config';
 
 const FETCH = /* GraphQL */ `
   query ConnectFeed($community_id: uuid!, $user_id: uuid!) {
@@ -65,6 +67,8 @@ export default async function ConnectPage({
     community_id: session.hasura.community_id,
     user_id: session.user.id,
   });
+  const t = await getTranslations('connect');
+  const locale = (await getLocale()) as Locale;
 
   const myGroups: GroupCardData[] = data.my_memberships
     .map((m) => ({ ...m.group, is_member: true }))
@@ -88,29 +92,29 @@ export default async function ConnectPage({
       <header className="flex items-start justify-between gap-3 mb-4 px-0.5">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-            Связь
+            {t('title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Группы по интересам — в общине и по миру
+            {t('subtitle')}
           </p>
         </div>
         <Link
           href="/dashboard/connect/new"
           className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
-          <Plus size={15} strokeWidth={2.4} /> Создать
+          <Plus size={15} strokeWidth={2.4} /> {t('create')}
         </Link>
       </header>
 
       {/* Category chips */}
       <div className="-mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto scrollbar-hide mb-5">
         <div className="flex gap-2 min-w-max md:flex-wrap">
-          <Chip href="/dashboard/connect" label="Все" active={!activeCat} />
+          <Chip href="/dashboard/connect" label={t('all')} active={!activeCat} />
           {GROUP_CATEGORIES.map((cat) => (
             <Chip
               key={cat}
               href={`/dashboard/connect?cat=${cat}`}
-              label={GROUP_CATEGORY_LABELS[cat].ru}
+              label={GROUP_CATEGORY_LABELS[cat][locale]}
               active={activeCat === cat}
             />
           ))}
@@ -121,7 +125,7 @@ export default async function ConnectPage({
       {myGroups.length > 0 && (
         <section className="mb-7">
           <h2 className="font-serif text-base font-semibold mb-2.5 px-0.5">
-            Мои группы <span className="text-xs font-normal text-muted-foreground">· {myGroups.length}</span>
+            {t('myGroups')} <span className="text-xs font-normal text-muted-foreground">· {myGroups.length}</span>
           </h2>
           <div className="grid grid-cols-2 gap-2.5">
             {myGroups.map((g, i) => <GroupCard key={g.id} g={g} index={i} />)}
@@ -132,14 +136,14 @@ export default async function ConnectPage({
       {/* Discover */}
       <section>
         <h2 className="font-serif text-base font-semibold mb-2.5 px-0.5">
-          Найти группу <span className="text-xs font-normal text-muted-foreground">· {discover.length}</span>
+          {t('findGroup')} <span className="text-xs font-normal text-muted-foreground">· {discover.length}</span>
         </h2>
 
         {discover.length === 0 && myGroups.length === 0 ? (
           <EmptyState
             emoji="✦"
-            title="Пока нет групп"
-            description="Создай первую группу и пригласи участников."
+            title={t('emptyTitle')}
+            description={t('emptyDesc')}
           />
         ) : activeCat ? (
           <div className="grid grid-cols-2 gap-2.5">
@@ -151,11 +155,11 @@ export default async function ConnectPage({
               <div key={cat}>
                 <div className="flex items-center justify-between mb-2 px-0.5">
                   <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
-                    {GROUP_CATEGORY_LABELS[cat].ru}
+                    {GROUP_CATEGORY_LABELS[cat][locale]}
                   </h3>
                   {items.length > 4 && (
                     <Link href={`/dashboard/connect?cat=${cat}`} className="text-xs text-primary hover:text-primary/80">
-                      Все →
+                      {t('seeAll')}
                     </Link>
                   )}
                 </div>

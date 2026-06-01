@@ -93,6 +93,40 @@
       { "emoji": "💬", "title": "The AI Rabbi is here", "body": "A deep talk or a quick question — just ask right now.", "cta_label": "Open AI Rabbi", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "connect": {
+    "title": "Connect",
+    "subtitle": "Interest groups — in your community and worldwide",
+    "create": "Create",
+    "all": "All",
+    "seeAll": "All →",
+    "myGroups": "My groups",
+    "findGroup": "Find a group",
+    "emptyTitle": "No groups yet",
+    "emptyDesc": "Create the first group and invite members."
+  },
+  "requests": {
+    "title": "Requests",
+    "subtitle": "The community mutual-help board",
+    "create": "Create",
+    "createFirst": "Create the first one",
+    "empty": "No requests in the community yet.",
+    "resolved": "Resolved",
+    "anon": "Anonymous",
+    "justNow": "just now",
+    "hoursAgo": "{h}h ago",
+    "daysAgo": "{d}d ago",
+    "urgency": { "low": "Not urgent", "normal": "Normal", "high": "Urgent" },
+    "categories": {
+      "childcare": "👶 Kids / babysitting",
+      "services": "🔧 Services",
+      "learning": "📚 Study / chavruta",
+      "community": "🤝 Help the community",
+      "loan": "💰 Loan",
+      "housing": "🏠 Housing",
+      "meals": "🍽️ Meals / Shabbat host",
+      "other": "❓ Other"
+    }
+  },
   "events": {
     "title": "Events",
     "upcoming": "{count} upcoming",

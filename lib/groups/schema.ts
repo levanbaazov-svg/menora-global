@@ -21,18 +21,18 @@ export type GroupCategory = typeof GROUP_CATEGORIES[number];
 
 export const GROUP_CATEGORY_LABELS: Record<
   GroupCategory,
-  { ru: string; en: string; emoji: string; gradient: string }
+  { ru: string; en: string; he: string; emoji: string; gradient: string }
 > = {
-  learning:  { ru: 'Учёба',        en: 'Learning',  emoji: '📚', gradient: 'from-amber-300 to-orange-500' },
-  social:    { ru: 'Общение',      en: 'Social',    emoji: '☕', gradient: 'from-rose-300 to-pink-500' },
-  wellness:  { ru: 'Здоровье',     en: 'Wellness',  emoji: '🧘', gradient: 'from-emerald-300 to-teal-500' },
-  family:    { ru: 'Семьи',        en: 'Family',    emoji: '👨‍👩‍👧', gradient: 'from-violet-300 to-purple-500' },
-  cooking:   { ru: 'Кулинария',    en: 'Cooking',   emoji: '🍳', gradient: 'from-yellow-300 to-amber-500' },
-  business:  { ru: 'Бизнес',       en: 'Business',  emoji: '💼', gradient: 'from-slate-400 to-slate-700' },
-  arts:      { ru: 'Искусство',    en: 'Arts',      emoji: '🎨', gradient: 'from-fuchsia-300 to-pink-500' },
-  sports:    { ru: 'Спорт',        en: 'Sports',    emoji: '⚽', gradient: 'from-sky-300 to-blue-500' },
-  travel:    { ru: 'Путешествия',  en: 'Travel',    emoji: '✈️', gradient: 'from-cyan-300 to-blue-400' },
-  volunteer: { ru: 'Волонтёрство', en: 'Volunteer', emoji: '🤝', gradient: 'from-lime-300 to-green-500' },
+  learning:  { ru: 'Учёба',        en: 'Learning',  he: 'לימוד',     emoji: '📚', gradient: 'from-amber-300 to-orange-500' },
+  social:    { ru: 'Общение',      en: 'Social',    he: 'חברה',      emoji: '☕', gradient: 'from-rose-300 to-pink-500' },
+  wellness:  { ru: 'Здоровье',     en: 'Wellness',  he: 'בריאות',    emoji: '🧘', gradient: 'from-emerald-300 to-teal-500' },
+  family:    { ru: 'Семьи',        en: 'Family',    he: 'משפחות',    emoji: '👨‍👩‍👧', gradient: 'from-violet-300 to-purple-500' },
+  cooking:   { ru: 'Кулинария',    en: 'Cooking',   he: 'בישול',     emoji: '🍳', gradient: 'from-yellow-300 to-amber-500' },
+  business:  { ru: 'Бизнес',       en: 'Business',  he: 'עסקים',     emoji: '💼', gradient: 'from-slate-400 to-slate-700' },
+  arts:      { ru: 'Искусство',    en: 'Arts',      he: 'אמנות',     emoji: '🎨', gradient: 'from-fuchsia-300 to-pink-500' },
+  sports:    { ru: 'Спорт',        en: 'Sports',    he: 'ספורט',     emoji: '⚽', gradient: 'from-sky-300 to-blue-500' },
+  travel:    { ru: 'Путешествия',  en: 'Travel',    he: 'טיולים',    emoji: '✈️', gradient: 'from-cyan-300 to-blue-400' },
+  volunteer: { ru: 'Волонтёрство', en: 'Volunteer', he: 'התנדבות',   emoji: '🤝', gradient: 'from-lime-300 to-green-500' },
 };
 
 // ── Visibility ───────────────────────────────────────────────────────────────

@@ -93,6 +93,40 @@
       { "emoji": "💬", "title": "רב ה-AI כאן", "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.", "cta_label": "לרב ה-AI", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "connect": {
+    "title": "קשר",
+    "subtitle": "קבוצות עניין — בקהילה ובעולם",
+    "create": "יצירה",
+    "all": "הכול",
+    "seeAll": "הכול →",
+    "myGroups": "הקבוצות שלי",
+    "findGroup": "מציאת קבוצה",
+    "emptyTitle": "אין עדיין קבוצות",
+    "emptyDesc": "צרו את הקבוצה הראשונה והזמינו חברים."
+  },
+  "requests": {
+    "title": "בקשות",
+    "subtitle": "לוח העזרה ההדדית של הקהילה",
+    "create": "יצירה",
+    "createFirst": "ליצור את הראשונה",
+    "empty": "אין עדיין בקשות בקהילה.",
+    "resolved": "טופלו",
+    "anon": "אנונימי",
+    "justNow": "ממש עכשיו",
+    "hoursAgo": "לפני {h} שעות",
+    "daysAgo": "לפני {d} ימים",
+    "urgency": { "low": "לא דחוף", "normal": "רגיל", "high": "דחוף" },
+    "categories": {
+      "childcare": "👶 ילדים / בייביסיטר",
+      "services": "🔧 שירותים",
+      "learning": "📚 לימוד / חברותא",
+      "community": "🤝 עזרה לקהילה",
+      "loan": "💰 הלוואה",
+      "housing": "🏠 דיור",
+      "meals": "🍽️ ארוחות / אירוח לשבת",
+      "other": "❓ אחר"
+    }
+  },
   "events": {
     "title": "אירועים",
     "upcoming": "{count} קרובים",
