@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import {
   Sparkles, Flame, BookOpenText, ScanLine, Bell, UserRound,
-  Bot, ShieldCheck, MailPlus, Settings2, LogOut, ChevronRight,
+  Bot, ShieldCheck, MailPlus, Settings2, LogOut, ChevronRight, LayoutDashboard,
   type LucideIcon,
 } from 'lucide-react';
 import { Avatar } from '@/app/dashboard/_Avatar';
@@ -44,7 +44,8 @@ const PERSONAL: MenuItem[] = [
 ];
 
 const ADMIN: MenuItem[] = [
-  { href: '/dashboard/assistant',          Icon: Bot,          labelKey: 'aiAssistant',     highlight: true },
+  { href: '/dashboard/admin',              Icon: LayoutDashboard, labelKey: 'rabbiConsole',  highlight: true },
+  { href: '/dashboard/assistant',          Icon: Bot,          labelKey: 'aiAssistant' },
   { href: '/dashboard/community/pending',  Icon: ShieldCheck,  labelKey: 'moderatePlaces' },
   { href: '/dashboard/members',            Icon: UserRound,    labelKey: 'accessRequests' },
   { href: '/dashboard/invitations',        Icon: MailPlus,     labelKey: 'invitations' },
