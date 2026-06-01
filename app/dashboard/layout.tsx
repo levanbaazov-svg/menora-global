@@ -31,13 +31,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const session = await auth();
   if (!session?.user) redirect('/');
 
-  const info = await getOnboardingInfo(session.user.id);
+  // These two reads are independent — run them concurrently to avoid stacking
+  // two ~700ms round-trips to Hasura Cloud on every navigation.
+  const [info, data] = await Promise.all([
+    getOnboardingInfo(session.user.id),
+    hasuraAdmin.request<{
+      users_by_pk: UserDisplay | null;
+      memberships: Array<{ community: { id: string; name: string } }>;
+    }>(HEADER_DATA, { user_id: session.user.id }),
+  ]);
   if (!info.done) redirect(info.redirectTarget);
-
-  const data = await hasuraAdmin.request<{
-    users_by_pk: UserDisplay | null;
-    memberships: Array<{ community: { id: string; name: string } }>;
-  }>(HEADER_DATA, { user_id: session.user.id });
 
   const user = data.users_by_pk ?? {
     id: session.user.id,
