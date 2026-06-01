@@ -6,24 +6,22 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-const TABS = [
-  { key: 'info', label: 'Инфо' },
-  { key: 'guide', label: 'Гид' },
-  { key: 'contacts', label: 'Контакты' },
-] as const;
+const TABS = ['info', 'guide', 'contacts'] as const;
 
 export function CommunityTabs({ basePath = '/dashboard/community' }: { basePath?: string }) {
   const sp = useSearchParams();
   const active = sp.get('tab') ?? 'info';
+  const t = useTranslations('community.tabs');
   return (
     <div className="flex gap-1 rounded-full bg-muted p-1">
-      {TABS.map((t) => {
-        const isActive = active === t.key;
-        const href = t.key === 'info' ? basePath : `${basePath}?tab=${t.key}`;
+      {TABS.map((key) => {
+        const isActive = active === key;
+        const href = key === 'info' ? basePath : `${basePath}?tab=${key}`;
         return (
           <Link
-            key={t.key}
+            key={key}
             href={href}
             scroll={false}
             className={`flex-1 text-center rounded-full py-1.5 text-sm font-medium transition-colors ${
@@ -32,7 +30,7 @@ export function CommunityTabs({ basePath = '/dashboard/community' }: { basePath?
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            {t.label}
+            {t(key)}
           </Link>
         );
       })}

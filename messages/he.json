@@ -93,6 +93,35 @@
       { "emoji": "💬", "title": "רב ה-AI כאן", "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.", "cta_label": "לרב ה-AI", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "community": {
+    "tabs": { "info": "מידע", "guide": "מדריך", "contacts": "צור קשר" },
+    "otherCommunity": "קהילה אחרת",
+    "myCommunity": "הקהילה שלי",
+    "members": "{count} חברים",
+    "candles": "נרות {time}",
+    "foundedIn": "נוסדה בשנת {year}",
+    "leadership": "הנהגה",
+    "upcomingEvents": "אירועים קרובים",
+    "noEvents": "אין עדיין אירועים מתוכננים",
+    "programs": "תוכניות",
+    "manage": "ניהול",
+    "noPrograms": "אין עדיין תוכניות",
+    "membersTitle": "חברים",
+    "seeAll": "הכול",
+    "guideEmpty": "עדיין לא נוספו מקומות למדריך העיר",
+    "contactsEmpty": "עדיין לא הוזנו פרטי קשר",
+    "roles": { "rabbi": "רב", "admin": "מנהל" },
+    "contact": {
+      "phone": "טלפון",
+      "whatsapp": "וואטסאפ",
+      "whatsappValue": "שליחת הודעה בוואטסאפ",
+      "email": "אימייל",
+      "website": "אתר",
+      "instagram": "אינסטגרם",
+      "instagramValue": "פתיחת פרופיל",
+      "address": "כתובת"
+    }
+  },
   "connect": {
     "title": "קשר",
     "subtitle": "קבוצות עניין — בקהילה ובעולם",

@@ -11,17 +11,17 @@ export const PLACE_TYPES = [
 ] as const;
 export type PlaceType = typeof PLACE_TYPES[number];
 
-export const PLACE_TYPE_LABELS: Record<PlaceType, { ru: string; en: string; emoji: string }> = {
-  synagogue:  { ru: 'Синагоги',     en: 'Synagogues',  emoji: '🕍' },
-  restaurant: { ru: 'Рестораны',    en: 'Restaurants', emoji: '🍽' },
-  cafe:       { ru: 'Кафе',         en: 'Cafés',       emoji: '☕' },
-  store:      { ru: 'Магазины',     en: 'Stores',      emoji: '🛒' },
-  mikvah:     { ru: 'Микве',        en: 'Mikvahs',     emoji: '🛁' },
-  school:     { ru: 'Школы',        en: 'Schools',     emoji: '🎓' },
-  service:    { ru: 'Сервисы',      en: 'Services',    emoji: '🛠' },
-  jcc:        { ru: 'JCC',          en: 'JCC',         emoji: '🏛' },
-  museum:     { ru: 'Музеи',        en: 'Museums',     emoji: '🖼' },
-  cemetery:   { ru: 'Кладбища',     en: 'Cemeteries',  emoji: '🕯' },
+export const PLACE_TYPE_LABELS: Record<PlaceType, { ru: string; en: string; he: string; emoji: string }> = {
+  synagogue:  { ru: 'Синагоги',     en: 'Synagogues',  he: 'בתי כנסת',   emoji: '🕍' },
+  restaurant: { ru: 'Рестораны',    en: 'Restaurants', he: 'מסעדות',     emoji: '🍽' },
+  cafe:       { ru: 'Кафе',         en: 'Cafés',       he: 'בתי קפה',    emoji: '☕' },
+  store:      { ru: 'Магазины',     en: 'Stores',      he: 'חנויות',     emoji: '🛒' },
+  mikvah:     { ru: 'Микве',        en: 'Mikvahs',     he: 'מקוואות',    emoji: '🛁' },
+  school:     { ru: 'Школы',        en: 'Schools',     he: 'בתי ספר',    emoji: '🎓' },
+  service:    { ru: 'Сервисы',      en: 'Services',    he: 'שירותים',    emoji: '🛠' },
+  jcc:        { ru: 'JCC',          en: 'JCC',         he: 'JCC',        emoji: '🏛' },
+  museum:     { ru: 'Музеи',        en: 'Museums',     he: 'מוזיאונים',  emoji: '🖼' },
+  cemetery:   { ru: 'Кладбища',     en: 'Cemeteries',  he: 'בתי עלמין',  emoji: '🕯' },
 };
 
 // ── Kashrut levels ───────────────────────────────────────────────────────────

@@ -7,6 +7,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import {
@@ -17,6 +18,9 @@ import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { CommunityTabs } from './CommunityTabs';
 import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
+
+type T = Awaited<ReturnType<typeof getTranslations<'community'>>>;
 import { upcomingShabbat } from '@/lib/hebcal';
 import { resolveLocation } from '@/lib/hebcal/timezone';
 import { COOKIE_NAME as TZ_COOKIE } from '@/app/api/me/timezone/route';
@@ -79,8 +83,6 @@ interface PlaceRow {
   photo_url: string | null; address: string | null; kashrut_level: string | null;
 }
 
-const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Администратор' };
-
 export default async function CommunityPage({
   searchParams,
 }: {
@@ -114,12 +116,15 @@ export default async function CommunityPage({
   const c = data.communities_by_pk;
   if (!c) redirect('/dashboard/community/discover');
 
+  const t = await getTranslations('community');
+  const locale = (await getLocale()) as Locale;
+
   const cookieStore = await cookies();
   const userTz = cookieStore.get(TZ_COOKIE)?.value ?? null;
   const resolved = resolveLocation(userTz, c);
   const shabbat = resolved ? upcomingShabbat(resolved.location) : null;
   const candle = shabbat?.candleLighting
-    ? shabbat.candleLighting.toLocaleTimeString('ru-RU', {
+    ? shabbat.candleLighting.toLocaleTimeString(LOCALE_BCP47[locale], {
         timeZone: resolved!.location.getTzid(), hour: '2-digit', minute: '2-digit',
       })
     : null;
@@ -143,12 +148,12 @@ export default async function CommunityPage({
               className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
             >
               <Search size={13} strokeWidth={2} />
-              Другая община
+              {t('otherCommunity')}
             </Link>
 
             <div className="absolute inset-x-0 bottom-0 p-5 text-white">
               <div className="text-[10px] uppercase tracking-[0.15em] text-white/80 mb-1">
-                {c.denomination ?? 'Моя община'}
+                {c.denomination ?? t('myCommunity')}
               </div>
               <h1 className="font-serif text-3xl font-semibold leading-tight drop-shadow-sm">
                 {c.name}
@@ -162,12 +167,12 @@ export default async function CommunityPage({
                 )}
                 <span className="inline-flex items-center gap-1">
                   <Users size={12} strokeWidth={2} />
-                  {c.member_count_cached} участников
+                  {t('members', { count: c.member_count_cached })}
                 </span>
                 {candle && (
                   <span className="inline-flex items-center gap-1 text-white">
                     <Flame size={12} strokeWidth={2} />
-                    Свечи {candle}
+                    {t('candles', { time: candle })}
                   </span>
                 )}
               </div>
@@ -189,7 +194,7 @@ export default async function CommunityPage({
                   <section>
                     <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
                     {c.founded_year && (
-                      <div className="mt-3 text-xs text-muted-foreground">Основана в {c.founded_year}</div>
+                      <div className="mt-3 text-xs text-muted-foreground">{t('foundedIn', { year: c.founded_year })}</div>
                     )}
                   </section>
                 </Reveal>
@@ -197,16 +202,16 @@ export default async function CommunityPage({
 
               {data.leaders.length > 0 && (
                 <Reveal delay={0.06}>
-                  <Section title="Руководство">
+                  <Section title={t('leadership')}>
                     <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
                       {data.leaders.map((l) => (
                         <Link key={l.user?.id} href={`/dashboard/people/${l.user?.id}`} className="shrink-0 w-20 text-center group">
                           <div className="mx-auto mb-1.5 transition-transform group-hover:scale-105">
                             <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
                           </div>
-                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? 'Без имени'}</div>
+                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? '—'}</div>
                           <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                            {l.community_role ?? ROLE_TITLE[l.role] ?? l.role}
+                            {l.community_role ?? (l.role === 'rabbi' || l.role === 'admin' ? t(`roles.${l.role}`) : l.role)}
                           </div>
                         </Link>
                       ))}
@@ -216,9 +221,9 @@ export default async function CommunityPage({
               )}
 
               <Reveal delay={0.08}>
-                <Section title="Ближайшие события" action={<SeeAll href="/dashboard/events" />}>
+                <Section title={t('upcomingEvents')} action={<SeeAll href="/dashboard/events" label={t('seeAll')} />}>
                   {data.events.length === 0 ? (
-                    <EmptyHint Icon={CalendarDays} text="Пока нет запланированных событий" />
+                    <EmptyHint Icon={CalendarDays} text={t('noEvents')} />
                   ) : (
                     <div className="space-y-2">
                       {data.events.map((e) => (
@@ -230,7 +235,7 @@ export default async function CommunityPage({
                           <div className="min-w-0 flex-1">
                             <div className="text-sm font-medium leading-tight truncate">{e.title}</div>
                             <div className="text-xs text-muted-foreground mt-0.5 truncate">
-                              {new Date(e.starts_at).toLocaleString('ru-RU', {
+                              {new Date(e.starts_at).toLocaleString(LOCALE_BCP47[locale], {
                                 timeZone: c.timezone || undefined, weekday: 'short', day: 'numeric', month: 'short',
                                 hour: '2-digit', minute: '2-digit',
                               })}
@@ -249,9 +254,9 @@ export default async function CommunityPage({
               </Reveal>
 
               <Reveal delay={0.1}>
-                <Section title="Программы" action={<SeeAll href="/dashboard/community/manage" label="Управление" />}>
+                <Section title={t('programs')} action={<SeeAll href="/dashboard/community/manage" label={t('manage')} />}>
                   {data.programs.length === 0 ? (
-                    <EmptyHint Icon={BookOpenText} text="Программ пока нет" />
+                    <EmptyHint Icon={BookOpenText} text={t('noPrograms')} />
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
                       {data.programs.map((p) => (
@@ -279,7 +284,7 @@ export default async function CommunityPage({
               </Reveal>
 
               <Reveal delay={0.12}>
-                <Section title="Участники" action={<SeeAll href="/dashboard/people" />}>
+                <Section title={t('membersTitle')} action={<SeeAll href="/dashboard/people" label={t('seeAll')} />}>
                   <div className="flex flex-wrap gap-2">
                     {data.members.map((m) => (
                       <Link key={m.user?.id} href={`/dashboard/people/${m.user?.id}`} title={m.user?.name ?? ''}>
@@ -298,9 +303,9 @@ export default async function CommunityPage({
             </>
           )}
 
-          {tab === 'guide' && <GuideTab places={data.places} />}
+          {tab === 'guide' && <GuideTab places={data.places} t={t} locale={locale} />}
 
-          {tab === 'contacts' && <ContactsTab c={c} />}
+          {tab === 'contacts' && <ContactsTab c={c} t={t} />}
         </div>
       </div>
     </div>
@@ -308,9 +313,9 @@ export default async function CommunityPage({
 }
 
 // ── Guide tab ─────────────────────────────────────────────────────────────
-function GuideTab({ places }: { places: PlaceRow[] }) {
+function GuideTab({ places, t, locale }: { places: PlaceRow[]; t: T; locale: Locale }) {
   if (places.length === 0) {
-    return <EmptyHint Icon={MapPin} text="Места ещё не добавлены в город-гид" />;
+    return <EmptyHint Icon={MapPin} text={t('guideEmpty')} />;
   }
   // Group by type
   const byType = new Map<PlaceType, PlaceRow[]>();
@@ -325,7 +330,7 @@ function GuideTab({ places }: { places: PlaceRow[] }) {
         <Reveal key={type} delay={0.04}>
           <section>
             <h2 className="font-serif text-base font-semibold mb-2.5">
-              {PLACE_TYPE_LABELS[type]?.ru ?? type}
+              {PLACE_TYPE_LABELS[type]?.[locale] ?? type}
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {items.map((p) => (
@@ -356,21 +361,21 @@ function GuideTab({ places }: { places: PlaceRow[] }) {
 }
 
 // ── Contacts tab ──────────────────────────────────────────────────────────
-function ContactsTab({ c }: { c: {
+function ContactsTab({ c, t }: { c: {
   contact_phone: string | null; whatsapp_url: string | null; contact_email: string | null;
   website_url: string | null; instagram_url: string | null; address: string | null;
-} }) {
+}; t: T }) {
   const rows = [
-    c.contact_phone && { Icon: Phone, label: 'Телефон', value: c.contact_phone, href: `tel:${c.contact_phone}` },
-    c.whatsapp_url && { Icon: MessageCircle, label: 'WhatsApp', value: 'Написать в WhatsApp', href: c.whatsapp_url, external: true },
-    c.contact_email && { Icon: Mail, label: 'Email', value: c.contact_email, href: `mailto:${c.contact_email}` },
-    c.website_url && { Icon: Globe, label: 'Сайт', value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
-    c.instagram_url && { Icon: AtSign, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
-    c.address && { Icon: Navigation, label: 'Адрес', value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
+    c.contact_phone && { Icon: Phone, label: t('contact.phone'), value: c.contact_phone, href: `tel:${c.contact_phone}` },
+    c.whatsapp_url && { Icon: MessageCircle, label: t('contact.whatsapp'), value: t('contact.whatsappValue'), href: c.whatsapp_url, external: true },
+    c.contact_email && { Icon: Mail, label: t('contact.email'), value: c.contact_email, href: `mailto:${c.contact_email}` },
+    c.website_url && { Icon: Globe, label: t('contact.website'), value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
+    c.instagram_url && { Icon: AtSign, label: t('contact.instagram'), value: t('contact.instagramValue'), href: c.instagram_url, external: true },
+    c.address && { Icon: Navigation, label: t('contact.address'), value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
   ].filter(Boolean) as Array<{ Icon: typeof Phone; label: string; value: string; href: string; external?: boolean }>;
 
   if (rows.length === 0) {
-    return <EmptyHint Icon={Phone} text="Контакты пока не указаны" />;
+    return <EmptyHint Icon={Phone} text={t('contactsEmpty')} />;
   }
   return (
     <Reveal delay={0.04}>

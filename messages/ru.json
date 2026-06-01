@@ -93,6 +93,35 @@
       { "emoji": "💬", "title": "AI Раввин рядом", "body": "Глубокий разговор или просто вопрос — спроси прямо сейчас.", "cta_label": "Открыть AI Раввина", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "community": {
+    "tabs": { "info": "Инфо", "guide": "Гид", "contacts": "Контакты" },
+    "otherCommunity": "Другая община",
+    "myCommunity": "Моя община",
+    "members": "{count} участников",
+    "candles": "Свечи {time}",
+    "foundedIn": "Основана в {year}",
+    "leadership": "Руководство",
+    "upcomingEvents": "Ближайшие события",
+    "noEvents": "Пока нет запланированных событий",
+    "programs": "Программы",
+    "manage": "Управление",
+    "noPrograms": "Программ пока нет",
+    "membersTitle": "Участники",
+    "seeAll": "Все",
+    "guideEmpty": "Места ещё не добавлены в город-гид",
+    "contactsEmpty": "Контакты пока не указаны",
+    "roles": { "rabbi": "Раввин", "admin": "Администратор" },
+    "contact": {
+      "phone": "Телефон",
+      "whatsapp": "WhatsApp",
+      "whatsappValue": "Написать в WhatsApp",
+      "email": "Email",
+      "website": "Сайт",
+      "instagram": "Instagram",
+      "instagramValue": "Открыть профиль",
+      "address": "Адрес"
+    }
+  },
   "connect": {
     "title": "Связь",
     "subtitle": "Группы по интересам — в общине и по миру",

@@ -93,6 +93,35 @@
       { "emoji": "💬", "title": "The AI Rabbi is here", "body": "A deep talk or a quick question — just ask right now.", "cta_label": "Open AI Rabbi", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "community": {
+    "tabs": { "info": "Info", "guide": "Guide", "contacts": "Contacts" },
+    "otherCommunity": "Other community",
+    "myCommunity": "My community",
+    "members": "{count} members",
+    "candles": "Candles {time}",
+    "foundedIn": "Founded in {year}",
+    "leadership": "Leadership",
+    "upcomingEvents": "Upcoming events",
+    "noEvents": "No events scheduled yet",
+    "programs": "Programs",
+    "manage": "Manage",
+    "noPrograms": "No programs yet",
+    "membersTitle": "Members",
+    "seeAll": "All",
+    "guideEmpty": "No places added to the city guide yet",
+    "contactsEmpty": "No contacts provided yet",
+    "roles": { "rabbi": "Rabbi", "admin": "Administrator" },
+    "contact": {
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "whatsappValue": "Message on WhatsApp",
+      "email": "Email",
+      "website": "Website",
+      "instagram": "Instagram",
+      "instagramValue": "Open profile",
+      "address": "Address"
+    }
+  },
   "connect": {
     "title": "Connect",
     "subtitle": "Interest groups — in your community and worldwide",
