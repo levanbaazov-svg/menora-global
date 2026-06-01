@@ -12,6 +12,7 @@ import {
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { CommunityTabs } from '../../CommunityTabs';
+import { SwitchToCommunityButton } from './SwitchToCommunityButton';
 import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 const FETCH = /* GraphQL */ `
@@ -257,6 +258,8 @@ export default async function VisitorCommunityPage({
             <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
               ⏳ Заявка на рассмотрении
             </div>
+          ) : membership.status === 'active' ? (
+            <SwitchToCommunityButton communityId={c.id} />
           ) : (
             <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
               Вы участник

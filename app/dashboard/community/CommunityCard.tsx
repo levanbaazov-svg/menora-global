@@ -25,7 +25,10 @@ function fmtCount(n: number): string {
 }
 
 export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: number }) {
-  const href = c.isMine ? '/dashboard/community' : `/dashboard/community/c/${c.slug}`;
+  // Always link to the specific community by slug. The c/[slug] page renders the
+  // full profile and (for your active community) redirects to the member view, so
+  // each card opens its OWN community instead of the active one.
+  const href = `/dashboard/community/c/${c.slug}`;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
