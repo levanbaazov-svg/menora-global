@@ -206,3 +206,53 @@ export async function enrollProgram(_prev: ActionState, formData: FormData): Pro
     return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
   }
 }
+
+// ── Community profile (rabbi/admin) ────────────────────────────────────────
+import { updateCommunitySchema } from '@/lib/community/schema';
+
+const UPDATE_COMMUNITY = /* GraphQL */ `
+  mutation UpdateCommunity($id: uuid!, $set: communities_set_input!) {
+    update_communities_by_pk(pk_columns: { id: $id }, _set: $set) { id }
+  }
+`;
+
+export async function updateCommunity(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Not authenticated');
+  const role = session.hasura.default_role;
+  if (role !== 'rabbi' && role !== 'admin') {
+    return { formError: 'Только раввин или админ может редактировать общину' };
+  }
+
+  const raw: Record<string, unknown> = {};
+  for (const [k, v] of formData.entries()) raw[k] = v;
+  const parsed = updateCommunitySchema.safeParse(raw);
+  if (!parsed.success) {
+    return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
+  }
+
+  const client = await hasuraAsCurrentUser({ role });
+  try {
+    await client.request(UPDATE_COMMUNITY, {
+      id: session.hasura.community_id,
+      set: {
+        name: parsed.data.name,
+        description: parsed.data.description ?? null,
+        denomination: parsed.data.denomination ?? null,
+        founded_year: parsed.data.founded_year ?? null,
+        address: parsed.data.address ?? null,
+        hero_image_url: parsed.data.hero_image_url ?? null,
+        contact_phone: parsed.data.contact_phone ?? null,
+        contact_email: parsed.data.contact_email ?? null,
+        website_url: parsed.data.website_url ?? null,
+        whatsapp_url: parsed.data.whatsapp_url ?? null,
+        instagram_url: parsed.data.instagram_url ?? null,
+      },
+    });
+    revalidatePath('/dashboard/community');
+    redirect('/dashboard/community');
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}

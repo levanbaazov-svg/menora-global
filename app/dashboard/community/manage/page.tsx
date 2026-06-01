@@ -74,6 +74,18 @@ export default async function ManagePage() {
         </p>
       </header>
 
+      <a
+        href="/dashboard/community/manage/edit"
+        className="mb-6 flex items-center justify-between rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3.5 hover:ring-primary/30 transition-all"
+      >
+        <div>
+          <div className="text-sm font-medium leading-tight">Профиль общины</div>
+          <div className="text-xs text-muted-foreground mt-0.5">Описание, фото, контакты, адрес</div>
+        </div>
+        <span className="text-muted-foreground">→</span>
+      </a>
+
+
       {/* Pending banner */}
       {pendingCount > 0 && (
         <Link
