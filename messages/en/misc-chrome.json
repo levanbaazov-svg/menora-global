@@ -1,0 +1,59 @@
+{
+  "miscChrome": {
+    "saving": "Saving",
+    "skip": "Skip",
+    "back": "Back",
+    "rsvp": {
+      "yes": "Going",
+      "maybe": "Maybe",
+      "no": "Not going"
+    },
+    "revoke": "Revoke",
+    "languageLabel": "Язык / Language / שפה",
+    "languageGroup": "Language",
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "prefer_not_say": "Prefer not to say"
+    },
+    "marital": {
+      "single": "Single",
+      "engaged": "Engaged",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed"
+    },
+    "visibility": {
+      "community": "Everyone in the community",
+      "members_only": "Verified members only",
+      "private": "Only me + rabbi"
+    },
+    "steps": {
+      "identity": {
+        "question": "Let's get to know each other",
+        "tagline": "A few basic questions — and we'll find your community."
+      },
+      "family": {
+        "question": "Tell us about your family",
+        "tagline": "This helps us match programs and events — for kids, couples, parents."
+      },
+      "religious": {
+        "question": "How's your relationship with tradition?",
+        "tagline": "No judgment. Any answer is fine. It helps us show what's relevant."
+      },
+      "interests": {
+        "question": "What resonates with you?",
+        "tagline": "Torah, Shabbat, sports, art… pick whatever speaks to you."
+      },
+      "community_choice": {
+        "question": "Find your community",
+        "tagline": "Open the map or apply directly to a rabbi."
+      },
+      "privacy": {
+        "question": "Who sees your profile?",
+        "tagline": "You can change this anytime in settings."
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { notFound, redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { SCENARIOS, type AIScenario } from '@/lib/ai/scenarios';
 import { Chat } from './Chat';
@@ -52,6 +53,8 @@ export default async function ConversationPage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const t = await getTranslations('aiMisc');
+
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const data = await client.request<Resp>(FETCH, { id });
 
@@ -80,7 +83,7 @@ export default async function ConversationPage({
       <div className="flex items-center gap-3 py-2 mb-2 border-b border-(--color-border)/60">
         <Link
           href="/dashboard/ai-rabbi"
-          className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) shrink-0"
+          className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) shrink-0 rtl:-scale-x-100"
         >
           ←
         </Link>
@@ -95,7 +98,7 @@ export default async function ConversationPage({
             {conv.title ?? meta.title}
           </div>
           <div className="text-xs text-(--color-fg-muted)">
-            AI Раввин · {meta.title}
+            {t('aiRabbiSubtitle')} · {meta.title}
           </div>
         </div>
       </div>

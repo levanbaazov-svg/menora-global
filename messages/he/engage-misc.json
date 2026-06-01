@@ -1,0 +1,24 @@
+{
+  "engageMisc": {
+    "routine": {
+      "pause": "השהה",
+      "enable": "הפעל",
+      "pauseLabel": "⏸ השהיה",
+      "resumeLabel": "▶ חידוש",
+      "deleteConfirm": "למחוק את “{label}”? גם היסטוריית הצ'ק-אין תימחק.",
+      "delete": "מחק",
+      "uncheck": "בטל סימון",
+      "check": "סמן כבוצע",
+      "cancel": "בטל",
+      "mark": "סמן"
+    },
+    "inspire": {
+      "removeBookmark": "הסר מהסימניות",
+      "addBookmark": "הוסף לסימניות",
+      "minutes": "{count} דק׳",
+      "minutesReading": "{count} דק׳ קריאה",
+      "whatNext": "מה הלאה",
+      "moreInCategory": "עוד בקטגוריה “{category}”"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "engageMisc": {
+    "routine": {
+      "pause": "Приостановить",
+      "enable": "Включить",
+      "pauseLabel": "⏸ Пауза",
+      "resumeLabel": "▶ Возобновить",
+      "deleteConfirm": "Удалить «{label}»? История чекинов тоже пропадёт.",
+      "delete": "Удалить",
+      "uncheck": "Снять отметку",
+      "check": "Отметить выполненной",
+      "cancel": "Отменить",
+      "mark": "Отметить"
+    },
+    "inspire": {
+      "removeBookmark": "Убрать из закладок",
+      "addBookmark": "В закладки",
+      "minutes": "{count} мин",
+      "minutesReading": "{count} мин чтения",
+      "whatNext": "Что дальше",
+      "moreInCategory": "Ещё в категории «{category}»"
+    }
+  }
+}

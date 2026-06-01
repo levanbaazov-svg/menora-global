@@ -2,6 +2,7 @@
 // warm hero with emoji "subject", progress dots instead of a bar, soft back/skip.
 
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { Hand, Users, Flame, Sparkles, Building2, Lock, type LucideIcon } from 'lucide-react';
 import {
   ONBOARDING_STEPS, STEP_META,
@@ -27,7 +28,8 @@ const TINT_BG: Record<string, string> = {
   cream:    'from-amber-50 via-yellow-50 to-orange-50',
 };
 
-export function StepShell({ step, hasMembership, children }: StepShellProps) {
+export async function StepShell({ step, hasMembership, children }: StepShellProps) {
+  const t = await getTranslations('miscChrome');
   const visibleSteps = ONBOARDING_STEPS.filter(
     (s) => s !== 'community_choice' || !hasMembership,
   );
@@ -37,6 +39,10 @@ export function StepShell({ step, hasMembership, children }: StepShellProps) {
   const meta = STEP_META[step];
   const tintClass = TINT_BG[meta.tint];
   const prevStep = currentIdx > 0 ? visibleSteps[currentIdx - 1] : null;
+  const question = t.has(`steps.${step}.question`) ? t(`steps.${step}.question`) : meta.question;
+  const tagline = meta.tagline
+    ? (t.has(`steps.${step}.tagline`) ? t(`steps.${step}.tagline`) : meta.tagline)
+    : undefined;
 
   return (
     <div className="min-h-screen flex flex-col bg-(--color-bg)">
@@ -47,10 +53,10 @@ export function StepShell({ step, hasMembership, children }: StepShellProps) {
           {prevStep ? (
             <Link
               href={`/onboarding/${prevStep}`}
-              aria-label="Назад"
+              aria-label={t('back')}
               className="w-10 h-10 -ml-2 inline-flex items-center justify-center text-(--color-fg-muted) hover:text-(--color-deep) hover:bg-(--color-bg-muted) rounded-full transition-all"
             >
-              ←
+              <span className="inline-block rtl:-scale-x-100">←</span>
             </Link>
           ) : (
             <span className="w-10 h-10" />
@@ -100,11 +106,11 @@ export function StepShell({ step, hasMembership, children }: StepShellProps) {
             {(() => { const Icon = STEP_ICON[meta.icon]; return <Icon className="text-(--color-gold-dark)" size={34} strokeWidth={1.7} />; })()}
           </div>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-[1.1] tracking-tight mb-3">
-            {meta.question}
+            {question}
           </h1>
-          {meta.tagline && (
+          {tagline && (
             <p className="text-base text-(--color-fg-muted) max-w-md mx-auto leading-relaxed">
-              {meta.tagline}
+              {tagline}
             </p>
           )}
         </div>

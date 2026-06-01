@@ -6,10 +6,12 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftRight, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { switchCommunity } from '@/app/dashboard/_actions/switch-community';
 
 export function SwitchToCommunityButton({ communityId }: { communityId: string }) {
   const router = useRouter();
+  const t = useTranslations('communityMisc');
   const [pending, start] = useTransition();
 
   function go() {
@@ -30,7 +32,7 @@ export function SwitchToCommunityButton({ communityId }: { communityId: string }
       {pending
         ? <Loader2 size={17} className="animate-spin" />
         : <ArrowLeftRight size={16} strokeWidth={2.2} />}
-      Перейти в эту общину
+      {t('switchToCommunity')}
     </button>
   );
 }

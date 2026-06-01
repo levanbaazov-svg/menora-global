@@ -6,6 +6,7 @@
 import Link from 'next/link';
 import { MapPin, Users } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 
 export interface CommunityCardData {
   slug: string;
@@ -25,6 +26,7 @@ function fmtCount(n: number): string {
 }
 
 export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: number }) {
+  const t = useTranslations('communityMisc');
   // Always link to the specific community by slug. The c/[slug] page renders the
   // full profile and (for your active community) redirects to the member view, so
   // each card opens its OWN community instead of the active one.
@@ -60,7 +62,7 @@ export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: 
           {/* Badges */}
           {c.isMine && (
             <span className="absolute top-3 left-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
-              Моя община
+              {t('myCommunity')}
             </span>
           )}
           {c.denomination && !c.isMine && (

@@ -1,0 +1,59 @@
+{
+  "miscChrome": {
+    "saving": "שומר",
+    "skip": "דלג",
+    "back": "חזרה",
+    "rsvp": {
+      "yes": "מגיע",
+      "maybe": "אולי",
+      "no": "לא מגיע"
+    },
+    "revoke": "בטל",
+    "languageLabel": "Язык / Language / שפה",
+    "languageGroup": "Language",
+    "gender": {
+      "male": "זכר",
+      "female": "נקבה",
+      "other": "אחר",
+      "prefer_not_say": "מעדיף שלא לציין"
+    },
+    "marital": {
+      "single": "רווק/ה",
+      "engaged": "מאורס/ת",
+      "married": "נשוי/אה",
+      "divorced": "גרוש/ה",
+      "widowed": "אלמן/ה"
+    },
+    "visibility": {
+      "community": "כל הקהילה",
+      "members_only": "חברים מאומתים בלבד",
+      "private": "רק אני + הרב"
+    },
+    "steps": {
+      "identity": {
+        "question": "בוא נכיר",
+        "tagline": "כמה שאלות בסיסיות — ונמצא את הקהילה שלך."
+      },
+      "family": {
+        "question": "ספר לנו על המשפחה",
+        "tagline": "זה יעזור להתאים תוכניות ואירועים — לילדים, זוגות, הורים."
+      },
+      "religious": {
+        "question": "איך הקשר שלך עם המסורת?",
+        "tagline": "בלי שיפוטיות. כל תשובה בסדר. זה יעזור להציג את הרלוונטי."
+      },
+      "interests": {
+        "question": "מה קרוב אליך?",
+        "tagline": "תורה, שבת, ספורט, אמנות… בחר את מה שמדבר אליך."
+      },
+      "community_choice": {
+        "question": "מצא את הקהילה שלך",
+        "tagline": "פתח את המפה או הגש בקשה ישירות לרב."
+      },
+      "privacy": {
+        "question": "מי רואה את הפרופיל שלך?",
+        "tagline": "אפשר לשנות בכל רגע בהגדרות."
+      }
+    }
+  }
+}

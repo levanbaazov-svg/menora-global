@@ -1,10 +1,12 @@
 'use client';
 
 import { useActionState, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { approvePlace, rejectPlace } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 
 export function PendingPlaceActions({ placeId }: { placeId: string }) {
+  const t = useTranslations('communityMisc');
   const [approveState, approveAction] = useActionState(approvePlace, INITIAL_STATE);
   const [rejectState, rejectActionFn] = useActionState(rejectPlace, INITIAL_STATE);
   const [showReject, setShowReject] = useState(false);
@@ -16,7 +18,7 @@ export function PendingPlaceActions({ placeId }: { placeId: string }) {
         <textarea
           name="reason"
           required rows={2}
-          placeholder="Причина отказа"
+          placeholder={t('rejectReason')}
           className="text-xs px-2 py-1.5 border rounded w-48 max-w-full"
         />
         <button
@@ -24,13 +26,13 @@ export function PendingPlaceActions({ placeId }: { placeId: string }) {
           onClick={() => setShowReject(false)}
           className="text-xs px-3 py-1.5 rounded border hover:bg-(--color-muted-bg)"
         >
-          Отмена
+          {t('cancel')}
         </button>
         <button
           type="submit"
           className="text-xs px-3 py-1.5 rounded bg-red-600 text-white hover:bg-red-700"
         >
-          Отклонить
+          {t('reject')}
         </button>
         {rejectState.formError && (
           <span className="text-xs text-red-600">{rejectState.formError}</span>
@@ -47,7 +49,7 @@ export function PendingPlaceActions({ placeId }: { placeId: string }) {
           type="submit"
           className="text-xs px-3 py-1.5 rounded bg-green-600 text-white hover:bg-green-700 font-medium"
         >
-          ✓ Опубликовать
+          ✓ {t('publish')}
         </button>
       </form>
       <button
@@ -55,7 +57,7 @@ export function PendingPlaceActions({ placeId }: { placeId: string }) {
         onClick={() => setShowReject(true)}
         className="text-xs px-3 py-1.5 rounded border hover:bg-red-50 hover:border-red-300 hover:text-red-700"
       >
-        Отклонить
+        {t('reject')}
       </button>
       {approveState.formError && (
         <span className="text-xs text-red-600">{approveState.formError}</span>

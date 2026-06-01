@@ -6,6 +6,7 @@
 // - Interim transcripts are streamed so the user sees what's being recognized.
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type SpeechRecognitionResult = {
   results: ArrayLike<{
@@ -42,6 +43,7 @@ interface Props {
 export function VoiceInput({
   onTranscript, onSupportDetected, lang = 'ru-RU',
 }: Props) {
+  const t = useTranslations('aiMisc');
   const [listening, setListening] = useState(false);
   const [supported, setSupported] = useState<boolean | null>(null);
   const recRef = useRef<RecognitionInstance | null>(null);
@@ -104,7 +106,7 @@ export function VoiceInput({
       <button
         type="button"
         disabled
-        title="Голосовой ввод недоступен в этом браузере. Открой в Chrome или Safari."
+        title={t('voiceUnavailable')}
         className="w-14 h-14 rounded-full bg-(--color-muted-bg) text-(--color-fg-subtle) flex items-center justify-center cursor-not-allowed"
       >
         🎙
@@ -116,7 +118,7 @@ export function VoiceInput({
     <button
       type="button"
       onClick={listening ? stop : start}
-      aria-label={listening ? 'Остановить запись' : 'Начать запись'}
+      aria-label={listening ? t('stopRecording') : t('startRecording')}
       className={`
         w-14 h-14 rounded-full flex items-center justify-center text-2xl
         transition-all duration-200 shrink-0

@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useOptimistic, startTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { bookmarkItem, unbookmarkItem } from './_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 
@@ -13,6 +14,7 @@ export function BookmarkButton({
   initiallyBookmarked: boolean;
   size?: 'sm' | 'md';
 }) {
+  const t = useTranslations('engageMisc');
   const [optimisticBookmarked, setOptimistic] = useOptimistic(initiallyBookmarked);
   const [_state, action] = useActionState(
     optimisticBookmarked ? unbookmarkItem : bookmarkItem,
@@ -32,8 +34,8 @@ export function BookmarkButton({
       <input type="hidden" name="slug" value={slug} />
       <button
         type="submit"
-        aria-label={optimisticBookmarked ? 'Убрать из закладок' : 'В закладки'}
-        title={optimisticBookmarked ? 'Убрать из закладок' : 'В закладки'}
+        aria-label={optimisticBookmarked ? t('inspire.removeBookmark') : t('inspire.addBookmark')}
+        title={optimisticBookmarked ? t('inspire.removeBookmark') : t('inspire.addBookmark')}
         className={`${sizeClass} inline-flex items-center justify-center rounded-full border transition-all ${
           optimisticBookmarked
             ? 'bg-(--color-gold-soft) border-(--color-gold)/40 text-(--color-gold-dark)'

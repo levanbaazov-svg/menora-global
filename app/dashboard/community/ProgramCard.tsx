@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
 import { PROGRAM_CATEGORY_LABELS, type ProgramCategory } from '@/lib/places/schema';
+import { type Locale } from '@/i18n/config';
 
 interface Props {
   id: string;
@@ -17,15 +19,17 @@ interface Props {
   max_capacity: number | null;
 }
 
-const PERIOD_LABEL: Record<string, string> = {
-  one_time: 'разово', monthly: '/мес', yearly: '/год', per_session: '/занятие',
-};
-
-export function ProgramCard(p: Props) {
+export async function ProgramCard(p: Props) {
+  const t = await getTranslations('communityMisc');
+  const locale = (await getLocale()) as Locale;
+  const PERIOD_LABEL: Record<string, string> = {
+    one_time: t('periodOneTime'), monthly: t('periodMonthly'),
+    yearly: t('periodYearly'), per_session: t('periodPerSession'),
+  };
   const cat = PROGRAM_CATEGORY_LABELS[p.category];
   const seatsLeft = p.max_capacity != null ? p.max_capacity - p.enrolled_count_cached : null;
-  const ageRange = p.age_min != null && p.age_max != null ? `${p.age_min}-${p.age_max} лет`
-                : p.age_min != null ? `от ${p.age_min}` : null;
+  const ageRange = p.age_min != null && p.age_max != null ? t('ageYears', { min: p.age_min, max: p.age_max })
+                : p.age_min != null ? t('ageFrom', { min: p.age_min }) : null;
 
   return (
     <Link
@@ -39,7 +43,7 @@ export function ProgramCard(p: Props) {
           : { background: 'linear-gradient(135deg, var(--color-pastel-yellow), var(--color-pastel-lavender))' }}
       >
         <span className="absolute top-3 left-3 z-10 text-xs px-2 py-1 rounded-full bg-white/90 backdrop-blur font-medium text-(--color-deep)">
-          {cat.emoji} {cat.ru.toUpperCase()}
+          {cat.emoji} {cat[locale].toUpperCase()}
         </span>
         <div className="absolute bottom-0 inset-x-0 p-4 z-10 text-white">
           <h3 className="font-serif text-lg font-semibold leading-tight">{p.name}</h3>
@@ -58,7 +62,7 @@ export function ProgramCard(p: Props) {
         </div>
         {seatsLeft != null && (
           <span className={seatsLeft > 0 ? 'text-(--color-success)' : 'text-(--color-danger)'}>
-            {seatsLeft > 0 ? `${seatsLeft} мест` : 'Мест нет'}
+            {seatsLeft > 0 ? t('seatsLeft', { count: seatsLeft }) : t('noSeats')}
           </span>
         )}
       </div>

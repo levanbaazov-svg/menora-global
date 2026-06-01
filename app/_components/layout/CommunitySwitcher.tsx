@@ -7,6 +7,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, Check, ChevronsUpDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { switchCommunity } from '@/app/dashboard/_actions/switch-community';
 
 export interface CommunityOption {
@@ -23,6 +24,7 @@ export function CommunitySwitcher({
   activeId: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('communityMisc');
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -51,7 +53,7 @@ export function CommunitySwitcher({
           <Building2 size={16} strokeWidth={1.9} />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Активная община</div>
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{t('activeCommunity')}</div>
           <div className="text-sm font-medium leading-tight truncate">{active?.name ?? '—'}</div>
         </div>
         {multi && <ChevronsUpDown size={15} className="shrink-0 text-muted-foreground/60" />}

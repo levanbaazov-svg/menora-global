@@ -78,6 +78,10 @@ export default async function MyProfilePage() {
   const name = displayName(user);
   const checkinsCount = data.checkins_30.aggregate?.count ?? 0;
   const t = await getTranslations('profile');
+  const tc = await getTranslations('miscChrome');
+  const genderLabel = (v: string) => (tc.has(`gender.${v}`) ? tc(`gender.${v}`) : v);
+  const maritalLabel = (v: string) => (tc.has(`marital.${v}`) ? tc(`marital.${v}`) : v);
+  const visibilityLabel = (v: string) => (tc.has(`visibility.${v}`) ? tc(`visibility.${v}`) : v);
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
@@ -141,19 +145,19 @@ export default async function MyProfilePage() {
       <section className="mb-8">
         <h2 className="font-serif text-xl font-semibold mb-3">{t('profile')}</h2>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-          {p?.gender && <Row k={t('fields.gender')} v={GENDER_LABELS[p.gender] ?? p.gender} />}
+          {p?.gender && <Row k={t('fields.gender')} v={genderLabel(p.gender)} />}
           {p?.date_of_birth && <Row k={t('fields.dateOfBirth')} v={fmt(p.date_of_birth)} />}
           {p?.phone_e164 && <Row k={t('fields.phone')} v={p.phone_e164} />}
-          {p?.marital_status && <Row k={t('fields.maritalStatus')} v={MARITAL_LABELS[p.marital_status] ?? p.marital_status} />}
+          {p?.marital_status && <Row k={t('fields.maritalStatus')} v={maritalLabel(p.marital_status)} />}
           {p?.has_children && (
-            <Row k={t('fields.children')} v={p.children_ages?.length ? `${p.children_ages.length} (${p.children_ages.join(', ')} лет)` : 'есть'} />
+            <Row k={t('fields.children')} v={p.children_ages?.length ? t('childrenWithAges', { count: p.children_ages.length, ages: p.children_ages.join(', ') }) : t('childrenYes')} />
           )}
           {p?.spouse_hebrew_name && <Row k={t('fields.spouse')} v={p.spouse_hebrew_name} />}
           {p?.denomination && <Row k={t('fields.denomination')} v={DENOMINATION_LABELS[p.denomination] ?? p.denomination} />}
           {p?.observance_level && <Row k={t('fields.observance')} v={OBSERVANCE_LABELS[p.observance_level] ?? p.observance_level} />}
           {p?.kashrut_level && <Row k={t('fields.kashrut')} v={KASHRUT_LABELS[p.kashrut_level] ?? p.kashrut_level} />}
           {p?.languages && p.languages.length > 0 && <Row k={t('fields.languages')} v={p.languages.join(', ')} />}
-          {p?.profile_visibility && <Row k={t('fields.visibility')} v={VISIBILITY_LABELS[p.profile_visibility] ?? p.profile_visibility} />}
+          {p?.profile_visibility && <Row k={t('fields.visibility')} v={visibilityLabel(p.profile_visibility)} />}
         </dl>
       </section>
 
@@ -203,14 +207,3 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     </div>
   );
 }
-
-const GENDER_LABELS: Record<string, string> = {
-  male: 'Мужской', female: 'Женский', other: 'Другой', prefer_not_say: 'Не указано',
-};
-const MARITAL_LABELS: Record<string, string> = {
-  single: 'Не женат / не замужем', engaged: 'Помолвлен(-а)',
-  married: 'Женат / замужем', divorced: 'В разводе', widowed: 'Вдовец / вдова',
-};
-const VISIBILITY_LABELS: Record<string, string> = {
-  community: 'Все в общине', members_only: 'Только подтверждённые', private: 'Только я + раввин',
-};

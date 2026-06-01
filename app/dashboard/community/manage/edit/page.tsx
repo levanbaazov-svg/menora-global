@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { CommunityEditForm } from './CommunityEditForm';
@@ -18,6 +19,7 @@ const FETCH = /* GraphQL */ `
 
 export default async function EditCommunityPage() {
   const session = await auth();
+  const t = await getTranslations('communityMisc');
   if (!session?.user?.id) redirect('/');
   const role = session.hasura.default_role;
   if (role !== 'rabbi' && role !== 'admin') redirect('/dashboard/community');
@@ -40,10 +42,10 @@ export default async function EditCommunityPage() {
         href="/dashboard/community/manage"
         className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
       >
-        <ChevronLeft size={14} /> Управление
+        <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('manage')}
       </Link>
       <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight mb-5">
-        Профиль общины
+        {t('communityProfile')}
       </h1>
       <CommunityEditForm
         defaults={{

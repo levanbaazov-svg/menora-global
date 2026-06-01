@@ -1,0 +1,28 @@
+{
+  "communityMisc": {
+    "catFood": "בתי קפה ומסעדות",
+    "catPrograms": "תוכניות",
+    "catEvents": "אירועים",
+    "catPeople": "חברים",
+    "periodOneTime": "חד פעמי",
+    "periodMonthly": "/חודש",
+    "periodYearly": "/שנה",
+    "periodPerSession": "/מפגש",
+    "ageYears": "גילאי {min}-{max}",
+    "ageFrom": "מגיל {min}",
+    "seatsLeft": "{count} מקומות",
+    "noSeats": "אזל",
+    "myCommunity": "הקהילה שלי",
+    "rejectReason": "סיבת הדחייה",
+    "cancel": "ביטול",
+    "reject": "דחה",
+    "publish": "פרסם",
+    "manage": "ניהול",
+    "communityProfile": "פרופיל הקהילה",
+    "errorGeneric": "שגיאה",
+    "requestSent": "הבקשה נשלחה",
+    "requestToJoin": "הגש בקשת הצטרפות",
+    "switchToCommunity": "עבור לקהילה זו",
+    "activeCommunity": "קהילה פעילה"
+  }
+}

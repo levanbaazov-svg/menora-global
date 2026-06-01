@@ -1,15 +1,17 @@
 // Card variant for an inspiration item. Used in feeds and grids.
 
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import type { InspirationItem } from '@/lib/inspiration/library';
 import { KIND_LABELS } from '@/lib/inspiration/library';
 
-export function InspirationCard({
+export async function InspirationCard({
   item, variant = 'default',
 }: {
   item: InspirationItem;
   variant?: 'default' | 'compact' | 'hero';
 }) {
+  const t = await getTranslations('engageMisc');
   const meta = KIND_LABELS[item.kind];
 
   if (variant === 'hero') {
@@ -25,7 +27,7 @@ export function InspirationCard({
               {meta.emoji} {meta.ru}
             </span>
             <span className="text-xs px-2.5 py-1 rounded-full bg-white/20 backdrop-blur text-white font-medium">
-              {item.readingTimeMinutes} мин
+              {t('inspire.minutes', { count: item.readingTimeMinutes })}
             </span>
           </div>
           <div className="absolute top-5 right-5 text-3xl drop-shadow-lg">{item.emoji}</div>
@@ -56,7 +58,7 @@ export function InspirationCard({
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-[10px] uppercase tracking-wider text-(--color-fg-muted)">
-            {meta.ru} · {item.readingTimeMinutes} мин
+            {meta.ru} · {t('inspire.minutes', { count: item.readingTimeMinutes })}
           </div>
           <div className="font-medium text-sm leading-tight line-clamp-2 mt-0.5">
             {item.title}
@@ -80,7 +82,7 @@ export function InspirationCard({
         </div>
         <div className="absolute top-2 right-2 text-2xl drop-shadow-md">{item.emoji}</div>
         <div className="absolute bottom-2 right-2 text-[10px] bg-black/40 text-white px-2 py-0.5 rounded-full font-medium">
-          {item.readingTimeMinutes} мин
+          {t('inspire.minutes', { count: item.readingTimeMinutes })}
         </div>
       </div>
       <div className="p-4">

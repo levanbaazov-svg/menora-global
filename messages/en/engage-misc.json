@@ -1,0 +1,24 @@
+{
+  "engageMisc": {
+    "routine": {
+      "pause": "Pause",
+      "enable": "Enable",
+      "pauseLabel": "⏸ Pause",
+      "resumeLabel": "▶ Resume",
+      "deleteConfirm": "Delete “{label}”? Your check-in history will be lost too.",
+      "delete": "Delete",
+      "uncheck": "Uncheck",
+      "check": "Mark as done",
+      "cancel": "Undo",
+      "mark": "Mark"
+    },
+    "inspire": {
+      "removeBookmark": "Remove from bookmarks",
+      "addBookmark": "Add to bookmarks",
+      "minutes": "{count} min",
+      "minutesReading": "{count} min read",
+      "whatNext": "What's next",
+      "moreInCategory": "More in “{category}”"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, startTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { setCheckin } from './_actions';
 import { Check } from 'lucide-react';
 
@@ -11,12 +12,13 @@ export function CheckinToggle({
   routineId: string;
   checked: boolean;
 }) {
+  const t = useTranslations('engageMisc');
   const [optimisticChecked, setOptimistic] = useOptimistic(checked);
 
   return (
     <button
       type="button"
-      aria-label={optimisticChecked ? 'Отменить' : 'Отметить'}
+      aria-label={optimisticChecked ? t('routine.cancel') : t('routine.mark')}
       onClick={() => {
         startTransition(async () => {
           setOptimistic(!optimisticChecked);

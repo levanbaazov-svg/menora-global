@@ -265,6 +265,8 @@
       "languages": "שפות",
       "visibility": "נראות הפרופיל"
     },
+    "childrenWithAges": "{count} (גילאים: {ages})",
+    "childrenYes": "יש",
     "channels": "ערוצים",
     "categories": "קטגוריות"
   }

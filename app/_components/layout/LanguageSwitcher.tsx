@@ -3,7 +3,7 @@
 // Three-way RU / EN / HE language toggle. Writes the cookie via a server action
 // and refreshes so server components re-render in the new locale.
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Languages } from 'lucide-react';
@@ -12,6 +12,7 @@ import { setLocale } from '@/app/_actions/set-locale';
 
 export function LanguageSwitcher() {
   const active = useLocale() as Locale;
+  const t = useTranslations('miscChrome');
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -27,12 +28,12 @@ export function LanguageSwitcher() {
     <div className="px-1">
       <div className="flex items-center gap-1.5 mb-2 text-xs uppercase tracking-wider text-(--color-fg-muted)">
         <Languages size={13} strokeWidth={2} />
-        <span>Язык / Language / שפה</span>
+        <span>{t('languageLabel')}</span>
       </div>
       <div
         className="flex gap-1 rounded-full bg-(--color-bg-muted) p-1"
         role="group"
-        aria-label="Language"
+        aria-label={t('languageGroup')}
       >
         {LOCALES.map((loc) => {
           const isActive = loc === active;

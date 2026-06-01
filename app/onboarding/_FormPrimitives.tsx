@@ -1,6 +1,7 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
+import { useTranslations } from 'next-intl';
 import type { Ref } from 'react';
 
 // Shared form atoms for onboarding. Clockout-influenced:
@@ -208,6 +209,7 @@ export function SubmitButton({
   children, variant = 'dark',
 }: { children: React.ReactNode; variant?: 'dark' | 'gold' }) {
   const { pending } = useFormStatus();
+  const t = useTranslations('miscChrome');
   const styles = variant === 'gold'
     ? 'bg-(--color-gold) text-(--color-deep) shadow-[var(--shadow-gold)]'
     : 'bg-(--color-deep) text-white shadow-[var(--shadow-md)]';
@@ -228,7 +230,7 @@ export function SubmitButton({
       {pending ? (
         <span className="inline-flex items-center gap-2">
           <span className="w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin" />
-          Сохраняю
+          {t('saving')}
         </span>
       ) : (
         <>
@@ -239,8 +241,9 @@ export function SubmitButton({
   );
 }
 
-export function SkipButton({ children = 'Пропустить' }: { children?: React.ReactNode }) {
+export function SkipButton({ children }: { children?: React.ReactNode }) {
   const { pending } = useFormStatus();
+  const t = useTranslations('miscChrome');
   return (
     <button
       type="submit"
@@ -253,7 +256,7 @@ export function SkipButton({ children = 'Пропустить' }: { children?: R
         disabled:opacity-50
       "
     >
-      {children} →
+      {children ?? t('skip')} →
     </button>
   );
 }

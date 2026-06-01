@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { getItemBySlug, KIND_LABELS, INSPIRATION_LIBRARY, type InspirationItem } from '@/lib/inspiration/library';
 import { BookmarkButton } from '../BookmarkButton';
@@ -27,6 +28,8 @@ export default async function InspireDetailPage({
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const t = await getTranslations('engageMisc');
 
   const { slug } = await params;
   const item = getItemBySlug(slug);
@@ -66,7 +69,7 @@ export default async function InspireDetailPage({
                 {meta.emoji} {meta.ru}
               </span>
               <span className="text-xs px-2.5 py-1 rounded-full bg-white/20 backdrop-blur text-white font-medium">
-                {item.readingTimeMinutes} мин чтения
+                {t('inspire.minutesReading', { count: item.readingTimeMinutes })}
               </span>
             </div>
             <div className="text-5xl md:text-6xl mb-4 drop-shadow-lg">{item.emoji}</div>
@@ -109,7 +112,7 @@ export default async function InspireDetailPage({
       {item.cta && item.cta.length > 0 && (
         <div className="mt-10">
           <h3 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-3">
-            Что дальше
+            {t('inspire.whatNext')}
           </h3>
           <div className="grid sm:grid-cols-2 gap-3">
             {item.cta.map((c) => (
@@ -144,7 +147,7 @@ export default async function InspireDetailPage({
       {related.length > 0 && (
         <section className="mt-12 border-t border-(--color-border) pt-8">
           <h3 className="font-serif text-lg font-semibold mb-4">
-            Ещё в категории «{meta.ru}»
+            {t('inspire.moreInCategory', { category: meta.ru })}
           </h3>
           <div className="grid sm:grid-cols-3 gap-3">
             {related.map((r) => (

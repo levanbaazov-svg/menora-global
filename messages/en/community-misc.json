@@ -1,0 +1,28 @@
+{
+  "communityMisc": {
+    "catFood": "Cafés & restaurants",
+    "catPrograms": "Programs",
+    "catEvents": "Events",
+    "catPeople": "Members",
+    "periodOneTime": "one-time",
+    "periodMonthly": "/mo",
+    "periodYearly": "/yr",
+    "periodPerSession": "/session",
+    "ageYears": "ages {min}-{max}",
+    "ageFrom": "from {min}",
+    "seatsLeft": "{count} seats",
+    "noSeats": "Sold out",
+    "myCommunity": "My community",
+    "rejectReason": "Reason for rejection",
+    "cancel": "Cancel",
+    "reject": "Reject",
+    "publish": "Publish",
+    "manage": "Manage",
+    "communityProfile": "Community profile",
+    "errorGeneric": "Error",
+    "requestSent": "Request sent",
+    "requestToJoin": "Request to join",
+    "switchToCommunity": "Switch to this community",
+    "activeCommunity": "Active community"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "aiMisc": {
+    "aiRabbiTitle": "רב AI",
+    "whereToStart": "במה נתחיל?",
+    "recentConversations": "שיחות אחרונות",
+    "conversation": "שיחה",
+    "messageCount": "{count} הודעות",
+    "opening": "פותח...",
+    "startConversation": "💬 התחל שיחה",
+    "aiRabbiSubtitle": "רב AI",
+    "voiceUnavailable": "קלט קולי אינו זמין בדפדפן זה. פתח ב-Chrome או ב-Safari.",
+    "stopRecording": "עצור הקלטה",
+    "startRecording": "התחל הקלטה",
+    "notifications": "התראות",
+    "markAllRead": "סמן הכל כנקרא",
+    "empty": "אין עדיין כלום.",
+    "allHistory": "כל ההיסטוריה →",
+    "justNow": "ממש עכשיו",
+    "minutesAgo": "{count} דק׳",
+    "hoursAgo": "{count} שע׳",
+    "daysAgo": "{count} ימ׳",
+    "shabbat": "שבת",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "inDays": "בעוד {count} {count, plural, one {יום} other {ימים}}",
+    "soon": "בקרוב",
+    "candleLighting": "הדלקת נרות",
+    "havdalah": "הבדלה"
+  }
+}

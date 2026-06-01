@@ -10,6 +10,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { type Locale } from '@/i18n/config';
 import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 interface Tab {
@@ -24,36 +26,33 @@ interface Props {
   isStaff: boolean;
 }
 
-const ALWAYS_VISIBLE_PLACES: Array<{ key: string; emoji: string; label: string }> = [
-  { key: 'synagogue', emoji: PLACE_TYPE_LABELS.synagogue.emoji, label: PLACE_TYPE_LABELS.synagogue.ru },
-  { key: 'food',      emoji: '🍽',                                 label: 'Кафе и рестораны' },
-  { key: 'store',     emoji: PLACE_TYPE_LABELS.store.emoji,     label: PLACE_TYPE_LABELS.store.ru },
-];
-
 const CONDITIONAL_PLACES: PlaceType[] = ['mikvah', 'school', 'service', 'jcc', 'museum', 'cemetery'];
 
 export function CategoryNav({ counts, isStaff }: Props) {
   const params = useSearchParams();
+  const t = useTranslations('communityMisc');
+  const locale = useLocale() as Locale;
   const active = params.get('cat') ?? 'programs';
 
-  const alwaysTabs: Tab[] = ALWAYS_VISIBLE_PLACES.map((t) => ({
-    ...t,
-    count: counts[t.key as keyof typeof counts],
-  }));
+  const alwaysTabs: Tab[] = [
+    { key: 'synagogue', emoji: PLACE_TYPE_LABELS.synagogue.emoji, label: PLACE_TYPE_LABELS.synagogue[locale], count: counts.synagogue },
+    { key: 'food',      emoji: '🍽',                              label: t('catFood'),                        count: counts.food },
+    { key: 'store',     emoji: PLACE_TYPE_LABELS.store.emoji,     label: PLACE_TYPE_LABELS.store[locale],     count: counts.store },
+  ];
 
   const conditionalTabs: Tab[] = CONDITIONAL_PLACES
     .filter((t) => isStaff || (counts[t] ?? 0) > 0)
-    .map((t) => ({
-      key: t,
-      emoji: PLACE_TYPE_LABELS[t].emoji,
-      label: PLACE_TYPE_LABELS[t].ru,
-      count: counts[t],
+    .map((tp) => ({
+      key: tp,
+      emoji: PLACE_TYPE_LABELS[tp].emoji,
+      label: PLACE_TYPE_LABELS[tp][locale],
+      count: counts[tp],
     }));
 
   const extraTabs: Tab[] = [
-    { key: 'programs', emoji: '📖', label: 'Программы', count: counts.programs },
-    { key: 'events',   emoji: '📅', label: 'События',   count: counts.events },
-    { key: 'people',   emoji: '👥', label: 'Участники', count: counts.people },
+    { key: 'programs', emoji: '📖', label: t('catPrograms'), count: counts.programs },
+    { key: 'events',   emoji: '📅', label: t('catEvents'),   count: counts.events },
+    { key: 'people',   emoji: '👥', label: t('catPeople'),   count: counts.people },
   ];
 
   const tabs = [...alwaysTabs, ...conditionalTabs, ...extraTabs];

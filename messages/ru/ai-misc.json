@@ -1,0 +1,30 @@
+{
+  "aiMisc": {
+    "aiRabbiTitle": "AI Раввин",
+    "whereToStart": "С чего начнём?",
+    "recentConversations": "Недавние разговоры",
+    "conversation": "Разговор",
+    "messageCount": "{count} сообщений",
+    "opening": "Открываю...",
+    "startConversation": "💬 Начать разговор",
+    "aiRabbiSubtitle": "AI Раввин",
+    "voiceUnavailable": "Голосовой ввод недоступен в этом браузере. Открой в Chrome или Safari.",
+    "stopRecording": "Остановить запись",
+    "startRecording": "Начать запись",
+    "notifications": "Уведомления",
+    "markAllRead": "Прочитать все",
+    "empty": "Пока пусто.",
+    "allHistory": "Вся история →",
+    "justNow": "только что",
+    "minutesAgo": "{count} мин",
+    "hoursAgo": "{count} ч",
+    "daysAgo": "{count} д",
+    "shabbat": "Шаббат",
+    "today": "сегодня",
+    "tomorrow": "завтра",
+    "inDays": "через {count} {count, plural, one {день} few {дня} other {дней}}",
+    "soon": "скоро",
+    "candleLighting": "Зажигание свечей",
+    "havdalah": "Гавдала"
+  }
+}

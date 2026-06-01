@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
+import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowUpRight, MessageCircle } from 'lucide-react';
@@ -39,6 +40,8 @@ export default async function AiRabbiHub() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const t = await getTranslations('aiMisc');
+
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const { ai_conversations } = await client.request<{ ai_conversations: Conv[] }>(
     FETCH, { user_id: session.user.id },
@@ -48,9 +51,9 @@ export default async function AiRabbiHub() {
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <header className="mb-4 px-0.5">
         <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          AI Раввин
+          {t('aiRabbiTitle')}
         </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">С чего начнём?</p>
+        <p className="text-sm text-muted-foreground mt-0.5">{t('whereToStart')}</p>
       </header>
 
       {/* Scenario grid */}
@@ -82,7 +85,7 @@ export default async function AiRabbiHub() {
       {ai_conversations.length > 0 && (
         <section>
           <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
-            Недавние разговоры
+            {t('recentConversations')}
           </h2>
           <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
             {ai_conversations.map((conv) => (
@@ -96,9 +99,9 @@ export default async function AiRabbiHub() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium leading-tight truncate">
-                    {conv.title ?? SCENARIOS[conv.scenario as keyof typeof SCENARIOS]?.title ?? 'Разговор'}
+                    {conv.title ?? SCENARIOS[conv.scenario as keyof typeof SCENARIOS]?.title ?? t('conversation')}
                   </div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{conv.message_count} сообщений</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{t('messageCount', { count: conv.message_count })}</div>
                 </div>
               </Link>
             ))}

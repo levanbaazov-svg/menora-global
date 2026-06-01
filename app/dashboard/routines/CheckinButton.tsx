@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { setCheckin } from './_actions';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
  * If the server fails, the next render reconciles back from real state.
  */
 export function CheckinButton({ routineId, done }: Props) {
+  const t = useTranslations('engageMisc');
   const [optimisticDone, setOptimisticDone] = useOptimistic(done, (_, next: boolean) => next);
   const [pending, startTransition] = useTransition();
 
@@ -34,7 +36,7 @@ export function CheckinButton({ routineId, done }: Props) {
           ? 'bg-(--color-gold) text-(--color-deep) hover:bg-(--color-gold)/80'
           : 'border-2 border-dashed border-(--color-muted) hover:border-(--color-gold) hover:bg-(--color-gold-soft)'
       }`}
-      title={optimisticDone ? 'Снять отметку' : 'Отметить выполненной'}
+      title={optimisticDone ? t('routine.uncheck') : t('routine.check')}
     >
       {optimisticDone ? '✓' : ''}
     </button>

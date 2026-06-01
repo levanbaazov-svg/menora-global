@@ -4,6 +4,8 @@
 
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { upcomingShabbat } from '@/lib/hebcal';
 import { resolveLocation } from '@/lib/hebcal/timezone';
 import { COOKIE_NAME as TZ_COOKIE } from '@/app/api/me/timezone/route';
@@ -13,11 +15,11 @@ interface Props {
   community: { id: string; name: string; city: string | null; country_code: string | null; timezone: string };
 }
 
-function tzTime(d: Date, tz: string): string {
-  return d.toLocaleTimeString('ru-RU', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
+function tzTime(d: Date, tz: string, bcp47: string): string {
+  return d.toLocaleTimeString(bcp47, { timeZone: tz, hour: '2-digit', minute: '2-digit' });
 }
-function tzDate(d: Date, tz: string): string {
-  return d.toLocaleDateString('ru-RU', {
+function tzDate(d: Date, tz: string, bcp47: string): string {
+  return d.toLocaleDateString(bcp47, {
     timeZone: tz, weekday: 'long', day: 'numeric', month: 'long',
   });
 }
@@ -31,6 +33,9 @@ function daysUntil(target: Date): number {
 }
 
 export async function ShabbatHero({ community }: Props) {
+  const t = await getTranslations('aiMisc');
+  const locale = (await getLocale()) as Locale;
+  const bcp47 = LOCALE_BCP47[locale] ?? 'ru-RU';
   const cookieStore = await cookies();
   const userTz = cookieStore.get(TZ_COOKIE)?.value ?? null;
   const resolved = resolveLocation(userTz, community);
@@ -45,9 +50,9 @@ export async function ShabbatHero({ community }: Props) {
   const days = candle ? daysUntil(candle) : null;
 
   const countdownLabel =
-    days === 0 ? 'сегодня'
-    : days === 1 ? 'завтра'
-    : days != null && days > 1 ? `через ${days} ${days < 5 ? 'дня' : 'дней'}`
+    days === 0 ? t('today')
+    : days === 1 ? t('tomorrow')
+    : days != null && days > 1 ? t('inDays', { count: days })
     : null;
 
   return (
@@ -60,18 +65,18 @@ export async function ShabbatHero({ community }: Props) {
           <Flame className="h-3.5 w-3.5" />
         </div>
         <div className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">
-          Шаббат · {countdownLabel ?? 'скоро'}
+          {t('shabbat')} · {countdownLabel ?? t('soon')}
         </div>
         <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5" />
       </div>
 
       <div className="p-4">
         <div className="font-serif text-xl md:text-2xl font-semibold leading-tight">
-          {shabbat.parshaRu ?? shabbat.parsha ?? 'Шаббат'}
+          {shabbat.parshaRu ?? shabbat.parsha ?? t('shabbat')}
         </div>
         {candle && (
           <div className="text-xs text-muted-foreground mt-1 capitalize">
-            {tzDate(candle, tz)}
+            {tzDate(candle, tz, bcp47)}
           </div>
         )}
 
@@ -79,17 +84,17 @@ export async function ShabbatHero({ community }: Props) {
           {candle && (
             <div>
               <div className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-medium mb-0.5">
-                Зажигание свечей
+                {t('candleLighting')}
               </div>
-              <div className="text-base font-semibold tabular-nums">{tzTime(candle, tz)}</div>
+              <div className="text-base font-semibold tabular-nums">{tzTime(candle, tz, bcp47)}</div>
             </div>
           )}
           {havdalah && (
             <div>
               <div className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-medium mb-0.5">
-                Гавдала
+                {t('havdalah')}
               </div>
-              <div className="text-base font-semibold tabular-nums">{tzTime(havdalah, tz)}</div>
+              <div className="text-base font-semibold tabular-nums">{tzTime(havdalah, tz, bcp47)}</div>
             </div>
           )}
         </div>

@@ -1,0 +1,28 @@
+{
+  "communityMisc": {
+    "catFood": "Кафе и рестораны",
+    "catPrograms": "Программы",
+    "catEvents": "События",
+    "catPeople": "Участники",
+    "periodOneTime": "разово",
+    "periodMonthly": "/мес",
+    "periodYearly": "/год",
+    "periodPerSession": "/занятие",
+    "ageYears": "{min}-{max} лет",
+    "ageFrom": "от {min}",
+    "seatsLeft": "{count} мест",
+    "noSeats": "Мест нет",
+    "myCommunity": "Моя община",
+    "rejectReason": "Причина отказа",
+    "cancel": "Отмена",
+    "reject": "Отклонить",
+    "publish": "Опубликовать",
+    "manage": "Управление",
+    "communityProfile": "Профиль общины",
+    "errorGeneric": "Ошибка",
+    "requestSent": "Заявка отправлена",
+    "requestToJoin": "Подать заявку на вступление",
+    "switchToCommunity": "Перейти в эту общину",
+    "activeCommunity": "Активная община"
+  }
+}

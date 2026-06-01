@@ -265,6 +265,8 @@
       "languages": "Languages",
       "visibility": "Profile visibility"
     },
+    "childrenWithAges": "{count} (ages: {ages})",
+    "childrenYes": "yes",
     "channels": "Channels",
     "categories": "Categories"
   }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Bell } from 'lucide-react';
 
 interface NotificationItem {
@@ -13,16 +14,18 @@ interface NotificationItem {
 
 const POLL_INTERVAL_MS = 30_000;
 
-function ago(iso: string): string {
-  const s = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (s < 60) return 'только что';
-  if (s < 3600) return `${Math.floor(s / 60)} мин`;
-  if (s < 86400) return `${Math.floor(s / 3600)} ч`;
-  return `${Math.floor(s / 86400)} д`;
-}
-
 export function NotificationBell() {
   const router = useRouter();
+  const t = useTranslations('aiMisc');
+
+  function ago(iso: string): string {
+    const s = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (s < 60) return t('justNow');
+    if (s < 3600) return t('minutesAgo', { count: Math.floor(s / 60) });
+    if (s < 86400) return t('hoursAgo', { count: Math.floor(s / 3600) });
+    return t('daysAgo', { count: Math.floor(s / 86400) });
+  }
+
   const [count, setCount] = useState(0);
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [open, setOpen] = useState(false);
@@ -85,7 +88,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Уведомления"
+        aria-label={t('notifications')}
         className="relative w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
       >
         <Bell size={18} strokeWidth={1.9} />
@@ -99,21 +102,21 @@ export function NotificationBell() {
       {open && (
         <div className="absolute right-0 mt-2 w-80 max-h-[28rem] overflow-y-auto bg-white border rounded-xl shadow-lg z-50">
           <div className="sticky top-0 bg-white border-b px-4 py-2 flex items-center justify-between">
-            <span className="text-sm font-semibold">Уведомления</span>
+            <span className="text-sm font-semibold">{t('notifications')}</span>
             {count > 0 && (
               <button
                 type="button"
                 onClick={markAllRead}
                 className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)"
               >
-                Прочитать все
+                {t('markAllRead')}
               </button>
             )}
           </div>
 
           {items.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-(--color-fg-muted)">
-              Пока пусто.
+              {t('empty')}
             </div>
           ) : (
             <ul>
@@ -152,7 +155,7 @@ export function NotificationBell() {
               onClick={() => setOpen(false)}
               className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)"
             >
-              Вся история →
+              {t('allHistory')}
             </Link>
           </div>
         </div>

@@ -1,0 +1,30 @@
+{
+  "aiMisc": {
+    "aiRabbiTitle": "AI Rabbi",
+    "whereToStart": "Where shall we begin?",
+    "recentConversations": "Recent conversations",
+    "conversation": "Conversation",
+    "messageCount": "{count} messages",
+    "opening": "Opening...",
+    "startConversation": "💬 Start conversation",
+    "aiRabbiSubtitle": "AI Rabbi",
+    "voiceUnavailable": "Voice input is not available in this browser. Open it in Chrome or Safari.",
+    "stopRecording": "Stop recording",
+    "startRecording": "Start recording",
+    "notifications": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "Nothing yet.",
+    "allHistory": "All history →",
+    "justNow": "just now",
+    "minutesAgo": "{count} min",
+    "hoursAgo": "{count} h",
+    "daysAgo": "{count} d",
+    "shabbat": "Shabbat",
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "inDays": "in {count} {count, plural, one {day} other {days}}",
+    "soon": "soon",
+    "candleLighting": "Candle lighting",
+    "havdalah": "Havdalah"
+  }
+}

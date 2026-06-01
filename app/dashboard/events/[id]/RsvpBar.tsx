@@ -3,14 +3,15 @@
 // Sticky RSVP action bar: Иду / Возможно / Не иду. Current choice highlighted.
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { setRsvp } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Check, HelpCircle, X } from 'lucide-react';
 
 const OPTIONS = [
-  { status: 'yes',   label: 'Иду',      Icon: Check },
-  { status: 'maybe', label: 'Возможно', Icon: HelpCircle },
-  { status: 'no',    label: 'Не иду',   Icon: X },
+  { status: 'yes',   key: 'yes',   Icon: Check },
+  { status: 'maybe', key: 'maybe', Icon: HelpCircle },
+  { status: 'no',    key: 'no',    Icon: X },
 ] as const;
 
 export function RsvpBar({
@@ -20,6 +21,7 @@ export function RsvpBar({
   current: string | null;
 }) {
   const [state, action, pending] = useActionState(setRsvp, INITIAL_STATE);
+  const t = useTranslations('miscChrome');
 
   return (
     <div>
@@ -46,7 +48,7 @@ export function RsvpBar({
                 `}
               >
                 <o.Icon size={17} strokeWidth={2} />
-                {o.label}
+                {t(`rsvp.${o.key}`)}
               </button>
             </form>
           );

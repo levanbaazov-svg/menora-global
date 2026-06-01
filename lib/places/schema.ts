@@ -121,17 +121,17 @@ export const PROGRAM_CATEGORIES = [
 ] as const;
 export type ProgramCategory = typeof PROGRAM_CATEGORIES[number];
 
-export const PROGRAM_CATEGORY_LABELS: Record<ProgramCategory, { ru: string; emoji: string }> = {
-  kids:        { ru: 'Дети',            emoji: '👶' },
-  teens:       { ru: 'Подростки',       emoji: '🧒' },
-  young_adult: { ru: 'Молодёжь',        emoji: '🧑‍🎓' },
-  couples:     { ru: 'Пары',            emoji: '💑' },
-  families:    { ru: 'Семьи',           emoji: '👨‍👩‍👧' },
-  newcomers:   { ru: 'Новички',         emoji: '👋' },
-  adults:      { ru: 'Взрослые',        emoji: '📚' },
-  seniors:     { ru: 'Старшее поколение', emoji: '👴' },
-  women:       { ru: 'Женские',         emoji: '👩' },
-  men:         { ru: 'Мужские',         emoji: '👨' },
+export const PROGRAM_CATEGORY_LABELS: Record<ProgramCategory, { ru: string; en: string; he: string; emoji: string }> = {
+  kids:        { ru: 'Дети',              en: 'Kids',          he: 'ילדים',        emoji: '👶' },
+  teens:       { ru: 'Подростки',         en: 'Teens',         he: 'נוער',         emoji: '🧒' },
+  young_adult: { ru: 'Молодёжь',          en: 'Young adults',  he: 'צעירים',       emoji: '🧑‍🎓' },
+  couples:     { ru: 'Пары',              en: 'Couples',       he: 'זוגות',        emoji: '💑' },
+  families:    { ru: 'Семьи',             en: 'Families',      he: 'משפחות',       emoji: '👨‍👩‍👧' },
+  newcomers:   { ru: 'Новички',           en: 'Newcomers',     he: 'חדשים',        emoji: '👋' },
+  adults:      { ru: 'Взрослые',          en: 'Adults',        he: 'מבוגרים',      emoji: '📚' },
+  seniors:     { ru: 'Старшее поколение', en: 'Seniors',       he: 'גיל הזהב',     emoji: '👴' },
+  women:       { ru: 'Женские',           en: 'Women',         he: 'נשים',         emoji: '👩' },
+  men:         { ru: 'Мужские',           en: 'Men',           he: 'גברים',        emoji: '👨' },
 };
 
 export const createProgramSchema = z.object({
