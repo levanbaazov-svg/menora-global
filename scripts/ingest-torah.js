@@ -37,9 +37,15 @@ const SOURCES = [
   { collection: 'rashi', author: 'Rashi', category: 'tanakh', authority: 1,
     titleRu: 'Раши на Тору', books: ['Rashi on Genesis','Rashi on Exodus','Rashi on Leviticus','Rashi on Numbers','Rashi on Deuteronomy'],
     chapters: { 'Rashi on Genesis':50, 'Rashi on Exodus':40, 'Rashi on Leviticus':27, 'Rashi on Numbers':36, 'Rashi on Deuteronomy':34 } },
-  // Tanya
+  // Tanya — all five parts
   { collection: 'tanya', author: 'Alter Rebbe', category: 'chassidut', authority: 1,
     titleRu: 'Тания', simpleRefs: tanyaRefs() },
+  // Torah Ohr — Alter Rebbe's chassidic discourses on Bereshit + Shemot (English available)
+  { collection: 'torah_ohr', author: 'Alter Rebbe', category: 'chassidut', authority: 1,
+    titleRu: 'Тора Ор', complexBook: 'Torah Ohr' },
+  // Likkutei Torah — Alter Rebbe's discourses on Vayikra–Devarim + festivals (Hebrew only)
+  { collection: 'likkutei_torah', author: 'Alter Rebbe', category: 'chassidut', authority: 1,
+    titleRu: 'Ликутей Тора', complexBook: 'Likkutei Torah' },
   // Pirkei Avot — 6 chapters
   { collection: 'pirkei_avot', author: 'Mishnah', category: 'mussar', authority: 1,
     titleRu: 'Пиркей Авот', simpleRefs: rangeRefs('Pirkei Avot', 6) },
@@ -69,16 +75,35 @@ function tanyaRefs() {
     ...Array.from({ length: 53 }, (_, i) => `Tanya, Part I; Likkutei Amarim ${i + 1}`),
     ...Array.from({ length: 12 }, (_, i) => `Tanya, Part II; Shaar HaYichud VehaEmunah ${i + 1}`),
     ...Array.from({ length: 12 }, (_, i) => `Tanya, Part III; Iggeret HaTeshuvah ${i + 1}`),
+    ...Array.from({ length: 32 }, (_, i) => `Tanya, Part IV; Iggeret HaKodesh ${i + 1}`),
+    ...Array.from({ length: 9 }, (_, i) => `Tanya, Part V; Kuntres Acharon ${i + 1}`),
   ];
+}
+
+// Enumerate refs for a "complex" Sefaria book by reading its shape: one ref per
+// section of every leaf node, e.g. "Torah Ohr, Bereshit 1".
+async function shapeRefs(book) {
+  const r = await fetch(`https://www.sefaria.org/api/shape/${encodeURIComponent(book)}`, {
+    headers: { Accept: 'application/json' },
+  });
+  if (!r.ok) { console.error(`shape ${book}: ${r.status}`); return []; }
+  const j = await r.json();
+  const node = Array.isArray(j) ? j[0] : j;
+  const leaves = Array.isArray(node?.chapters) ? node.chapters : [];
+  const refs = [];
+  for (const c of leaves) {
+    const sections = typeof c.length === 'number'
+      ? c.length
+      : (typeof c.chapters === 'number' ? c.chapters : 0);
+    for (let i = 1; i <= sections; i++) refs.push(`${c.title} ${i}`);
+  }
+  return refs;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function fetchSefaria(ref) {
-  // v3 API: request the English translation explicitly (the default version is
-  // often Hebrew, which would pollute text_en).
-  const url = `${SEFARIA}/${encodeURIComponent(ref)}?version=english&return_format=text_only`;
+async function fetchOnce(url) {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const res = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -90,6 +115,18 @@ async function fetchSefaria(ref) {
     }
   }
   return null;
+}
+
+async function fetchSefaria(ref) {
+  // Prefer the English translation; fall back to the source (usually Hebrew)
+  // when no English version exists (e.g. Likkutei Torah). Embeddings are
+  // multilingual, so Hebrew sources are still useful for retrieval.
+  const base = `${SEFARIA}/${encodeURIComponent(ref)}`;
+  let json = await fetchOnce(`${base}?version=english&return_format=text_only`);
+  if (!json || !json.versions || json.versions.length === 0) {
+    json = await fetchOnce(`${base}?return_format=text_only`);
+  }
+  return json;
 }
 
 // Extract flat array of English segment strings from a v3 response.
@@ -183,7 +220,11 @@ async function existingRefs() {
 }
 
 // ── Enumerate refs for a source ──────────────────────────────────────────
-function enumerateRefs(src) {
+async function enumerateRefs(src) {
+  if (src.complexBook) {
+    const refs = await shapeRefs(src.complexBook);
+    return refs.map((ref) => ({ ref, titleRu: src.titleRu }));
+  }
   if (src.simpleRefs) return src.simpleRefs.map((ref) => ({ ref, titleRu: src.titleRu }));
   // book + chapters
   const refs = [];
@@ -205,7 +246,7 @@ function enumerateRefs(src) {
   const sources = only ? SOURCES.filter((s) => s.collection === only) : SOURCES;
 
   for (const src of sources) {
-    const refs = enumerateRefs(src);
+    const refs = await enumerateRefs(src);
     console.log(`\n=== ${src.titleRu} (${src.collection}) — ${refs.length} refs ===`);
 
     for (const { ref, titleRu } of refs) {
