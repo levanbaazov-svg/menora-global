@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Avatar } from '../_Avatar';
 
@@ -21,8 +22,6 @@ interface Row {
   user: { id: string; name: string | null; image_url: string | null } | null;
 }
 
-const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Админ' };
-
 export default async function PeoplePage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
@@ -30,14 +29,17 @@ export default async function PeoplePage() {
   const { memberships } = await client.request<{ memberships: Row[] }>(
     LIST, { community_id: session.hasura.community_id },
   );
+  const t = await getTranslations('directory.peopleList');
+  const roleTitle = (role: string) =>
+    role === 'rabbi' || role === 'admin' ? t(role) : null;
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <header className="mb-4 px-0.5">
         <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          Участники
+          {t('title')}
         </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">{memberships.length} человек в общине</p>
+        <p className="text-sm text-muted-foreground mt-0.5">{t('countLine', { count: memberships.length })}</p>
       </header>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
@@ -50,10 +52,10 @@ export default async function PeoplePage() {
             <div className="flex justify-center mb-2">
               <Avatar user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="lg" />
             </div>
-            <div className="font-medium text-xs leading-tight truncate">{m.user?.name ?? 'Без имени'}</div>
-            {(m.community_role || ROLE_TITLE[m.role]) && (
+            <div className="font-medium text-xs leading-tight truncate">{m.user?.name ?? t('noName')}</div>
+            {(m.community_role || roleTitle(m.role)) && (
               <div className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                {m.community_role ?? ROLE_TITLE[m.role]}
+                {m.community_role ?? roleTitle(m.role)}
               </div>
             )}
           </Link>

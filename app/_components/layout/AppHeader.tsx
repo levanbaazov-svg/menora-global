@@ -38,7 +38,7 @@ function greetingKey(): 'night' | 'morning' | 'day' | 'evening' {
 export function AppHeader({ user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const t = useTranslations('header');
-  const firstName = user.name?.split(' ')[0] ?? 'друг';
+  const firstName = user.name?.split(' ')[0] ?? t('friend');
 
   return (
     <>

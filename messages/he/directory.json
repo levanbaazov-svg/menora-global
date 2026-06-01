@@ -1,5 +1,12 @@
 {
   "directory": {
+    "peopleList": {
+      "title": "חברים",
+      "countLine": "{count} אנשים בקהילה",
+      "noName": "ללא שם",
+      "rabbi": "רב",
+      "admin": "מנהל"
+    },
     "members": {
       "title": "חברים",
       "totalLine": "סך הכול {count}.",

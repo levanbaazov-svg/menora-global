@@ -1,5 +1,12 @@
 {
   "directory": {
+    "peopleList": {
+      "title": "Members",
+      "countLine": "{count} people in the community",
+      "noName": "No name",
+      "rabbi": "Rabbi",
+      "admin": "Admin"
+    },
     "members": {
       "title": "Members",
       "totalLine": "{count} total.",

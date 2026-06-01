@@ -1,5 +1,12 @@
 {
   "directory": {
+    "peopleList": {
+      "title": "Участники",
+      "countLine": "{count} человек в общине",
+      "noName": "Без имени",
+      "rabbi": "Раввин",
+      "admin": "Админ"
+    },
     "members": {
       "title": "Участники",
       "totalLine": "Всего {count}.",

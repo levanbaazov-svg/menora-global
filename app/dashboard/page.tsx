@@ -39,7 +39,7 @@ export default async function DashboardPage() {
   const firstName =
     data.user_profiles_by_pk?.legal_first_name
     ?? session.user.name?.split(' ')[0]
-    ?? 'друг';
+    ?? t('friend');
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-2 pb-32 space-y-2.5">

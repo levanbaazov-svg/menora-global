@@ -20,7 +20,8 @@
       "evening": "Добрый вечер"
     },
     "search": "Поиск",
-    "menu": "Открыть меню"
+    "menu": "Открыть меню",
+    "friend": "друг"
   },
   "nav": {
     "home": "Главная",
@@ -51,6 +52,7 @@
   },
   "home": {
     "greeting": "Шалом, <accent>{name}</accent>",
+    "friend": "друг",
     "prompt": "Что у тебя на душе сегодня?",
     "askPlaceholder": "Спросить раввина…",
     "ask": "Спросить",
@@ -267,6 +269,7 @@
     },
     "childrenWithAges": "{count} (возраст: {ages})",
     "childrenYes": "есть",
+    "since": "с {date}",
     "channels": "Каналы",
     "categories": "Категории"
   }

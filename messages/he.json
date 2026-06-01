@@ -20,7 +20,8 @@
       "evening": "ערב טוב"
     },
     "search": "חיפוש",
-    "menu": "פתיחת תפריט"
+    "menu": "פתיחת תפריט",
+    "friend": "חבר"
   },
   "nav": {
     "home": "בית",
@@ -51,6 +52,7 @@
   },
   "home": {
     "greeting": "שלום, <accent>{name}</accent>",
+    "friend": "חבר",
     "prompt": "מה על ליבך היום?",
     "askPlaceholder": "לשאול את הרב…",
     "ask": "לשאול",
@@ -267,6 +269,7 @@
     },
     "childrenWithAges": "{count} (גילאים: {ages})",
     "childrenYes": "יש",
+    "since": "מאז {date}",
     "channels": "ערוצים",
     "categories": "קטגוריות"
   }

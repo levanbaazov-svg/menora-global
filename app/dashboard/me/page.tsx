@@ -116,7 +116,7 @@ export default async function MyProfilePage() {
                   <div className="font-medium">{m.community.name}</div>
                   <div className="text-xs text-(--color-fg-muted) mt-0.5">
                     {[m.community.city, m.community.country_code].filter(Boolean).join(', ')}
-                    {m.joined_at && ` · с ${fmt(m.joined_at)}`}
+                    {m.joined_at && ` · ${t('since', { date: fmt(m.joined_at) ?? '' })}`}
                   </div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full ${badge.cls}`}>{m.role}</span>

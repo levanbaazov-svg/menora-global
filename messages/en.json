@@ -20,7 +20,8 @@
       "evening": "Good evening"
     },
     "search": "Search",
-    "menu": "Open menu"
+    "menu": "Open menu",
+    "friend": "friend"
   },
   "nav": {
     "home": "Home",
@@ -51,6 +52,7 @@
   },
   "home": {
     "greeting": "Shalom, <accent>{name}</accent>",
+    "friend": "friend",
     "prompt": "What's on your soul today?",
     "askPlaceholder": "Ask the rabbi…",
     "ask": "Ask",
@@ -267,6 +269,7 @@
     },
     "childrenWithAges": "{count} (ages: {ages})",
     "childrenYes": "yes",
+    "since": "since {date}",
     "channels": "Channels",
     "categories": "Categories"
   }
