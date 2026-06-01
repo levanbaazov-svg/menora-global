@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "שמירה",
+    "cancel": "ביטול",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "back": "חזרה",
+    "loading": "טוען…",
+    "search": "חיפוש",
+    "send": "שליחה",
+    "more": "עוד",
+    "all": "הכול",
+    "noName": "ללא שם"
+  },
+  "nav": {
+    "home": "בית",
+    "community": "קהילה",
+    "connect": "קשר",
+    "requests": "בקשות",
+    "events": "אירועים"
+  },
+  "drawer": {
+    "spiritual": "רוחני",
+    "personal": "אישי",
+    "management": "ניהול",
+    "aiRabbi": "רב AI",
+    "routine": "השגרה שלי",
+    "inspire": "פרשה · חגים · חוכמה",
+    "jewishId": "תעודת זהות יהודית",
+    "myProfile": "הפרופיל שלי",
+    "notifications": "התראות",
+    "aiAssistant": "עוזר AI",
+    "moderatePlaces": "אישור מקומות",
+    "accessRequests": "בקשות וגישה",
+    "invitations": "הזמנות",
+    "manageCommunity": "ניהול הקהילה",
+    "signOut": "התנתקות",
+    "language": "Язык / Language / שפה"
+  },
+  "home": {
+    "greeting": "שלום, <accent>{name}</accent>",
+    "prompt": "מה על ליבך היום?",
+    "askPlaceholder": "לשאול את הרב…",
+    "ask": "לשאול",
+    "scenarios": {
+      "purposeTitle": "למצוא את עצמי",
+      "purposeSubtitle": "שיחה רוחנית",
+      "shabbatTitle": "לתכנן את השבת",
+      "shabbatSubtitle": "ארוחות בקרבת מקום",
+      "hebrewSchoolTitle": "בית ספר עברי",
+      "hebrewSchoolSubtitle": "המתאים ביותר לילדים",
+      "parshaTitle": "פרשת השבוע",
+      "parshaSubtitle": "חוכמה ב-5 דקות",
+      "meetPeopleTitle": "למצוא את הקהילה שלי",
+      "meetPeopleSubtitle": "ברוכים הבאים",
+      "strugglingTitle": "קשה לי",
+      "strugglingSubtitle": "מרחב בטוח"
+    },
+    "aiCardEyebrow": "רב AI · היום בשבילך"
+  },
+  "profile": {
+    "backToDashboard": "← לדשבורד",
+    "edit": "✎ עריכה",
+    "myCommunities": "הקהילות שלי",
+    "profile": "פרופיל",
+    "about": "אודות",
+    "interests": "תחומי עניין",
+    "notifications": "התראות",
+    "stat_checkins": "צ׳ק-אינים ב-30 ימים",
+    "stat_onboarding": "אונבורדינג",
+    "stat_memberSince": "ב-Menorah מאז",
+    "fields": {
+      "gender": "מגדר",
+      "dateOfBirth": "תאריך לידה",
+      "phone": "טלפון",
+      "maritalStatus": "מצב משפחתי",
+      "children": "ילדים",
+      "spouse": "בן/בת זוג",
+      "denomination": "זרם",
+      "observance": "שמירת מצוות",
+      "kashrut": "כשרות",
+      "languages": "שפות",
+      "visibility": "נראות הפרופיל"
+    },
+    "channels": "ערוצים",
+    "categories": "קטגוריות"
+  }
+}

@@ -195,8 +195,8 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 12px);
 
-  --font-sans: var(--font-inter, ui-sans-serif), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-fraunces, ui-serif), Georgia, serif;
+  --font-sans: var(--font-inter, ui-sans-serif), var(--font-hebrew), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-fraunces, ui-serif), var(--font-hebrew), Georgia, serif;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════

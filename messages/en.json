@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "loading": "Loading…",
+    "search": "Search",
+    "send": "Send",
+    "more": "More",
+    "all": "All",
+    "noName": "No name"
+  },
+  "nav": {
+    "home": "Home",
+    "community": "Community",
+    "connect": "Connect",
+    "requests": "Requests",
+    "events": "Events"
+  },
+  "drawer": {
+    "spiritual": "Spiritual",
+    "personal": "Personal",
+    "management": "Management",
+    "aiRabbi": "AI Rabbi",
+    "routine": "My routine",
+    "inspire": "Parsha · holidays · wisdom",
+    "jewishId": "Jewish ID",
+    "myProfile": "My profile",
+    "notifications": "Notifications",
+    "aiAssistant": "AI Assistant",
+    "moderatePlaces": "Moderate places",
+    "accessRequests": "Requests & access",
+    "invitations": "Invitations",
+    "manageCommunity": "Manage community",
+    "signOut": "Sign out",
+    "language": "Язык / Language / שפה"
+  },
+  "home": {
+    "greeting": "Shalom, <accent>{name}</accent>",
+    "prompt": "What's on your soul today?",
+    "askPlaceholder": "Ask the rabbi…",
+    "ask": "Ask",
+    "scenarios": {
+      "purposeTitle": "Find myself",
+      "purposeSubtitle": "Spiritual dialogue",
+      "shabbatTitle": "Plan my Shabbat",
+      "shabbatSubtitle": "Dinners near you",
+      "hebrewSchoolTitle": "Hebrew school",
+      "hebrewSchoolSubtitle": "Best fit for kids",
+      "parshaTitle": "Weekly Parsha",
+      "parshaSubtitle": "5-minute wisdom",
+      "meetPeopleTitle": "Meet my people",
+      "meetPeopleSubtitle": "Newcomers welcome",
+      "strugglingTitle": "I'm struggling",
+      "strugglingSubtitle": "A safe space"
+    },
+    "aiCardEyebrow": "AI Rabbi · today for you"
+  },
+  "profile": {
+    "backToDashboard": "← To dashboard",
+    "edit": "✎ Edit",
+    "myCommunities": "My communities",
+    "profile": "Profile",
+    "about": "About",
+    "interests": "Interests",
+    "notifications": "Notifications",
+    "stat_checkins": "check-ins in 30 days",
+    "stat_onboarding": "onboarding",
+    "stat_memberSince": "on Menorah since",
+    "fields": {
+      "gender": "Gender",
+      "dateOfBirth": "Date of birth",
+      "phone": "Phone",
+      "maritalStatus": "Marital status",
+      "children": "Children",
+      "spouse": "Spouse",
+      "denomination": "Denomination",
+      "observance": "Observance",
+      "kashrut": "Kashrut",
+      "languages": "Languages",
+      "visibility": "Profile visibility"
+    },
+    "channels": "Channels",
+    "categories": "Categories"
+  }
+}

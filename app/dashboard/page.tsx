@@ -4,19 +4,20 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Reveal } from '@/components/motion/Reveal';
 import { ScenarioTile, type ScenarioTint } from './_ScenarioTile';
 import { DailyHomeCard } from '@/app/_components/ai/DailyHomeCard';
 import { HomeAskBar } from '@/app/_components/ai/HomeAskBar';
 import { RoutineHomeCard } from './_RoutineHomeCard';
 
-const SCENARIOS: Array<{ href: string; title: string; subtitle: string; tint: ScenarioTint }> = [
-  { href: '/dashboard/ai-rabbi/purpose',       tint: 'yellow',   title: 'Найти себя',          subtitle: 'Духовный диалог' },
-  { href: '/dashboard/ai-rabbi/shabbat',       tint: 'lavender', title: 'Спланировать Шаббат', subtitle: 'Ужины рядом' },
-  { href: '/dashboard/ai-rabbi/hebrew-school', tint: 'mint',     title: 'Hebrew school',       subtitle: 'Школа для детей' },
-  { href: '/dashboard/ai-rabbi/parsha',        tint: 'rose',     title: 'Парша недели',        subtitle: '5-минутная мудрость' },
-  { href: '/dashboard/ai-rabbi/meet-people',   tint: 'sky',      title: 'Найти своих',         subtitle: 'Знакомства' },
-  { href: '/dashboard/ai-rabbi/struggling',    tint: 'cream',    title: 'Мне тяжело',          subtitle: 'Безопасно' },
+const SCENARIOS: Array<{ href: string; key: string; tint: ScenarioTint }> = [
+  { href: '/dashboard/ai-rabbi/purpose',       tint: 'yellow',   key: 'purpose' },
+  { href: '/dashboard/ai-rabbi/shabbat',       tint: 'lavender', key: 'shabbat' },
+  { href: '/dashboard/ai-rabbi/hebrew-school', tint: 'mint',     key: 'hebrewSchool' },
+  { href: '/dashboard/ai-rabbi/parsha',        tint: 'rose',     key: 'parsha' },
+  { href: '/dashboard/ai-rabbi/meet-people',   tint: 'sky',      key: 'meetPeople' },
+  { href: '/dashboard/ai-rabbi/struggling',    tint: 'cream',    key: 'struggling' },
 ];
 
 const FETCH = /* GraphQL */ `
@@ -34,6 +35,7 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect('/');
 
   const data = await hasuraAdmin.request<Data>(FETCH, { user_id: session.user.id });
+  const t = await getTranslations('home');
   const firstName =
     data.user_profiles_by_pk?.legal_first_name
     ?? session.user.name?.split(' ')[0]
@@ -45,10 +47,13 @@ export default async function DashboardPage() {
       <Reveal>
         <header className="px-0.5">
           <h1 className="font-serif text-[26px] md:text-3xl font-semibold leading-[1.05] tracking-tight">
-            Шалом, <em className="italic font-normal text-primary">{firstName}</em>
+            {t.rich('greeting', {
+              name: firstName,
+              accent: (chunks) => <em className="italic font-normal text-primary">{chunks}</em>,
+            })}
           </h1>
           <h2 className="font-serif text-base text-foreground/70 mt-1">
-            Что у тебя на душе сегодня?
+            {t('prompt')}
           </h2>
         </header>
       </Reveal>
@@ -59,8 +64,8 @@ export default async function DashboardPage() {
           <ScenarioTile
             key={s.href}
             href={s.href}
-            title={s.title}
-            subtitle={s.subtitle}
+            title={t(`scenarios.${s.key}Title`)}
+            subtitle={t(`scenarios.${s.key}Subtitle`)}
             tint={s.tint}
             index={i}
           />

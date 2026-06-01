@@ -5,10 +5,12 @@
 // typed question auto-sent.
 
 import { useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { Sparkles, ArrowUp, Loader2 } from 'lucide-react';
 import { askRabbiFromHome } from '@/app/dashboard/ai-rabbi/_actions';
 
 export function HomeAskBar() {
+  const t = useTranslations('home');
   const [text, setText] = useState('');
   const [pending, startTransition] = useTransition();
 
@@ -38,7 +40,7 @@ export function HomeAskBar() {
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Спросить раввина…"
+            placeholder={t('askPlaceholder')}
             disabled={pending}
             enterKeyHint="send"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-foreground/45 disabled:opacity-60 py-1.5"
@@ -46,7 +48,7 @@ export function HomeAskBar() {
           <button
             type="submit"
             disabled={!text.trim() || pending}
-            aria-label="Спросить"
+            aria-label={t('ask')}
             className="shrink-0 w-9 h-9 rounded-full bg-foreground text-background flex items-center justify-center hover:opacity-90 disabled:opacity-30 transition-opacity"
           >
             {pending

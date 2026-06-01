@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter, Geist } from 'next/font/google';
+import { Fraunces, Inter, Geist, Noto_Sans_Hebrew } from 'next/font/google';
 import './globals.css';
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
+import { dirFor } from '@/i18n/config';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -22,6 +25,14 @@ const fraunces = Fraunces({
 const inter = Inter({
   subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
   variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+});
+
+// Hebrew glyphs (Inter has none) — fallback in the --font-sans chain.
+const hebrew = Noto_Sans_Hebrew({
+  subsets: ['hebrew'],
+  variable: '--font-hebrew',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
 });
@@ -50,18 +61,27 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="ru" className={cn(fraunces.variable, inter.variable, "font-sans", geist.variable)}>
+    <html
+      lang={locale}
+      dir={dirFor(locale)}
+      className={cn(fraunces.variable, inter.variable, hebrew.variable, "font-sans", geist.variable)}
+    >
       <body>
-        <TooltipProvider delayDuration={300}>
-          {children}
-        </TooltipProvider>
-        <Toaster richColors position="top-center" />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <TooltipProvider delayDuration={300}>
+            {children}
+          </TooltipProvider>
+          <Toaster richColors position="top-center" />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

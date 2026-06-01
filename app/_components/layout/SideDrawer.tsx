@@ -7,6 +7,7 @@
 // Built on shadcn Sheet + lucide icons + sectioned grouped lists.
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   Sparkles, Flame, BookOpenText, ScanLine, Bell, UserRound,
   Bot, ShieldCheck, MailPlus, Settings2, LogOut, ChevronRight,
@@ -18,11 +19,12 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import type { UserDisplay } from '@/lib/profile/display';
 import { CommunitySwitcher, type CommunityOption } from './CommunitySwitcher';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface MenuItem {
   href: string;
   Icon: LucideIcon;
-  label: string;
+  labelKey: string;
   badge?: string;
   highlight?: boolean;
 }
@@ -30,23 +32,23 @@ interface MenuItem {
 // Items that DON'T duplicate the bottom-nav tabs.
 // Personal / utility / admin only.
 const SPIRITUAL: MenuItem[] = [
-  { href: '/dashboard/ai-rabbi',       Icon: Sparkles,      label: 'AI Раввин' },
-  { href: '/dashboard/routines',       Icon: Flame,         label: 'Моя рутина' },
-  { href: '/dashboard/inspire',        Icon: BookOpenText,  label: 'Парша · праздники · мудрости' },
+  { href: '/dashboard/ai-rabbi',       Icon: Sparkles,      labelKey: 'aiRabbi' },
+  { href: '/dashboard/routines',       Icon: Flame,         labelKey: 'routine' },
+  { href: '/dashboard/inspire',        Icon: BookOpenText,  labelKey: 'inspire' },
 ];
 
 const PERSONAL: MenuItem[] = [
-  { href: '/dashboard/me/jewish-id',   Icon: ScanLine,      label: 'Jewish ID',     highlight: true },
-  { href: '/dashboard/me',             Icon: UserRound,     label: 'Мой профиль' },
-  { href: '/dashboard/notifications',  Icon: Bell,          label: 'Уведомления' },
+  { href: '/dashboard/me/jewish-id',   Icon: ScanLine,      labelKey: 'jewishId',      highlight: true },
+  { href: '/dashboard/me',             Icon: UserRound,     labelKey: 'myProfile' },
+  { href: '/dashboard/notifications',  Icon: Bell,          labelKey: 'notifications' },
 ];
 
 const ADMIN: MenuItem[] = [
-  { href: '/dashboard/assistant',          Icon: Bot,          label: 'AI Ассистент',  highlight: true },
-  { href: '/dashboard/community/pending',  Icon: ShieldCheck,  label: 'Модерация мест' },
-  { href: '/dashboard/members',            Icon: UserRound,    label: 'Заявки и доступ' },
-  { href: '/dashboard/invitations',        Icon: MailPlus,     label: 'Приглашения' },
-  { href: '/dashboard/community/manage',   Icon: Settings2,    label: 'Управление общиной' },
+  { href: '/dashboard/assistant',          Icon: Bot,          labelKey: 'aiAssistant',     highlight: true },
+  { href: '/dashboard/community/pending',  Icon: ShieldCheck,  labelKey: 'moderatePlaces' },
+  { href: '/dashboard/members',            Icon: UserRound,    labelKey: 'accessRequests' },
+  { href: '/dashboard/invitations',        Icon: MailPlus,     labelKey: 'invitations' },
+  { href: '/dashboard/community/manage',   Icon: Settings2,    labelKey: 'manageCommunity' },
 ];
 
 interface Props {
@@ -62,6 +64,7 @@ interface Props {
 
 export function SideDrawer({ open, onClose, user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
   const isStaff = role === 'rabbi' || role === 'admin';
+  const t = useTranslations('drawer');
 
   return (
     <Sheet open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
@@ -95,9 +98,10 @@ export function SideDrawer({ open, onClose, user, role, communityName, communiti
           {communities && communities.length > 1 && activeCommunityId && (
             <CommunitySwitcher communities={communities} activeId={activeCommunityId} />
           )}
-          <SectionList title="Духовное" items={SPIRITUAL} onClose={onClose} />
-          <SectionList title="Личное" items={PERSONAL} onClose={onClose} />
-          {isStaff && <SectionList title="Управление" items={ADMIN} onClose={onClose} />}
+          <SectionList title={t('spiritual')} items={SPIRITUAL} t={t} onClose={onClose} />
+          <SectionList title={t('personal')} items={PERSONAL} t={t} onClose={onClose} />
+          {isStaff && <SectionList title={t('management')} items={ADMIN} t={t} onClose={onClose} />}
+          <LanguageSwitcher />
         </div>
 
         {/* Sign out + footer */}
@@ -113,7 +117,7 @@ export function SideDrawer({ open, onClose, user, role, communityName, communiti
               <span className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0">
                 <LogOut size={16} strokeWidth={1.9} />
               </span>
-              <span>Выйти</span>
+              <span>{t('signOut')}</span>
             </button>
           </form>
           <div className="px-3 pb-1 text-[10px] text-muted-foreground/70">
@@ -126,11 +130,12 @@ export function SideDrawer({ open, onClose, user, role, communityName, communiti
 }
 
 function SectionList({
-  title, items, onClose,
+  title, items, onClose, t,
 }: {
   title: string;
   items: MenuItem[];
   onClose: () => void;
+  t: (key: string) => string;
 }) {
   return (
     <div>
@@ -157,7 +162,7 @@ function SectionList({
               >
                 <it.Icon size={16} strokeWidth={1.9} />
               </span>
-              <span className="flex-1 font-medium truncate">{it.label}</span>
+              <span className="flex-1 font-medium truncate">{t(it.labelKey)}</span>
               {it.badge && (
                 <Badge variant="secondary" className="text-[10px]">{it.badge}</Badge>
               )}

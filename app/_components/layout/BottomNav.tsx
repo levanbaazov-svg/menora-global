@@ -6,23 +6,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
 import { Home, Building2, MessageCircle, HandHeart, CalendarDays } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface Tab {
   href: string;
-  label: string;
+  labelKey: string;
   Icon: LucideIcon;
   matchPrefix: string;
 }
 
 const TABS: Tab[] = [
-  { href: '/dashboard',           label: 'Главная',  Icon: Home,          matchPrefix: '/dashboard' },
-  { href: '/dashboard/community', label: 'Община',   Icon: Building2,     matchPrefix: '/dashboard/community' },
-  { href: '/dashboard/connect',   label: 'Связь',    Icon: MessageCircle, matchPrefix: '/dashboard/connect' },
-  { href: '/dashboard/requests',  label: 'Просьбы',  Icon: HandHeart,     matchPrefix: '/dashboard/requests' },
-  { href: '/dashboard/events',    label: 'События',  Icon: CalendarDays,  matchPrefix: '/dashboard/events' },
+  { href: '/dashboard',           labelKey: 'home',      Icon: Home,          matchPrefix: '/dashboard' },
+  { href: '/dashboard/community', labelKey: 'community', Icon: Building2,     matchPrefix: '/dashboard/community' },
+  { href: '/dashboard/connect',   labelKey: 'connect',   Icon: MessageCircle, matchPrefix: '/dashboard/connect' },
+  { href: '/dashboard/requests',  labelKey: 'requests',  Icon: HandHeart,     matchPrefix: '/dashboard/requests' },
+  { href: '/dashboard/events',    labelKey: 'events',    Icon: CalendarDays,  matchPrefix: '/dashboard/events' },
 ];
 
 function isActive(pathname: string, tab: Tab): boolean {
@@ -32,6 +33,7 @@ function isActive(pathname: string, tab: Tab): boolean {
 
 export function BottomNav() {
   const pathname = usePathname() ?? '/dashboard';
+  const t = useTranslations('nav');
 
   return (
     <nav
@@ -51,15 +53,16 @@ export function BottomNav() {
             backdrop-blur-[28px] backdrop-saturate-[180%]
           "
         >
-          {TABS.map((t) => {
-            const active = isActive(pathname, t);
-            const Icon = t.Icon;
+          {TABS.map((tab) => {
+            const active = isActive(pathname, tab);
+            const Icon = tab.Icon;
+            const label = t(tab.labelKey);
             return (
               <Link
-                key={t.href}
-                href={t.href}
+                key={tab.href}
+                href={tab.href}
                 aria-current={active ? 'page' : undefined}
-                aria-label={t.label}
+                aria-label={label}
                 className="relative flex flex-col items-center justify-center gap-0.5 px-3.5 py-1.5 rounded-full group transition-colors"
               >
                 {active && (
@@ -85,7 +88,7 @@ export function BottomNav() {
                     active ? 'text-primary' : 'text-foreground/50'
                   }`}
                 >
-                  {t.label}
+                  {label}
                 </span>
               </Link>
             );

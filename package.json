@@ -49,6 +49,7 @@
     "motion": "^12.40.0",
     "next": "^16.2.6",
     "next-auth": "^5.0.0-beta.31",
+    "next-intl": "^4.13.0",
     "next-themes": "^0.4.6",
     "qrcode": "^1.5.4",
     "radix-ui": "^1.4.3",

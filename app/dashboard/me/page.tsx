@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Avatar } from '../_Avatar';
 import {
@@ -76,11 +77,12 @@ export default async function MyProfilePage() {
   const p = user.profile;
   const name = displayName(user);
   const checkinsCount = data.checkins_30.aggregate?.count ?? 0;
+  const t = await getTranslations('profile');
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <Link href="/dashboard" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
-        ← К дашборду
+        {t('backToDashboard')}
       </Link>
 
       <header className="flex items-start gap-5 mb-8">
@@ -94,13 +96,13 @@ export default async function MyProfilePage() {
           href="/dashboard/me/edit"
           className="px-4 py-2 rounded-full border text-sm font-semibold hover:bg-(--color-muted-bg)"
         >
-          ✎ Редактировать
+          {t('edit')}
         </Link>
       </header>
 
       {/* Communities */}
       <section className="mb-8">
-        <h2 className="font-serif text-xl font-semibold mb-3">Мои общины</h2>
+        <h2 className="font-serif text-xl font-semibold mb-3">{t('myCommunities')}</h2>
         <div className="space-y-2">
           {data.memberships.map((m) => {
             const badge = ROLE_BADGES[m.role];
@@ -122,43 +124,43 @@ export default async function MyProfilePage() {
 
       {/* Activity stats */}
       <section className="mb-8 grid grid-cols-3 gap-3">
-        <Stat label="чекинов за 30 дн" value={checkinsCount} />
-        <Stat label="онбординг" value={user.onboarded_at ? '✓' : '–'} />
-        <Stat label="в Menorah с" value={fmt(user.created_at) ?? '—'} />
+        <Stat label={t('stat_checkins')} value={checkinsCount} />
+        <Stat label={t('stat_onboarding')} value={user.onboarded_at ? '✓' : '–'} />
+        <Stat label={t('stat_memberSince')} value={fmt(user.created_at) ?? '—'} />
       </section>
 
       {/* Bio */}
       {p?.bio && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">О себе</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">{t('about')}</h2>
           <p className="whitespace-pre-wrap">{p.bio}</p>
         </section>
       )}
 
       {/* Profile details */}
       <section className="mb-8">
-        <h2 className="font-serif text-xl font-semibold mb-3">Профиль</h2>
+        <h2 className="font-serif text-xl font-semibold mb-3">{t('profile')}</h2>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-          {p?.gender && <Row k="Пол" v={GENDER_LABELS[p.gender] ?? p.gender} />}
-          {p?.date_of_birth && <Row k="Дата рождения" v={fmt(p.date_of_birth)} />}
-          {p?.phone_e164 && <Row k="Телефон" v={p.phone_e164} />}
-          {p?.marital_status && <Row k="Семейный статус" v={MARITAL_LABELS[p.marital_status] ?? p.marital_status} />}
+          {p?.gender && <Row k={t('fields.gender')} v={GENDER_LABELS[p.gender] ?? p.gender} />}
+          {p?.date_of_birth && <Row k={t('fields.dateOfBirth')} v={fmt(p.date_of_birth)} />}
+          {p?.phone_e164 && <Row k={t('fields.phone')} v={p.phone_e164} />}
+          {p?.marital_status && <Row k={t('fields.maritalStatus')} v={MARITAL_LABELS[p.marital_status] ?? p.marital_status} />}
           {p?.has_children && (
-            <Row k="Дети" v={p.children_ages?.length ? `${p.children_ages.length} (${p.children_ages.join(', ')} лет)` : 'есть'} />
+            <Row k={t('fields.children')} v={p.children_ages?.length ? `${p.children_ages.length} (${p.children_ages.join(', ')} лет)` : 'есть'} />
           )}
-          {p?.spouse_hebrew_name && <Row k="Супруг(а)" v={p.spouse_hebrew_name} />}
-          {p?.denomination && <Row k="Направление" v={DENOMINATION_LABELS[p.denomination] ?? p.denomination} />}
-          {p?.observance_level && <Row k="Соблюдение" v={OBSERVANCE_LABELS[p.observance_level] ?? p.observance_level} />}
-          {p?.kashrut_level && <Row k="Кашрут" v={KASHRUT_LABELS[p.kashrut_level] ?? p.kashrut_level} />}
-          {p?.languages && p.languages.length > 0 && <Row k="Языки" v={p.languages.join(', ')} />}
-          {p?.profile_visibility && <Row k="Видимость профиля" v={VISIBILITY_LABELS[p.profile_visibility] ?? p.profile_visibility} />}
+          {p?.spouse_hebrew_name && <Row k={t('fields.spouse')} v={p.spouse_hebrew_name} />}
+          {p?.denomination && <Row k={t('fields.denomination')} v={DENOMINATION_LABELS[p.denomination] ?? p.denomination} />}
+          {p?.observance_level && <Row k={t('fields.observance')} v={OBSERVANCE_LABELS[p.observance_level] ?? p.observance_level} />}
+          {p?.kashrut_level && <Row k={t('fields.kashrut')} v={KASHRUT_LABELS[p.kashrut_level] ?? p.kashrut_level} />}
+          {p?.languages && p.languages.length > 0 && <Row k={t('fields.languages')} v={p.languages.join(', ')} />}
+          {p?.profile_visibility && <Row k={t('fields.visibility')} v={VISIBILITY_LABELS[p.profile_visibility] ?? p.profile_visibility} />}
         </dl>
       </section>
 
       {/* Interests */}
       {p?.interests && p.interests.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Интересы</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">{t('interests')}</h2>
           <div className="flex flex-wrap gap-1.5">
             {p.interests.map((i) => (
               <span key={i} className="text-sm px-3 py-1 rounded-full bg-(--color-muted-bg)">
@@ -172,10 +174,10 @@ export default async function MyProfilePage() {
       {/* Notifications */}
       {p?.notification_prefs && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Уведомления</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">{t('notifications')}</h2>
           <p className="text-sm text-(--color-fg-muted)">
-            Каналы: {p.notification_prefs.channels?.join(', ') ?? '—'}<br />
-            Категории: {p.notification_prefs.categories?.join(', ') ?? '—'}
+            {t('channels')}: {p.notification_prefs.channels?.join(', ') ?? '—'}<br />
+            {t('categories')}: {p.notification_prefs.categories?.join(', ') ?? '—'}
           </p>
         </section>
       )}

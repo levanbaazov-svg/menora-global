@@ -3,11 +3,13 @@
 
 import Link from 'next/link';
 import { Sparkles, ChevronRight } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { Reveal } from '@/components/motion/Reveal';
 import { getDailyHomeSuggestion } from '@/lib/ai/suggestions';
 
 export async function DailyHomeCard({ userId }: { userId: string }) {
   const s = await getDailyHomeSuggestion(userId);
+  const t = await getTranslations('home');
 
   return (
     <Reveal delay={0.05}>
@@ -33,7 +35,7 @@ export async function DailyHomeCard({ userId }: { userId: string }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[9px] uppercase tracking-[0.18em] text-primary font-semibold mb-1">
-              AI Раввин · сегодня для тебя
+              {t('aiCardEyebrow')}
             </div>
             <h3 className="font-serif text-[15px] font-semibold leading-snug mb-1">
               {s.title}

@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "back": "Назад",
+    "loading": "Загрузка…",
+    "search": "Поиск",
+    "send": "Отправить",
+    "more": "Ещё",
+    "all": "Все",
+    "noName": "Без имени"
+  },
+  "nav": {
+    "home": "Главная",
+    "community": "Община",
+    "connect": "Связь",
+    "requests": "Просьбы",
+    "events": "События"
+  },
+  "drawer": {
+    "spiritual": "Духовное",
+    "personal": "Личное",
+    "management": "Управление",
+    "aiRabbi": "AI Раввин",
+    "routine": "Моя рутина",
+    "inspire": "Парша · праздники · мудрости",
+    "jewishId": "Jewish ID",
+    "myProfile": "Мой профиль",
+    "notifications": "Уведомления",
+    "aiAssistant": "AI Ассистент",
+    "moderatePlaces": "Модерация мест",
+    "accessRequests": "Заявки и доступ",
+    "invitations": "Приглашения",
+    "manageCommunity": "Управление общиной",
+    "signOut": "Выйти",
+    "language": "Язык / Language / שפה"
+  },
+  "home": {
+    "greeting": "Шалом, <accent>{name}</accent>",
+    "prompt": "Что у тебя на душе сегодня?",
+    "askPlaceholder": "Спросить раввина…",
+    "ask": "Спросить",
+    "scenarios": {
+      "purposeTitle": "Найти себя",
+      "purposeSubtitle": "Духовный диалог",
+      "shabbatTitle": "Спланировать Шаббат",
+      "shabbatSubtitle": "Ужины рядом",
+      "hebrewSchoolTitle": "Hebrew school",
+      "hebrewSchoolSubtitle": "Школа для детей",
+      "parshaTitle": "Парша недели",
+      "parshaSubtitle": "5-минутная мудрость",
+      "meetPeopleTitle": "Найти своих",
+      "meetPeopleSubtitle": "Знакомства",
+      "strugglingTitle": "Мне тяжело",
+      "strugglingSubtitle": "Безопасно"
+    },
+    "aiCardEyebrow": "AI Раввин · сегодня для тебя"
+  },
+  "profile": {
+    "backToDashboard": "← К дашборду",
+    "edit": "✎ Редактировать",
+    "myCommunities": "Мои общины",
+    "profile": "Профиль",
+    "about": "О себе",
+    "interests": "Интересы",
+    "notifications": "Уведомления",
+    "stat_checkins": "чекинов за 30 дн",
+    "stat_onboarding": "онбординг",
+    "stat_memberSince": "в Menorah с",
+    "fields": {
+      "gender": "Пол",
+      "dateOfBirth": "Дата рождения",
+      "phone": "Телефон",
+      "maritalStatus": "Семейный статус",
+      "children": "Дети",
+      "spouse": "Супруг(а)",
+      "denomination": "Направление",
+      "observance": "Соблюдение",
+      "kashrut": "Кашрут",
+      "languages": "Языки",
+      "visibility": "Видимость профиля"
+    },
+    "channels": "Каналы",
+    "categories": "Категории"
+  }
+}
