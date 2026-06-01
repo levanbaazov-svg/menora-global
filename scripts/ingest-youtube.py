@@ -50,6 +50,26 @@ CATEGORY = "community_rabbi"
 EMBED_MODEL = "text-embedding-3-small"
 
 from youtube_transcript_api import YouTubeTranscriptApi  # noqa: E402
+try:
+    from youtube_transcript_api.proxies import GenericProxyConfig, WebshareProxyConfig
+except Exception:
+    GenericProxyConfig = WebshareProxyConfig = None
+
+# Pace + retry (YouTube IP-blocks aggressive transcript scraping).
+DELAY = float(os.environ.get("YT_DELAY", "2.5"))
+BACKOFFS = [30, 90, 180, 300]  # seconds to wait between IpBlocked retries
+
+def make_api():
+    # Optional proxy to avoid IP blocks: Webshare (YT_WEBSHARE_USER/PASS) or a
+    # generic HTTP(S) proxy (YT_PROXY=http://user:pass@host:port).
+    if WebshareProxyConfig and os.environ.get("YT_WEBSHARE_USER"):
+        return YouTubeTranscriptApi(proxy_config=WebshareProxyConfig(
+            proxy_username=os.environ["YT_WEBSHARE_USER"],
+            proxy_password=os.environ.get("YT_WEBSHARE_PASS", "")))
+    if GenericProxyConfig and os.environ.get("YT_PROXY"):
+        p = os.environ["YT_PROXY"]
+        return YouTubeTranscriptApi(proxy_config=GenericProxyConfig(http_url=p, https_url=p))
+    return YouTubeTranscriptApi()
 
 # ── helpers ────────────────────────────────────────────────────────────────
 def run_sql(sql, read_only=False):
@@ -83,9 +103,12 @@ def list_videos(channel):
             vids.append((vid.strip(), title.strip()))
     return vids
 
+_API = None
 def fetch_transcript(vid):
-    api = YouTubeTranscriptApi()
-    ft = api.fetch(vid, languages=["ru"])
+    global _API
+    if _API is None:
+        _API = make_api()
+    ft = _API.fetch(vid, languages=["ru"])
     return " ".join(s["text"].replace("\n", " ") for s in ft.to_raw_data() if s["text"].strip())
 
 def chunk_text(text, chunk_words=220):
@@ -140,11 +163,25 @@ def main():
         if ref in done:
             print(f"[{n}/{len(videos)}] · skip {vid}")
             continue
-        try:
-            text = fetch_transcript(vid)
-        except Exception as e:
-            print(f"[{n}/{len(videos)}] x no transcript {vid}: {type(e).__name__}")
-            time.sleep(1.0)
+        text = None
+        for attempt in range(len(BACKOFFS) + 1):
+            try:
+                text = fetch_transcript(vid)
+                break
+            except Exception as e:
+                name = type(e).__name__
+                if "IpBlocked" in name or "TooManyRequests" in name or "RequestBlocked" in name:
+                    if attempt < len(BACKOFFS):
+                        wait = BACKOFFS[attempt]
+                        print(f"[{n}/{len(videos)}] … IpBlocked {vid}, backoff {wait}s")
+                        time.sleep(wait)
+                        continue
+                    print(f"[{n}/{len(videos)}] x blocked (gave up) {vid}")
+                else:
+                    print(f"[{n}/{len(videos)}] x no transcript {vid}: {name}")
+                break
+        if not text:
+            time.sleep(DELAY)
             continue
         if len(text) < 200:
             print(f"[{n}/{len(videos)}] o empty {vid}")
@@ -168,7 +205,7 @@ def main():
             print(f"[{n}/{len(videos)}] ✓ {vid} — {len(rows)} chunks — {title[:50]}")
         except Exception as e:
             print(f"[{n}/{len(videos)}] store fail {vid}: {str(e)[:120]}")
-        time.sleep(0.5)  # be polite to YouTube
+        time.sleep(DELAY)  # be polite to YouTube
 
     print(f"\n✅ Done. Stored {total_chunks} new chunks.")
 
