@@ -17,6 +17,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import type { UserDisplay } from '@/lib/profile/display';
+import { CommunitySwitcher, type CommunityOption } from './CommunitySwitcher';
 
 interface MenuItem {
   href: string;
@@ -54,10 +55,12 @@ interface Props {
   user: UserDisplay;
   role: string;
   communityName?: string;
+  communities?: CommunityOption[];
+  activeCommunityId?: string;
   signOutAction: () => Promise<void>;
 }
 
-export function SideDrawer({ open, onClose, user, role, communityName, signOutAction }: Props) {
+export function SideDrawer({ open, onClose, user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
   const isStaff = role === 'rabbi' || role === 'admin';
 
   return (
@@ -89,6 +92,9 @@ export function SideDrawer({ open, onClose, user, role, communityName, signOutAc
 
         {/* Scrollable middle */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          {communities && communities.length > 1 && activeCommunityId && (
+            <CommunitySwitcher communities={communities} activeId={activeCommunityId} />
+          )}
           <SectionList title="Духовное" items={SPIRITUAL} onClose={onClose} />
           <SectionList title="Личное" items={PERSONAL} onClose={onClose} />
           {isStaff && <SectionList title="Управление" items={ADMIN} onClose={onClose} />}

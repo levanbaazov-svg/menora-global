@@ -14,10 +14,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import type { UserDisplay } from '@/lib/profile/display';
 
+import type { CommunityOption } from './CommunitySwitcher';
+
 interface Props {
   user: UserDisplay;
   role: string;
   communityName?: string;
+  communities?: CommunityOption[];
+  activeCommunityId?: string;
   signOutAction: () => Promise<void>;
 }
 
@@ -30,7 +34,7 @@ function getGreeting(): string {
   return 'Доброй ночи';
 }
 
-export function AppHeader({ user, role, communityName, signOutAction }: Props) {
+export function AppHeader({ user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const firstName = user.name?.split(' ')[0] ?? 'друг';
 
@@ -93,6 +97,8 @@ export function AppHeader({ user, role, communityName, signOutAction }: Props) {
         user={user}
         role={role}
         communityName={communityName}
+        communities={communities}
+        activeCommunityId={activeCommunityId}
         signOutAction={signOutAction}
       />
     </>

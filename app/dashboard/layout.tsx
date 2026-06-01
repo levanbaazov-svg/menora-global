@@ -14,9 +14,10 @@ const HEADER_DATA = /* GraphQL */ `
     }
     memberships(
       where: { user_id: { _eq: $user_id }, status: { _eq: active } }
-      limit: 1
+      order_by: { joined_at: asc }
     ) {
-      community { id name }
+      role
+      community { id name city }
     }
   }
 `;
