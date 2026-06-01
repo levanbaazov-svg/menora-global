@@ -93,6 +93,17 @@
       { "emoji": "💬", "title": "The AI Rabbi is here", "body": "A deep talk or a quick question — just ask right now.", "cta_label": "Open AI Rabbi", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "events": {
+    "title": "Events",
+    "upcoming": "{count} upcoming",
+    "create": "Create",
+    "createFirst": "Create the first one",
+    "empty": "No events in the community yet.",
+    "past": "Past",
+    "going": "Going",
+    "host": "Host",
+    "free": "Free"
+  },
   "profile": {
     "backToDashboard": "← To dashboard",
     "edit": "✎ Edit",

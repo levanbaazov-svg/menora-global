@@ -16,6 +16,13 @@ export const LOCALE_DIR: Record<Locale, 'ltr' | 'rtl'> = {
   he: 'rtl',
 };
 
+/** BCP-47 tags for Intl date/number formatting per locale. */
+export const LOCALE_BCP47: Record<Locale, string> = {
+  ru: 'ru-RU',
+  en: 'en-US',
+  he: 'he-IL',
+};
+
 /** Human-readable language names (shown in the switcher, in their own script). */
 export const LOCALE_LABELS: Record<Locale, string> = {
   ru: 'Русский',

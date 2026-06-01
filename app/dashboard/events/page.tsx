@@ -3,9 +3,13 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { Plus, MapPin, Users, CalendarDays } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
+
+type T = Awaited<ReturnType<typeof getTranslations<'events'>>>;
 
 const LIST_EVENTS = /* GraphQL */ `
   query ListEvents($community_id: uuid!) {
@@ -39,6 +43,8 @@ export default async function EventsListPage() {
   const { events } = await client.request<{ events: EventRow[] }>(
     LIST_EVENTS, { community_id: session.hasura.community_id },
   );
+  const t = await getTranslations('events');
+  const locale = (await getLocale()) as Locale;
 
   const now = Date.now();
   const upcoming = events.filter((e) => new Date(e.starts_at).getTime() >= now);
@@ -49,26 +55,26 @@ export default async function EventsListPage() {
       <header className="flex items-start justify-between gap-3 mb-4 px-0.5">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-            События
+            {t('title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {upcoming.length} предстоящих
+            {t('upcoming', { count: upcoming.length })}
           </p>
         </div>
         <Link
           href="/dashboard/events/new"
           className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
-          <Plus size={15} strokeWidth={2.4} /> Создать
+          <Plus size={15} strokeWidth={2.4} /> {t('create')}
         </Link>
       </header>
 
       {events.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border px-4 py-10 text-center">
           <CalendarDays size={28} strokeWidth={1.5} className="mx-auto text-muted-foreground/50 mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">Пока нет событий в общине.</p>
+          <p className="text-sm text-muted-foreground mb-4">{t('empty')}</p>
           <Link href="/dashboard/events/new" className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold">
-            Создать первое
+            {t('createFirst')}
           </Link>
         </div>
       ) : (
@@ -77,7 +83,7 @@ export default async function EventsListPage() {
             <section className="space-y-3">
               {upcoming.map((e, i) => (
                 <Reveal key={e.id} delay={0.03 * i}>
-                  <EventCard e={e} userId={session.user.id} />
+                  <EventCard e={e} userId={session.user.id} t={t} locale={locale} />
                 </Reveal>
               ))}
             </section>
@@ -86,10 +92,10 @@ export default async function EventsListPage() {
           {past.length > 0 && (
             <section>
               <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
-                Прошедшие
+                {t('past')}
               </h2>
               <div className="space-y-3 opacity-70">
-                {past.map((e) => <EventCard key={e.id} e={e} userId={session.user.id} />)}
+                {past.map((e) => <EventCard key={e.id} e={e} userId={session.user.id} t={t} locale={locale} />)}
               </div>
             </section>
           )}
@@ -99,10 +105,10 @@ export default async function EventsListPage() {
   );
 }
 
-function EventCard({ e, userId }: { e: EventRow; userId: string }) {
+function EventCard({ e, userId, t, locale }: { e: EventRow; userId: string; t: T; locale: Locale }) {
   const myRsvp = e.rsvps.find((r) => r.user_id === userId)?.status;
   const isHost = e.host?.id === userId;
-  const when = new Date(e.starts_at).toLocaleString('ru-RU', {
+  const when = new Date(e.starts_at).toLocaleString(LOCALE_BCP47[locale], {
     timeZone: e.timezone || undefined,
     weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
@@ -131,10 +137,10 @@ function EventCard({ e, userId }: { e: EventRow; userId: string }) {
 
         <div className="absolute top-3 right-3 flex gap-1.5">
           {myRsvp === 'yes' && (
-            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm">Иду</span>
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm">{t('going')}</span>
           )}
           {isHost && (
-            <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-foreground shadow-sm">Хост</span>
+            <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-foreground shadow-sm">{t('host')}</span>
           )}
         </div>
 
@@ -157,8 +163,8 @@ function EventCard({ e, userId }: { e: EventRow; userId: string }) {
           <Users size={12} strokeWidth={2} />
           {e.attendee_count_cached}{e.max_attendees ? `/${e.max_attendees}` : ''}
         </span>
-        <span className="ml-auto font-medium text-foreground/70">
-          {price ?? 'Бесплатно'}
+        <span className="ms-auto font-medium text-foreground/70">
+          {price ?? t('free')}
         </span>
       </div>
     </Link>

@@ -93,6 +93,17 @@
       { "emoji": "💬", "title": "רב ה-AI כאן", "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.", "cta_label": "לרב ה-AI", "cta_href": "/dashboard/ai-rabbi" }
     ]
   },
+  "events": {
+    "title": "אירועים",
+    "upcoming": "{count} קרובים",
+    "create": "יצירה",
+    "createFirst": "ליצור את הראשון",
+    "empty": "אין עדיין אירועים בקהילה.",
+    "past": "שעברו",
+    "going": "מגיע/ה",
+    "host": "מארח/ת",
+    "free": "חינם"
+  },
   "profile": {
     "backToDashboard": "← לדשבורד",
     "edit": "✎ עריכה",
