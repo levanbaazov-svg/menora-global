@@ -57,7 +57,9 @@ except Exception:
 
 # Pace + retry (YouTube IP-blocks aggressive transcript scraping).
 DELAY = float(os.environ.get("YT_DELAY", "2.5"))
-BACKOFFS = [30, 90, 180, 300]  # seconds to wait between IpBlocked retries
+BACKOFFS = [20, 60]  # seconds to wait between IpBlocked retries
+MAX_CONSEC_BLOCKS = int(os.environ.get("YT_MAX_CONSEC_BLOCKS", "3"))  # stop run when IP is blocked
+MAX_NEW = int(os.environ.get("YT_MAX_NEW", "0"))  # 0 = unlimited; else cap new videos per run
 
 def make_api():
     # Optional proxy to avoid IP blocks: Webshare (YT_WEBSHARE_USER/PASS) or a
@@ -158,12 +160,15 @@ def main():
     print(f"Channel videos: {len(videos)}")
 
     total_chunks = 0
+    new_videos = 0
+    consec_blocked = 0
     for n, (vid, title) in enumerate(videos, 1):
         ref = f"yt:{vid}"
         if ref in done:
             print(f"[{n}/{len(videos)}] · skip {vid}")
             continue
         text = None
+        blocked = False
         for attempt in range(len(BACKOFFS) + 1):
             try:
                 text = fetch_transcript(vid)
@@ -177,9 +182,18 @@ def main():
                         time.sleep(wait)
                         continue
                     print(f"[{n}/{len(videos)}] x blocked (gave up) {vid}")
+                    blocked = True
                 else:
                     print(f"[{n}/{len(videos)}] x no transcript {vid}: {name}")
                 break
+        if blocked:
+            consec_blocked += 1
+            if consec_blocked >= MAX_CONSEC_BLOCKS:
+                print(f"\n⏸ IP blocked ({consec_blocked} in a row) — stopping; resume on next run.")
+                break
+            time.sleep(DELAY)
+            continue
+        consec_blocked = 0
         if not text:
             time.sleep(DELAY)
             continue
@@ -202,7 +216,11 @@ def main():
         try:
             store(rows)
             total_chunks += len(rows)
+            new_videos += 1
             print(f"[{n}/{len(videos)}] ✓ {vid} — {len(rows)} chunks — {title[:50]}")
+            if MAX_NEW and new_videos >= MAX_NEW:
+                print(f"\n✔ Reached YT_MAX_NEW={MAX_NEW} this run.")
+                break
         except Exception as e:
             print(f"[{n}/{len(videos)}] store fail {vid}: {str(e)[:120]}")
         time.sleep(DELAY)  # be polite to YouTube
