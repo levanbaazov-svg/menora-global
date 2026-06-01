@@ -5,6 +5,7 @@
 
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Flame, Trophy, CalendarCheck, CircleCheck } from 'lucide-react';
 
 function CountUp({ value }: { value: number }) {
@@ -26,6 +27,7 @@ export function StreakHeader({
   doneToday: number;
   totalToday: number;
 }) {
+  const t = useTranslations('personal');
   return (
     <div className="grid grid-cols-2 gap-2.5">
       {/* Big current streak */}
@@ -51,23 +53,23 @@ export function StreakHeader({
           <div>
             <div className="text-3xl font-bold leading-none tabular-nums">
               <CountUp value={current} />
-              <span className="text-lg font-semibold ml-1">
-                {current === 1 ? 'день' : current >= 2 && current <= 4 ? 'дня' : 'дней'}
+              <span className="text-lg font-semibold ms-1">
+                {t('routines.stats.days', { count: current })}
               </span>
             </div>
             <div className="text-xs text-background/85 mt-1">
-              {current > 0 ? 'Серия продолжается — не прерывай!' : 'Начни новую серию сегодня'}
+              {current > 0 ? t('routines.stats.streakActive') : t('routines.stats.streakStart')}
             </div>
           </div>
           <div className="ml-auto text-right">
             <div className="text-sm font-semibold tabular-nums">{doneToday}/{totalToday}</div>
-            <div className="text-[10px] text-background/80 uppercase tracking-wide">сегодня</div>
+            <div className="text-[10px] text-background/80 uppercase tracking-wide">{t('routines.stats.today')}</div>
           </div>
         </div>
       </motion.div>
 
-      <StatCard Icon={Trophy} value={longest} label="Рекорд" tint="text-amber-600 bg-amber-50" delay={0.06} />
-      <StatCard Icon={CircleCheck} value={totalCheckins} label="Всего отметок" tint="text-emerald-600 bg-emerald-50" delay={0.1} />
+      <StatCard Icon={Trophy} value={longest} label={t('routines.stats.record')} tint="text-amber-600 bg-amber-50" delay={0.06} />
+      <StatCard Icon={CircleCheck} value={totalCheckins} label={t('routines.stats.totalCheckins')} tint="text-emerald-600 bg-emerald-50" delay={0.1} />
     </div>
   );
 }

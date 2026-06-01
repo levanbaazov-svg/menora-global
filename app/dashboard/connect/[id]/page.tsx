@@ -4,8 +4,10 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import {
-  GROUP_CATEGORY_LABELS, VISIBILITY_LABELS,
+  GROUP_CATEGORY_LABELS,
   type GroupCategory, type GroupVisibility,
 } from '@/lib/groups/schema';
 import { JoinLeaveButton } from '../JoinLeaveButton';
@@ -82,6 +84,9 @@ export default async function GroupDetailPage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const t = await getTranslations('connectPage');
+  const locale = (await getLocale()) as Locale;
+
   const { id } = await params;
   const userId = session.user.id;
   const role = session.hasura.default_role;
@@ -106,7 +111,7 @@ export default async function GroupDetailPage({
         href="/dashboard/connect"
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
       >
-        ← К группам
+        <span className="inline-block rtl:-scale-x-100">←</span> {t('backToGroups')}
       </Link>
 
       {/* Hero */}
@@ -121,16 +126,16 @@ export default async function GroupDetailPage({
           <div className="relative">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs uppercase tracking-widest bg-white/85 text-(--color-deep) px-2 py-1 rounded-full font-medium">
-                {meta.emoji} {meta.ru}
+                {meta.emoji} {meta[locale]}
               </span>
               {g.is_ai_suggested && (
                 <span className="text-[10px] px-2 py-1 rounded-full bg-(--color-gold) text-(--color-deep) font-semibold">
-                  AI Suggested
+                  {t('aiSuggested')}
                 </span>
               )}
               {!g.community_id && (
                 <span className="text-[10px] px-2 py-1 rounded-full bg-white/20 backdrop-blur text-white font-medium">
-                  🌍 Global
+                  🌍 {t('global')}
                 </span>
               )}
             </div>
@@ -138,7 +143,7 @@ export default async function GroupDetailPage({
               {g.name}
             </h1>
             <div className="flex items-center gap-3 text-sm opacity-90 mt-2">
-              <span>👥 {g.member_count_cached} участников</span>
+              <span>👥 {t('members', { count: g.member_count_cached })}</span>
               {g.community && (
                 <span>· {g.community.name}{g.community.city ? `, ${g.community.city}` : ''}</span>
               )}
@@ -152,7 +157,7 @@ export default async function GroupDetailPage({
         <JoinLeaveButton groupId={g.id} isMember={isMember} />
         {isGroupAdmin && (
           <span className="text-xs px-2.5 py-1 rounded-full bg-(--color-gold-soft) text-(--color-gold-dark) font-medium">
-            ⭐ Админ
+            ⭐ {t('admin')}
           </span>
         )}
       </div>
@@ -160,26 +165,26 @@ export default async function GroupDetailPage({
       {/* Meta */}
       <section className="grid sm:grid-cols-2 gap-3 mb-8">
         {g.frequency && (
-          <MetaCard emoji="🗓" label="Расписание" value={g.frequency} />
+          <MetaCard emoji="🗓" label={t('schedule')} value={g.frequency} />
         )}
         {g.meeting_place ? (
           <MetaCard
-            emoji="📍" label="Место"
+            emoji="📍" label={t('place')}
             value={g.meeting_place.name}
             sub={g.meeting_place.address ?? undefined}
           />
         ) : g.meeting_location ? (
-          <MetaCard emoji="📍" label="Место" value={g.meeting_location} />
+          <MetaCard emoji="📍" label={t('place')} value={g.meeting_location} />
         ) : null}
         <MetaCard
-          emoji="🔒" label="Доступ"
-          value={VISIBILITY_LABELS[g.visibility].ru}
-          sub={VISIBILITY_LABELS[g.visibility].hint}
+          emoji="🔒" label={t('access')}
+          value={t(`visibility.${g.visibility}`)}
+          sub={t(`visibilityHint.${g.visibility}`)}
         />
         {g.creator && (
           <MetaCard
-            emoji="✦" label="Создатель"
-            value={g.creator.name ?? 'Без имени'}
+            emoji="✦" label={t('creator')}
+            value={g.creator.name ?? t('noName')}
           />
         )}
       </section>
@@ -187,7 +192,7 @@ export default async function GroupDetailPage({
       {/* Description */}
       {g.description && (
         <section className="mb-8">
-          <h2 className="font-serif text-lg font-semibold mb-2">О группе</h2>
+          <h2 className="font-serif text-lg font-semibold mb-2">{t('aboutGroup')}</h2>
           <p className="text-sm text-(--color-fg) whitespace-pre-wrap leading-relaxed">
             {g.description}
           </p>
@@ -213,14 +218,14 @@ export default async function GroupDetailPage({
       {/* Members preview */}
       <section className="mb-8">
         <h2 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2">
-          👥 Участники
+          👥 {t('membersHeading')}
           <span className="text-xs font-normal text-(--color-fg-muted)">
             {g.member_count_cached}
           </span>
         </h2>
 
         {data.memberships.length === 0 ? (
-          <p className="text-sm text-(--color-fg-muted)">Пока никого. Будь первым!</p>
+          <p className="text-sm text-(--color-fg-muted)">{t('noMembers')}</p>
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {data.memberships.map((m) => (
@@ -234,10 +239,10 @@ export default async function GroupDetailPage({
                   )}
                 </div>
                 <div className="text-[11px] mt-1.5 truncate" title={m.user?.name ?? ''}>
-                  {m.user?.name ?? 'Без имени'}
+                  {m.user?.name ?? t('noName')}
                 </div>
                 {m.role === 'admin' && (
-                  <div className="text-[9px] text-(--color-gold-dark) font-semibold mt-0.5">АДМИН</div>
+                  <div className="text-[9px] text-(--color-gold-dark) font-semibold mt-0.5">{t('memberAdmin')}</div>
                 )}
               </div>
             ))}
@@ -245,7 +250,7 @@ export default async function GroupDetailPage({
         )}
         {g.member_count_cached > data.memberships.length && (
           <p className="text-xs text-(--color-fg-subtle) mt-3">
-            Показаны первые {data.memberships.length} из {g.member_count_cached}.
+            {t('showingFirst', { shown: data.memberships.length, total: g.member_count_cached })}
           </p>
         )}
       </section>
@@ -254,10 +259,9 @@ export default async function GroupDetailPage({
       <section className="mb-8">
         <div className="rounded-2xl border border-dashed border-(--color-border) p-5 text-center">
           <div className="text-3xl opacity-50 mb-2">💬</div>
-          <div className="font-medium text-sm">Чат группы — скоро</div>
+          <div className="font-medium text-sm">{t('chatTitle')}</div>
           <p className="text-xs text-(--color-fg-muted) mt-1 max-w-sm mx-auto">
-            Сейчас договаривайтесь о встречах в общих чатах вашей общины. Real-time чат прямо
-            внутри группы — в v1.1.
+            {t('chatHint')}
           </p>
         </div>
       </section>
@@ -266,7 +270,7 @@ export default async function GroupDetailPage({
       {canArchive && (
         <section className="mt-10 border-t border-(--color-border) pt-6">
           <h3 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-3">
-            Управление
+            {t('management')}
           </h3>
           <ArchiveGroupButton groupId={g.id} />
         </section>

@@ -4,12 +4,14 @@ import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { type Locale } from '@/i18n/config';
 import {
   CalendarClock, MapPin, Wallet, Users, ChevronLeft, BadgeCheck,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
-import { PROGRAM_CATEGORY_LABELS, type ProgramCategory } from '@/lib/places/schema';
+import { type ProgramCategory } from '@/lib/places/schema';
 import { EnrollButton } from './EnrollButton';
 
 const FETCH = /* GraphQL */ `
@@ -30,10 +32,6 @@ const FETCH = /* GraphQL */ `
     ) { id status }
   }
 `;
-
-const PERIOD_LABEL: Record<string, string> = {
-  one_time: 'разово', monthly: 'в месяц', yearly: 'в год', per_session: 'за занятие',
-};
 
 export default async function ProgramDetailPage({
   params,
@@ -65,14 +63,26 @@ export default async function ProgramDetailPage({
   const p = data.programs_by_pk;
   if (!p) notFound();
 
-  const meta = PROGRAM_CATEGORY_LABELS[p.category];
+  const t = await getTranslations('communityPages');
+  const locale = (await getLocale()) as Locale;
+
   const enrollment = data.my_enrollment[0] ?? null;
   const isFull = p.max_capacity != null && p.enrolled_count_cached >= p.max_capacity;
+  const periodLabel = p.price_period
+    ? (['one_time', 'monthly', 'yearly', 'per_session'].includes(p.price_period)
+        ? t(`program.period.${p.price_period}`)
+        : p.price_period)
+    : null;
   const price = p.price_amount != null && p.price_amount > 0
-    ? `${p.price_amount} ${p.price_currency ?? ''}${p.price_period ? ` / ${PERIOD_LABEL[p.price_period] ?? p.price_period}` : ''}`
-    : 'Бесплатно';
+    ? `${p.price_amount} ${p.price_currency ?? ''}${periodLabel ? ` / ${periodLabel}` : ''}`
+    : t('program.free');
+  const categoryLabel = ['kids','teens','young_adult','couples','families','newcomers','adults','seniors','women','men'].includes(p.category)
+    ? t(`programCategories.${p.category}`)
+    : p.category;
   const ageRange = p.age_min != null || p.age_max != null
-    ? `${p.age_min ?? 0}${p.age_max != null ? `–${p.age_max}` : '+'} лет`
+    ? (p.age_max != null
+        ? t('program.ageRange', { min: p.age_min ?? 0, max: p.age_max })
+        : t('program.ageMin', { min: p.age_min ?? 0 }))
     : null;
 
   return (
@@ -93,12 +103,12 @@ export default async function ProgramDetailPage({
               href="/dashboard/community"
               className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
             >
-              <ChevronLeft size={14} /> Община
+              <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('program.back')}
             </Link>
 
             <div className="absolute inset-x-0 bottom-0 p-5 text-white">
               <span className="inline-block rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-foreground mb-2">
-                {meta?.ru ?? p.category}
+                {categoryLabel}
               </span>
               <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight drop-shadow-sm">
                 {p.name}
@@ -115,11 +125,11 @@ export default async function ProgramDetailPage({
         {/* Quick facts */}
         <Reveal delay={0.04}>
           <div className="grid grid-cols-2 gap-3">
-            <Fact Icon={CalendarClock} label="Расписание" value={p.schedule_text ?? '—'} />
-            <Fact Icon={Wallet} label="Стоимость" value={price} />
-            {ageRange && <Fact Icon={Users} label="Возраст" value={ageRange} />}
+            <Fact Icon={CalendarClock} label={t('program.schedule')} value={p.schedule_text ?? '—'} />
+            <Fact Icon={Wallet} label={t('program.price')} value={price} />
+            {ageRange && <Fact Icon={Users} label={t('program.age')} value={ageRange} />}
             {(p.location_place || p.location_text) && (
-              <Fact Icon={MapPin} label="Место" value={p.location_place?.name ?? p.location_text ?? '—'} />
+              <Fact Icon={MapPin} label={t('program.location')} value={p.location_place?.name ?? p.location_text ?? '—'} />
             )}
           </div>
         </Reveal>
@@ -129,8 +139,8 @@ export default async function ProgramDetailPage({
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users size={15} strokeWidth={1.9} />
             <span>
-              {p.enrolled_count_cached} записаны
-              {p.max_capacity != null ? ` · осталось ${Math.max(0, p.max_capacity - p.enrolled_count_cached)} мест` : ''}
+              {t('program.enrolled', { count: p.enrolled_count_cached })}
+              {p.max_capacity != null ? ` · ${t('program.spotsLeft', { count: Math.max(0, p.max_capacity - p.enrolled_count_cached) })}` : ''}
             </span>
           </div>
         </Reveal>
@@ -151,12 +161,12 @@ export default async function ProgramDetailPage({
             >
               <Avatar user={{ id: p.contact_user.id, name: p.contact_user.name, email: null, image_url: p.contact_user.image_url }} size="md" />
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Контактное лицо</div>
-                <div className="text-sm font-medium leading-tight">{p.contact_user.name ?? 'Без имени'}</div>
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{t('program.contactPerson')}</div>
+                <div className="text-sm font-medium leading-tight">{p.contact_user.name ?? t('program.noName')}</div>
               </div>
               {p.requires_approval && (
                 <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <BadgeCheck size={13} /> по одобрению
+                  <BadgeCheck size={13} /> {t('program.byApproval')}
                 </span>
               )}
             </Link>

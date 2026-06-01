@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { submitCommunityChoice } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Textarea, FormError, SubmitButton } from '../_FormPrimitives';
@@ -8,6 +9,7 @@ import { Textarea, FormError, SubmitButton } from '../_FormPrimitives';
 interface Community { id: string; slug: string; name: string; city: string | null; country_code: string | null; }
 
 export function CommunityChoiceForm({ communities }: { communities: Community[] }) {
+  const t = useTranslations('onboarding');
   const [state, action] = useActionState(submitCommunityChoice, INITIAL_STATE);
   const selected = state.values?.community_id as string | undefined;
 
@@ -15,15 +17,15 @@ export function CommunityChoiceForm({ communities }: { communities: Community[] 
     <form action={action} className="space-y-5">
       <FormError message={state.formError} />
       <p className="text-sm text-(--color-fg-muted) mb-4">
-        Выбери общину, к которой хочешь присоединиться. Раввин рассмотрит заявку.
+        {t('community.intro')}
       </p>
       <fieldset className={`space-y-2 max-h-96 overflow-y-auto border rounded-lg p-3 ${
         state.errors?.community_id ? 'border-red-500' : ''
       }`}>
-        <legend className="sr-only">Община</legend>
+        <legend className="sr-only">{t('community.legend')}</legend>
         {communities.length === 0 ? (
           <p className="text-sm text-(--color-fg-muted) p-4 text-center">
-            Пока нет общин. Подожди приглашения.
+            {t('community.empty')}
           </p>
         ) : communities.map((c) => (
           <label key={c.id} className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-(--color-muted-bg)">
@@ -38,12 +40,12 @@ export function CommunityChoiceForm({ communities }: { communities: Community[] 
         ))}
       </fieldset>
       {state.errors?.community_id && <span className="text-xs text-red-600 block">{state.errors.community_id}</span>}
-      <Textarea label="Почему хочешь присоединиться? *" name="request_message" rows={4}
+      <Textarea label={t('community.message')} name="request_message" rows={4}
                 defaultValue={(state.values?.request_message as string) ?? ''}
-                placeholder="Раввин увидит это сообщение при рассмотрении заявки..."
+                placeholder={t('community.messagePlaceholder')}
                 error={state.errors?.request_message} />
       <div className="pt-4">
-        <SubmitButton>Подать заявку</SubmitButton>
+        <SubmitButton>{t('community.submit')}</SubmitButton>
       </div>
     </form>
   );

@@ -9,6 +9,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage } from 'ai';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { VoiceInput } from './VoiceInput';
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function AssistantChat({ rabbiName, communityName, starterPrompts }: Props) {
+  const t = useTranslations('aiPublic');
   const { messages, sendMessage, status, error, stop } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/ai/assistant',
@@ -76,15 +78,14 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
           <div className="text-center py-8 fade-up">
             <div className="text-5xl mb-3 inline-block float">✦</div>
             <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-2 leading-tight">
-              Слушаю, рав {rabbiName ?? 'мой'}
+              {t('assistant.welcomeTitle', { name: rabbiName ?? t('assistant.welcomeNamefallback') })}
             </h2>
             <p className="text-sm text-(--color-fg-muted) max-w-md mx-auto">
-              Нажми микрофон и говори, или печатай. Я найду людей в общине, поставлю задачи,
-              напомню, отправлю уведомления.
+              {t('assistant.welcomeSubtitle')}
             </p>
             {voiceSupported === false && (
               <p className="text-[11px] text-(--color-warning) mt-3">
-                Голосовой ввод недоступен в этом браузере — открой в Chrome или Safari.
+                {t('assistant.voiceUnsupported')}
               </p>
             )}
           </div>
@@ -101,7 +102,7 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
         {showSuggestions && starterPrompts.length > 0 && (
           <div className="pt-2 max-w-md mx-auto">
             <div className="text-[10px] uppercase tracking-widest text-(--color-fg-muted) mb-3 text-center">
-              Например, спроси:
+              {t('assistant.suggestionsLabel')}
             </div>
             <div className="space-y-2">
               {starterPrompts.map((p) => (
@@ -120,7 +121,7 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
 
         {error && (
           <div className="rounded-2xl bg-(--color-danger-soft) border border-(--color-danger)/30 text-(--color-danger) px-4 py-3 text-sm">
-            <div className="font-medium mb-1">Не получилось</div>
+            <div className="font-medium mb-1">{t('assistant.errorTitle')}</div>
             <div className="text-xs">{error.message}</div>
           </div>
         )}
@@ -142,7 +143,7 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Напомни мне позвонить Йонатану в среду..."
+              placeholder={t('assistant.inputPlaceholder')}
               rows={1}
               disabled={isStreaming}
               className="flex-1 resize-none bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-(--color-fg-subtle) max-h-32 disabled:opacity-50"
@@ -153,7 +154,7 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
                 type="button"
                 onClick={stop}
                 className="shrink-0 w-10 h-10 rounded-full bg-(--color-fg-muted) text-white flex items-center justify-center hover:opacity-90"
-                aria-label="Остановить"
+                aria-label={t('assistant.stop')}
               >
                 ⏸
               </button>
@@ -162,7 +163,7 @@ export function AssistantChat({ rabbiName, communityName, starterPrompts }: Prop
                 type="submit"
                 disabled={!input.trim()}
                 className="shrink-0 w-10 h-10 rounded-full bg-(--color-deep) text-white flex items-center justify-center hover:opacity-90 disabled:opacity-30 transition-opacity"
-                aria-label="Отправить"
+                aria-label={t('assistant.send')}
               >
                 ↑
               </button>
@@ -242,7 +243,8 @@ function ToolCallCard({
   output: unknown;
   communityName: string | null;
 }) {
-  const label = TOOL_LABELS[toolName] ?? toolName;
+  const t = useTranslations('aiPublic');
+  const label = TOOL_KEYS.includes(toolName) ? t(`assistant.tools.${toolName}`) : toolName;
   const running = state === 'input-streaming' || state === 'input-available';
 
   return (
@@ -258,7 +260,7 @@ function ToolCallCard({
         )}
         <span>{label}</span>
         <span className="text-(--color-fg-muted) text-[10px] font-normal ml-auto">
-          {running ? 'выполняется...' : 'готово'}
+          {running ? t('assistant.toolRunning') : t('assistant.toolDone')}
         </span>
       </summary>
       <ToolResultRenderer toolName={toolName} input={input} output={output} communityName={communityName} />
@@ -266,20 +268,12 @@ function ToolCallCard({
   );
 }
 
-const TOOL_LABELS: Record<string, string> = {
-  lookup_member: 'Ищу члена общины',
-  get_member_summary: 'Открываю профиль',
-  add_member_note: 'Записываю заметку',
-  add_task: 'Создаю задачу',
-  list_tasks: 'Смотрю задачи',
-  complete_task: 'Закрываю задачу',
-  get_upcoming_events: 'Смотрю события',
-  get_pending_requests: 'Смотрю просьбы',
-  community_stats: 'Считаю общину',
-  birthdays_in_next_week: 'Ищу дни рождения',
-  send_notification_to_member: 'Отправляю уведомление',
-  google_calendar_quick_add: 'Готовлю календарь',
-};
+const TOOL_KEYS = [
+  'lookup_member', 'get_member_summary', 'add_member_note', 'add_task',
+  'list_tasks', 'complete_task', 'get_upcoming_events', 'get_pending_requests',
+  'community_stats', 'birthdays_in_next_week', 'send_notification_to_member',
+  'google_calendar_quick_add',
+];
 
 function ToolResultRenderer({
   toolName, input, output,
@@ -289,6 +283,7 @@ function ToolResultRenderer({
   output: unknown;
   communityName: string | null;
 }) {
+  const t = useTranslations('aiPublic');
   if (!output) {
     if (input && typeof input === 'object') {
       return (
@@ -307,7 +302,7 @@ function ToolResultRenderer({
 
   // Member list
   if (toolName === 'lookup_member' && Array.isArray(output)) {
-    if (output.length === 0) return <div className="mt-2 text-(--color-fg-muted)">Не нашёл никого подходящего.</div>;
+    if (output.length === 0) return <div className="mt-2 text-(--color-fg-muted)">{t('assistant.lookupEmpty')}</div>;
     return (
       <div className="mt-2 space-y-1.5">
         {output.map((m: Record<string, unknown>) => (
@@ -330,7 +325,7 @@ function ToolResultRenderer({
         <div className="font-semibold text-(--color-fg)">📝 {String(o.title ?? '')}</div>
         {o.due_date != null && (
           <div className="text-[11px] text-(--color-fg-muted) mt-0.5">
-            Срок: {String(o.due_date)}
+            {t('assistant.taskDue', { date: String(o.due_date) })}
           </div>
         )}
       </div>
@@ -360,7 +355,7 @@ function ToolResultRenderer({
           href={url} target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-(--color-deep) text-white font-medium hover:opacity-90"
         >
-          🗓 Открыть в Google Calendar
+          {t('assistant.openGoogleCalendar')}
         </a>
       </div>
     );

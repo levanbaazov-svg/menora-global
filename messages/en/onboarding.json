@@ -1,0 +1,91 @@
+{
+  "onboarding": {
+    "common": {
+      "next": "Next",
+      "selectPlaceholder": "— choose —",
+      "skipPlaceholder": "— skip —"
+    },
+    "identity": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "hebrewName": "Hebrew name",
+      "hebrewNamePlaceholder": "Avraham ben Yitzhak",
+      "gender": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
+      "genderPreferNotSay": "Prefer not to say",
+      "dateOfBirth": "Date of birth",
+      "phone": "Phone",
+      "phonePlaceholder": "+972501234567 or 050-1234567"
+    },
+    "family": {
+      "maritalStatus": "Marital status",
+      "single": "Single",
+      "engaged": "Engaged",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed",
+      "spouseHebrewName": "Spouse's Hebrew name (opt.)",
+      "hasChildren": "Has children",
+      "childrenAges": "Children's ages (comma-separated)",
+      "childrenAgesPlaceholder": "4, 7, 11"
+    },
+    "religious": {
+      "denomination": "Denomination *",
+      "denominationOther": "Other",
+      "observanceLevel": "Observance level *",
+      "observanceCurious": "Just curious",
+      "observanceTraditional": "Traditional",
+      "observanceObservant": "Observant",
+      "observanceStrict": "Strictly observant",
+      "kashrut": "Kashrut *",
+      "kashrutNone": "Don't keep",
+      "kashrutBasic": "Basic",
+      "kashrutStrict": "Strict",
+      "kashrutMehadrin": "Mehadrin"
+    },
+    "interests": {
+      "interests": "Interests",
+      "languages": "Languages",
+      "bio": "About you",
+      "bioPlaceholder": "What would you like to share with other community members?",
+      "i_torah_learning": "Torah / study",
+      "i_prayer": "Prayer",
+      "i_social": "Socializing",
+      "i_volunteering": "Volunteering",
+      "i_parenting": "Parenting",
+      "i_sports": "Sports",
+      "i_music": "Music",
+      "i_cooking": "Cooking",
+      "i_hebrew": "Hebrew",
+      "i_israel": "Israel",
+      "i_arts": "Arts",
+      "i_outdoors": "Outdoors",
+      "i_meditation": "Meditation"
+    },
+    "community": {
+      "intro": "Choose a community you'd like to join. The rabbi will review your request.",
+      "legend": "Community",
+      "empty": "No communities yet. Please wait for an invitation.",
+      "message": "Why do you want to join? *",
+      "messagePlaceholder": "The rabbi will see this message when reviewing your request...",
+      "submit": "Submit request"
+    },
+    "privacy": {
+      "visibility": "Who can see my profile *",
+      "visibilityCommunity": "All members of my community",
+      "visibilityMembersOnly": "Verified members only",
+      "visibilityPrivate": "Nobody (only me and the rabbi)",
+      "channels": "Notification channels",
+      "channelEmail": "Email",
+      "channelPush": "Push (in browser)",
+      "categories": "What to notify about",
+      "catEvents": "New events",
+      "catRequests": "Community requests",
+      "catPrayers": "Prayer reminders",
+      "catCommunity": "Community news",
+      "finish": "Finish"
+    }
+  }
+}

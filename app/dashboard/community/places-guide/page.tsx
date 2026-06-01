@@ -6,6 +6,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { CategoryNav } from '../CategoryNav';
 import { PlaceCard } from '../PlaceCard';
 import { ProgramCard } from '../ProgramCard';
@@ -80,6 +82,8 @@ export default async function CityGuidePage({
   }
 
   const activeCategory = (await searchParams).cat ?? 'synagogue';
+  const t = await getTranslations('communityPages');
+  const locale = (await getLocale()) as Locale;
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const data = await client.request<{
     places: Place[];
@@ -115,15 +119,15 @@ export default async function CityGuidePage({
         href="/dashboard/community"
         className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-3 inline-block"
       >
-        ← Община
+        ← {t('back.community')}
       </Link>
 
       <header className="mb-4 px-0.5">
         <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          Город-гид
+          {t('cityGuide.title')}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Синагоги, кошерные кафе, рестораны и магазины твоей общины.
+          {t('cityGuide.subtitle')}
         </p>
       </header>
 
@@ -131,37 +135,41 @@ export default async function CityGuidePage({
 
       <section className="mt-6">
         {activeCategory === 'food' ? (
-          <PlaceGrid places={foodPlaces} title="Кафе и рестораны" isStaff={isStaff} addType="restaurant" />
+          <PlaceGrid places={foodPlaces} title={t('cityGuide.foodTitle')} isStaff={isStaff} addType="restaurant" t={t} />
         ) : PLACE_TYPES.includes(activeCategory as PlaceType) ? (
           <PlaceGrid
             places={placesByType.get(activeCategory as PlaceType) ?? []}
-            title={PLACE_TYPE_LABELS[activeCategory as PlaceType].ru}
+            title={PLACE_TYPE_LABELS[activeCategory as PlaceType][locale]}
             isStaff={isStaff}
             addType={activeCategory as PlaceType}
+            t={t}
           />
         ) : activeCategory === 'programs' ? (
-          <ProgramGrid programs={data.programs} />
+          <ProgramGrid programs={data.programs} t={t} />
         ) : activeCategory === 'events' ? (
-          <EventList events={data.events} />
+          <EventList events={data.events} t={t} locale={locale} />
         ) : null}
       </section>
     </div>
   );
 }
 
-function PlaceGrid({ places, title, isStaff, addType }: { places: Place[]; title: string; isStaff: boolean; addType: PlaceType }) {
+function PlaceGrid({ places, title, isStaff, addType, t }: {
+  places: Place[]; title: string; isStaff: boolean; addType: PlaceType;
+  t: Awaited<ReturnType<typeof getTranslations>>;
+}) {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-serif text-xl font-semibold">{title}</h2>
         {isStaff && (
-          <LinkButton href={`/dashboard/community/places/new?type=${addType}`} variant="gold" size="sm">+ Добавить</LinkButton>
+          <LinkButton href={`/dashboard/community/places/new?type=${addType}`} variant="gold" size="sm">{t('cityGuide.add')}</LinkButton>
         )}
       </div>
       {places.length === 0 ? (
-        <EmptyState emoji="✦" title="Пока пусто"
-          description={isStaff ? 'Добавь первое место — участники сразу его увидят.' : 'Знаешь подходящее место? Предложи его.'}
-          action={<LinkButton href={`/dashboard/community/places/new?type=${addType}`} variant="gold" size="sm">{isStaff ? 'Добавить' : 'Предложить'}</LinkButton>}
+        <EmptyState emoji="✦" title={t('cityGuide.emptyTitle')}
+          description={isStaff ? t('cityGuide.emptyStaff') : t('cityGuide.emptyMember')}
+          action={<LinkButton href={`/dashboard/community/places/new?type=${addType}`} variant="gold" size="sm">{isStaff ? t('cityGuide.addAction') : t('cityGuide.proposeAction')}</LinkButton>}
         />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -172,12 +180,15 @@ function PlaceGrid({ places, title, isStaff, addType }: { places: Place[]; title
   );
 }
 
-function ProgramGrid({ programs }: { programs: Program[] }) {
+function ProgramGrid({ programs, t }: {
+  programs: Program[];
+  t: Awaited<ReturnType<typeof getTranslations>>;
+}) {
   return (
     <>
-      <h2 className="font-serif text-xl font-semibold mb-4">Программы</h2>
+      <h2 className="font-serif text-xl font-semibold mb-4">{t('cityGuide.programsTitle')}</h2>
       {programs.length === 0 ? (
-        <EmptyState emoji="📖" title="Программ пока нет" />
+        <EmptyState emoji="📖" title={t('cityGuide.programsEmpty')} />
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {programs.map((p) => <ProgramCard key={p.id} {...p} />)}
@@ -187,12 +198,16 @@ function ProgramGrid({ programs }: { programs: Program[] }) {
   );
 }
 
-function EventList({ events }: { events: EventRow[] }) {
+function EventList({ events, t, locale }: {
+  events: EventRow[];
+  t: Awaited<ReturnType<typeof getTranslations>>;
+  locale: Locale;
+}) {
   return (
     <>
-      <h2 className="font-serif text-xl font-semibold mb-4">Ближайшие события</h2>
+      <h2 className="font-serif text-xl font-semibold mb-4">{t('cityGuide.eventsTitle')}</h2>
       {events.length === 0 ? (
-        <EmptyState emoji="📅" title="Событий нет" />
+        <EmptyState emoji="📅" title={t('cityGuide.eventsEmpty')} />
       ) : (
         <div className="space-y-2">
           {events.map((e) => (
@@ -200,7 +215,7 @@ function EventList({ events }: { events: EventRow[] }) {
               className="block rounded-2xl bg-card ring-1 ring-border/70 p-4 hover:ring-primary/30 transition-all">
               <div className="font-medium text-sm">{e.title}</div>
               <div className="text-xs text-muted-foreground mt-1">
-                {new Date(e.starts_at).toLocaleString('ru-RU', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                {new Date(e.starts_at).toLocaleString(LOCALE_BCP47[locale], { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 {e.location_text && ` · ${e.location_text}`}
               </div>
             </Link>

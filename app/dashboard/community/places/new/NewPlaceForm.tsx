@@ -1,6 +1,8 @@
 'use client';
 
 import { useActionState, useState, useRef } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { type Locale } from '@/i18n/config';
 import { submitPlace } from '../../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
@@ -12,6 +14,8 @@ import {
 } from '@/lib/places/schema';
 
 export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType; isStaff: boolean }) {
+  const t = useTranslations('communityPages.newPlace');
+  const locale = useLocale() as Locale;
   const [state, action] = useActionState(submitPlace, INITIAL_STATE);
   const [type, setType] = useState<PlaceType>(
     (defaultType ?? (state.values?.type as PlaceType | undefined) ?? 'restaurant'),
@@ -36,80 +40,80 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
 
       {/* Type picker */}
       <fieldset>
-        <legend className="text-sm font-medium mb-3">Тип места</legend>
+        <legend className="text-sm font-medium mb-3">{t('typeLegend')}</legend>
         <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-          {PLACE_TYPES.map((t) => {
-            const meta = PLACE_TYPE_LABELS[t];
+          {PLACE_TYPES.map((pt) => {
+            const meta = PLACE_TYPE_LABELS[pt];
             return (
               <label
-                key={t}
+                key={pt}
                 className={`cursor-pointer border rounded-xl p-3 text-center transition-all ${
-                  type === t ? 'border-(--color-gold) bg-(--color-gold-soft)/50' : 'hover:border-(--color-gold)'
+                  type === pt ? 'border-(--color-gold) bg-(--color-gold-soft)/50' : 'hover:border-(--color-gold)'
                 }`}
               >
                 <input
-                  type="radio" name="type" value={t}
-                  checked={type === t}
-                  onChange={() => setType(t)}
+                  type="radio" name="type" value={pt}
+                  checked={type === pt}
+                  onChange={() => setType(pt)}
                   className="sr-only"
                 />
                 <div className="text-2xl mb-1">{meta.emoji}</div>
-                <div className="text-xs font-medium">{meta.ru}</div>
+                <div className="text-xs font-medium">{meta[locale]}</div>
               </label>
             );
           })}
         </div>
       </fieldset>
 
-      <Field label="Название" name="name" required defaultValue={v('name')} error={state.errors?.name} inputRef={nameRef} />
+      <Field label={t('name')} name="name" required defaultValue={v('name')} error={state.errors?.name} inputRef={nameRef} />
       <Textarea
-        label="Описание" name="description" rows={3}
+        label={t('description')} name="description" rows={3}
         defaultValue={v('description')}
-        placeholder="Что важно знать посетителю..."
+        placeholder={t('descriptionPlaceholder')}
         error={state.errors?.description}
         inputRef={descRef}
         hint={<AITextHelper targetRef={descRef} kind={aiKind} hint={{ name: nameRef.current?.value }} />}
       />
       <Field
-        label="Фото URL" name="photo_url" type="url"
+        label={t('photoUrl')} name="photo_url" type="url"
         placeholder="https://..."
         defaultValue={v('photo_url')} error={state.errors?.photo_url}
       />
 
       <div className="grid md:grid-cols-2 gap-4">
-        <Field label="Адрес *" name="address" required defaultValue={v('address')} error={state.errors?.address} />
-        <Field label="Город *" name="city" required defaultValue={v('city')} error={state.errors?.city} />
+        <Field label={t('address')} name="address" required defaultValue={v('address')} error={state.errors?.address} />
+        <Field label={t('city')} name="city" required defaultValue={v('city')} error={state.errors?.city} />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Field label="Страна (ISO)" name="country_code" placeholder="IL" defaultValue={v('country_code')} error={state.errors?.country_code} />
-        <Field label="Район (опц.)" name="neighborhood" defaultValue={v('neighborhood')} error={state.errors?.neighborhood} />
+        <Field label={t('country')} name="country_code" placeholder="IL" defaultValue={v('country_code')} error={state.errors?.country_code} />
+        <Field label={t('neighborhood')} name="neighborhood" defaultValue={v('neighborhood')} error={state.errors?.neighborhood} />
       </div>
 
       {/* Food-specific */}
       {isFood && (
         <fieldset className="border rounded-xl p-4 space-y-4">
-          <legend className="text-sm font-medium px-2">Кашрут и кухня</legend>
+          <legend className="text-sm font-medium px-2">{t('kashrutCuisineLegend')}</legend>
           <Select
-            label="Уровень кашрута" name="kashrut_level"
+            label={t('kashrutLevel')} name="kashrut_level"
             defaultValue={v('kashrut_level', 'standard')}
             error={state.errors?.kashrut_level}
             options={KASHRUT_LEVELS.map((k) => [k, KASHRUT_LABELS[k].label])}
           />
-          <Field label="Сертификат (OU, Star-K, и т.д.)" name="kashrut_authority"
+          <Field label={t('kashrutAuthority')} name="kashrut_authority"
                  defaultValue={v('kashrut_authority')} error={state.errors?.kashrut_authority} />
           <Select
-            label="Ценовой уровень" name="price_level"
+            label={t('priceLevel')} name="price_level"
             defaultValue={v('price_level', '$$')}
             error={state.errors?.price_level}
-            options={PRICE_LEVELS.map((p) => [p, `${p} ${{ $: 'недорого', $$: 'средне', $$$: 'дорого', $$$$: 'премиум' }[p]}`])}
+            options={PRICE_LEVELS.map((p) => [p, `${p} ${{ $: t('price.cheap'), $$: t('price.mid'), $$$: t('price.expensive'), $$$$: t('price.premium') }[p]}`])}
           />
           <Chips
-            label="Кухня" name="cuisine_tags"
+            label={t('cuisine')} name="cuisine_tags"
             options={[...CUISINE_TAGS]} labels={CUISINE_LABELS}
             defaults={(state.values?.cuisine_tags as string[]) ?? []}
           />
           <Chips
-            label="Диета / тип" name="dietary_tags"
+            label={t('dietary')} name="dietary_tags"
             options={[...DIETARY_TAGS]} labels={DIETARY_LABELS}
             defaults={(state.values?.dietary_tags as string[]) ?? []}
           />
@@ -119,40 +123,40 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
       {/* Synagogue-specific */}
       {isSynagogue && (
         <fieldset className="border rounded-xl p-4 space-y-3">
-          <legend className="text-sm font-medium px-2">Особенности синагоги</legend>
-          <Check name="has_women_section" label="Есть женская секция" defaultChecked={v('has_women_section') === 'true'} />
-          <Check name="has_parking_shabbat" label="Парковка в шаббат" defaultChecked={v('has_parking_shabbat') === 'true'} />
-          <Field label="Расписание молитв URL" name="prayer_times_url" type="url" defaultValue={v('prayer_times_url')} />
+          <legend className="text-sm font-medium px-2">{t('synagogueLegend')}</legend>
+          <Check name="has_women_section" label={t('womenSection')} defaultChecked={v('has_women_section') === 'true'} />
+          <Check name="has_parking_shabbat" label={t('parkingShabbat')} defaultChecked={v('has_parking_shabbat') === 'true'} />
+          <Field label={t('prayerTimesUrl')} name="prayer_times_url" type="url" defaultValue={v('prayer_times_url')} />
         </fieldset>
       )}
 
       <fieldset className="border rounded-xl p-4 space-y-4">
-        <legend className="text-sm font-medium px-2">Контакты</legend>
-        <Field label="Телефон" name="contact_phone" placeholder="+972..." defaultValue={v('contact_phone')} />
-        <Field label="Email" name="contact_email" type="email" defaultValue={v('contact_email')} />
-        <Field label="Сайт" name="website_url" type="url" defaultValue={v('website_url')} />
-        <Field label="Reservation URL (опц.)" name="reservation_url" type="url" defaultValue={v('reservation_url')} />
+        <legend className="text-sm font-medium px-2">{t('contactsLegend')}</legend>
+        <Field label={t('phone')} name="contact_phone" placeholder="+972..." defaultValue={v('contact_phone')} />
+        <Field label={t('email')} name="contact_email" type="email" defaultValue={v('contact_email')} />
+        <Field label={t('website')} name="website_url" type="url" defaultValue={v('website_url')} />
+        <Field label={t('reservationUrl')} name="reservation_url" type="url" defaultValue={v('reservation_url')} />
       </fieldset>
 
       <Textarea
-        label="Часы / заметка" name="hours_notes" rows={2}
+        label={t('hoursNotes')} name="hours_notes" rows={2}
         defaultValue={v('hours_notes')}
-        placeholder="Пн-Чт 9-23 · Пт 9-15 · Шаб закрыто · Вс 10-23"
+        placeholder={t('hoursPlaceholder')}
       />
 
       <div className="space-y-2">
-        <Check name="accepts_reservations" label="Принимают бронирования" defaultChecked={v('accepts_reservations') === 'true'} />
-        <Check name="wheelchair_accessible" label="Доступно для колясочников" defaultChecked={v('wheelchair_accessible') === 'true'} />
-        <Check name="family_friendly" label="С детьми" defaultChecked={v('family_friendly') === 'true'} />
+        <Check name="accepts_reservations" label={t('acceptsReservations')} defaultChecked={v('accepts_reservations') === 'true'} />
+        <Check name="wheelchair_accessible" label={t('wheelchair')} defaultChecked={v('wheelchair_accessible') === 'true'} />
+        <Check name="family_friendly" label={t('familyFriendly')} defaultChecked={v('family_friendly') === 'true'} />
       </div>
 
       <div className="pt-4">
         <SubmitButton variant="gold">
-          {isStaff ? 'Опубликовать' : 'Подать на модерацию'}
+          {isStaff ? t('publish') : t('submitForReview')}
         </SubmitButton>
         {!isStaff && (
           <p className="text-xs text-(--color-fg-muted) mt-2">
-            Раввин получит уведомление и одобрит место — обычно в течение дня.
+            {t('reviewHint')}
           </p>
         )}
       </div>

@@ -9,6 +9,7 @@
 
 import { useCallback, useState } from 'react';
 import type { RefObject } from 'react';
+import { useTranslations } from 'next-intl';
 
 type ContentKind =
   | 'place_synagogue' | 'place_restaurant' | 'place_cafe' | 'place_store' | 'place_generic'
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export function AITextHelper({ targetRef, kind, hint }: Props) {
+  const t = useTranslations('aiPublic');
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,7 @@ export function AITextHelper({ targetRef, kind, hint }: Props) {
 
     const draft = el.value.trim();
     if (draft.length < 3) {
-      setError('Сначала напиши хотя бы пару слов — AI улучшит, не сочинит с нуля');
+      setError(t('textHelper.needDraft'));
       setState('error');
       setTimeout(() => setState('idle'), 4000);
       return;
@@ -52,7 +54,7 @@ export function AITextHelper({ targetRef, kind, hint }: Props) {
       });
       const json: { ok: boolean; text?: string; error?: string } = await res.json();
       if (!json.ok || !json.text) {
-        setError(json.error ?? 'AI вернул ошибку');
+        setError(json.error ?? t('textHelper.aiError'));
         setState('error');
         setTimeout(() => setState('idle'), 5000);
         return;
@@ -67,11 +69,11 @@ export function AITextHelper({ targetRef, kind, hint }: Props) {
       el.focus();
       setState('idle');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Сеть');
+      setError(e instanceof Error ? e.message : t('textHelper.network'));
       setState('error');
       setTimeout(() => setState('idle'), 5000);
     }
-  }, [kind, hint?.name, hint?.communityName, targetRef]);
+  }, [kind, hint?.name, hint?.communityName, targetRef, t]);
 
   return (
     <div className="mt-1.5 flex items-center gap-2 flex-wrap">
@@ -92,10 +94,10 @@ export function AITextHelper({ targetRef, kind, hint }: Props) {
         {state === 'loading' ? (
           <>
             <span className="w-3 h-3 border-2 border-current border-r-transparent rounded-full animate-spin" />
-            AI пишет...
+            {t('textHelper.writing')}
           </>
         ) : (
-          <>✨ Улучшить с AI</>
+          <>✨ {t('textHelper.improve')}</>
         )}
       </button>
       {state === 'error' && error && (

@@ -1,0 +1,99 @@
+{
+  "aiPublic": {
+    "landing": {
+      "whatsInside": "Что внутри ↓",
+      "brandTag": "Menorah · Jewish community network",
+      "heroTitlePre": "Свой",
+      "heroTitleEm": "еврейский дом",
+      "heroTitlePost": "везде, где ты",
+      "heroSubtitle": "Шаббат-ужины. Кошерные места. AI-раввин в кармане. Найди свою общину или открой новые — в любом городе мира.",
+      "signInGoogle": "Войти через Google",
+      "signInNote": "Setup ~3 минуты · Бесплатно · Без рекламы",
+      "feature1Title": "Шаббат рядом",
+      "feature1Body": "Времена свечей по твоей геолокации. Шаббат-ужины в общине. Дом из коробки.",
+      "feature2Title": "AI Раввин",
+      "feature2Body": "6 сценариев плюс свободный разговор. Знает твою общину и недельную парашу.",
+      "feature3Title": "Jewish ID",
+      "feature3Body": "Цифровой паспорт с QR. В любой общине по миру тебя подтвердят за пару секунд.",
+      "footer": "Платформа для еврейских общин по всему миру"
+    },
+    "assistant": {
+      "noCommunity": "Нет активной общины.",
+      "eyebrow": "✦ Ассистент раввина",
+      "backHome": "← Главная",
+      "icalSummary": "Подписать свой календарь на задачи и события",
+      "icalDescription": "Скопируй ссылку и добавь как новый календарь в Apple Calendar / Google Calendar / Outlook — твои задачи и события общины появятся там автоматически и будут обновляться.",
+      "icalOpenCalendar": "Открыть в Календаре",
+      "icalGoogleCalendar": "Google Calendar",
+      "welcomeTitle": "Слушаю, рав {name}",
+      "welcomeNamefallback": "мой",
+      "welcomeSubtitle": "Нажми микрофон и говори, или печатай. Я найду людей в общине, поставлю задачи, напомню, отправлю уведомления.",
+      "voiceUnsupported": "Голосовой ввод недоступен в этом браузере — открой в Chrome или Safari.",
+      "suggestionsLabel": "Например, спроси:",
+      "errorTitle": "Не получилось",
+      "inputPlaceholder": "Напомни мне позвонить Йонатану в среду...",
+      "stop": "Остановить",
+      "send": "Отправить",
+      "toolRunning": "выполняется...",
+      "toolDone": "готово",
+      "lookupEmpty": "Не нашёл никого подходящего.",
+      "taskDue": "Срок: {date}",
+      "openGoogleCalendar": "🗓 Открыть в Google Calendar",
+      "starters": {
+        "activeMembers": "Сколько у нас активных участников?",
+        "birthdays": "У кого день рождения на этой неделе?",
+        "openTasks": "Покажи мои открытые задачи",
+        "weekEvents": "Какие события на этой неделе?",
+        "requests": "Какие просьбы участники сейчас оставили?"
+      },
+      "tools": {
+        "lookup_member": "Ищу члена общины",
+        "get_member_summary": "Открываю профиль",
+        "add_member_note": "Записываю заметку",
+        "add_task": "Создаю задачу",
+        "list_tasks": "Смотрю задачи",
+        "complete_task": "Закрываю задачу",
+        "get_upcoming_events": "Смотрю события",
+        "get_pending_requests": "Смотрю просьбы",
+        "community_stats": "Считаю общину",
+        "birthdays_in_next_week": "Ищу дни рождения",
+        "send_notification_to_member": "Отправляю уведомление",
+        "google_calendar_quick_add": "Готовлю календарь"
+      }
+    },
+    "chat": {
+      "suggestionsLabel": "Можешь спросить:",
+      "errorTitle": "Не получилось",
+      "inputPlaceholder": "Спросить про {topic}...",
+      "stop": "Остановить",
+      "send": "Отправить",
+      "disclaimer": "AI Раввин может ошибаться — по галахическим вопросам сверяйся с местным раввином."
+    },
+    "scenario": {
+      "backToScenarios": "← К сценариям",
+      "yourConversations": "Твои разговоры в этом сценарии",
+      "untitled": "(без названия)",
+      "messageOne": "сообщение",
+      "messageMany": "сообщений",
+      "examplesLabel": "Примеры того что можно спросить"
+    },
+    "coverGen": {
+      "needTitle": "Сначала введи название события",
+      "aiError": "AI вернул ошибку",
+      "network": "Сеть",
+      "placeholder": "Обложка появится здесь",
+      "drawing": "AI рисует обложку...",
+      "drawingHint": "~15 секунд",
+      "generateAgain": "Сгенерировать ещё раз",
+      "generate": "Сгенерировать обложку с AI",
+      "remove": "Убрать"
+    },
+    "textHelper": {
+      "needDraft": "Сначала напиши хотя бы пару слов — AI улучшит, не сочинит с нуля",
+      "aiError": "AI вернул ошибку",
+      "network": "Сеть",
+      "writing": "AI пишет...",
+      "improve": "Улучшить с AI"
+    }
+  }
+}

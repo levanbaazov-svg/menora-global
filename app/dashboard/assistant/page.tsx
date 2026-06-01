@@ -5,6 +5,7 @@ import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { AssistantChat } from './AssistantChat';
 
 const FETCH = /* GraphQL */ `
@@ -22,17 +23,18 @@ const FETCH = /* GraphQL */ `
   }
 `;
 
-const STARTERS = [
-  'Сколько у нас активных участников?',
-  'У кого день рождения на этой неделе?',
-  'Покажи мои открытые задачи',
-  'Какие события на этой неделе?',
-  'Какие просьбы участники сейчас оставили?',
-];
-
 export default async function AssistantPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const t = await getTranslations('aiPublic');
+  const STARTERS = [
+    t('assistant.starters.activeMembers'),
+    t('assistant.starters.birthdays'),
+    t('assistant.starters.openTasks'),
+    t('assistant.starters.weekEvents'),
+    t('assistant.starters.requests'),
+  ];
 
   const role = session.hasura.default_role;
   if (role !== 'rabbi' && role !== 'admin') redirect('/dashboard');
@@ -45,7 +47,7 @@ export default async function AssistantPage() {
   const user = data.users_by_pk;
   const community = data.memberships[0]?.community;
   if (!user || !community) {
-    return <div className="p-10 text-center">Нет активной общины.</div>;
+    return <div className="p-10 text-center">{t('assistant.noCommunity')}</div>;
   }
 
   const h = await headers();
@@ -59,7 +61,7 @@ export default async function AssistantPage() {
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-(--color-gold-dark) font-semibold">
-            ✦ Ассистент раввина
+            {t('assistant.eyebrow')}
           </div>
           <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight mt-1">
             {community.name}
@@ -69,7 +71,7 @@ export default async function AssistantPage() {
           href="/dashboard"
           className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors whitespace-nowrap mt-1"
         >
-          ← Главная
+          {t('assistant.backHome')}
         </Link>
       </header>
 
@@ -77,12 +79,11 @@ export default async function AssistantPage() {
       <details className="mb-3 rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/60 px-4 py-2.5 text-xs">
         <summary className="cursor-pointer text-(--color-fg-muted) hover:text-(--color-deep) transition-colors flex items-center gap-2">
           <span>🗓</span>
-          <span>Подписать свой календарь на задачи и события</span>
+          <span>{t('assistant.icalSummary')}</span>
         </summary>
         <div className="mt-2 space-y-2">
           <p className="text-(--color-fg-muted) leading-relaxed">
-            Скопируй ссылку и добавь как новый календарь в Apple Calendar / Google Calendar / Outlook —
-            твои задачи и события общины появятся там автоматически и будут обновляться.
+            {t('assistant.icalDescription')}
           </p>
           <div className="rounded-xl bg-(--color-bg-muted) px-3 py-2 break-all font-mono text-[10px]">
             {icalUrl}
@@ -92,7 +93,7 @@ export default async function AssistantPage() {
               href={icalUrl.replace(/^https?:/, 'webcal:')}
               className="inline-block px-3 py-1 rounded-full bg-(--color-deep) text-white font-medium hover:opacity-90 text-[11px]"
             >
-              Открыть в Календаре
+              {t('assistant.icalOpenCalendar')}
             </a>
             <a
               href={`https://calendar.google.com/calendar/u/0/r?cid=${encodeURIComponent(icalUrl)}`}

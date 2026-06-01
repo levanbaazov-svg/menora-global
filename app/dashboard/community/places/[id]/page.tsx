@@ -2,6 +2,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { type Locale } from '@/i18n/config';
 import {
   PLACE_TYPE_LABELS, KASHRUT_LABELS, CUISINE_LABELS, DIETARY_LABELS,
   type PlaceType, type KashrutLevel,
@@ -61,6 +63,8 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
   );
   if (!place) notFound();
 
+  const t = await getTranslations('communityPages');
+  const locale = (await getLocale()) as Locale;
   const meta = PLACE_TYPE_LABELS[place.type];
   const kashrut = place.kashrut_level && place.kashrut_level !== 'none' ? KASHRUT_LABELS[place.kashrut_level] : null;
   const mapsUrl = place.address
@@ -73,7 +77,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
         href={`/dashboard/community?cat=${place.type}`}
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
       >
-        ← {meta.emoji} {meta.ru}
+        ← {meta.emoji} {meta[locale]}
       </Link>
 
       {/* Hero photo */}
@@ -88,21 +92,21 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
         )}
         {place.submission_status === 'pending' && (
           <Chip tone="soft-gold" className="absolute top-4 left-4">
-            ⏳ Ожидает модерации
+            {t('placeDetail.pending')}
           </Chip>
         )}
       </div>
 
       {/* Header */}
       <div className="mb-5">
-        <div className="text-sm text-(--color-fg-muted) mb-1">{meta.emoji} {meta.ru.slice(0, -1)}</div>
+        <div className="text-sm text-(--color-fg-muted) mb-1">{meta.emoji} {meta[locale]}</div>
         <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-tight">{place.name}</h1>
         <div className="flex flex-wrap gap-2 mt-3">
           {kashrut && <Chip tone="soft-gold">{kashrut.label}{place.kashrut_authority ? ` · ${place.kashrut_authority}` : ''}</Chip>}
           {place.price_level && <Chip tone="neutral">{place.price_level}</Chip>}
-          {place.family_friendly && <Chip tone="neutral">С детьми</Chip>}
-          {place.wheelchair_accessible && <Chip tone="neutral">♿ Доступно</Chip>}
-          {place.accepts_reservations && <Chip tone="neutral">Бронирование</Chip>}
+          {place.family_friendly && <Chip tone="neutral">{t('placeDetail.familyFriendly')}</Chip>}
+          {place.wheelchair_accessible && <Chip tone="neutral">{t('placeDetail.accessible')}</Chip>}
+          {place.accepts_reservations && <Chip tone="neutral">{t('placeDetail.reservations')}</Chip>}
         </div>
       </div>
 
@@ -119,7 +123,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
             target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-(--color-deep) text-white font-semibold text-sm hover:opacity-90"
           >
-            🧭 Маршрут
+            {t('placeDetail.route')}
           </a>
         )}
         {place.contact_phone && (
@@ -127,12 +131,12 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
             href={`tel:${place.contact_phone}`}
             className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-(--color-border) hover:border-(--color-gold) text-sm font-semibold"
           >
-            📞 Позвонить
+            {t('placeDetail.call')}
           </a>
         )}
         {place.reservation_url && (
           <LinkButton href={place.reservation_url} variant="gold" size="md">
-            Забронировать
+            {t('placeDetail.book')}
           </LinkButton>
         )}
       </div>
@@ -142,7 +146,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
         <dl className="grid grid-cols-[120px_1fr] gap-y-3 gap-x-6 text-sm">
           {place.address && (
             <>
-              <dt className="text-(--color-fg-muted)">Адрес</dt>
+              <dt className="text-(--color-fg-muted)">{t('placeDetail.address')}</dt>
               <dd>
                 {[place.address, place.neighborhood, place.city, place.country_code].filter(Boolean).join(', ')}
               </dd>
@@ -150,13 +154,13 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
           )}
           {place.hours_notes && (
             <>
-              <dt className="text-(--color-fg-muted)">Часы</dt>
+              <dt className="text-(--color-fg-muted)">{t('placeDetail.hours')}</dt>
               <dd className="whitespace-pre-wrap">{place.hours_notes}</dd>
             </>
           )}
           {place.contact_phone && (
             <>
-              <dt className="text-(--color-fg-muted)">Телефон</dt>
+              <dt className="text-(--color-fg-muted)">{t('placeDetail.phone')}</dt>
               <dd>
                 <a href={`tel:${place.contact_phone}`} className="hover:underline">{place.contact_phone}</a>
               </dd>
@@ -164,7 +168,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
           )}
           {place.contact_email && (
             <>
-              <dt className="text-(--color-fg-muted)">Email</dt>
+              <dt className="text-(--color-fg-muted)">{t('placeDetail.email')}</dt>
               <dd>
                 <a href={`mailto:${place.contact_email}`} className="hover:underline">{place.contact_email}</a>
               </dd>
@@ -172,7 +176,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
           )}
           {place.website_url && (
             <>
-              <dt className="text-(--color-fg-muted)">Сайт</dt>
+              <dt className="text-(--color-fg-muted)">{t('placeDetail.website')}</dt>
               <dd>
                 <a href={place.website_url} target="_blank" rel="noopener noreferrer" className="hover:underline truncate inline-block max-w-full">
                   {place.website_url.replace(/^https?:\/\//, '')}
@@ -186,7 +190,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
       {/* Cuisine + dietary chips */}
       {(place.cuisine_tags.length > 0 || place.dietary_tags.length > 0) && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-2">Кухня и диета</h2>
+          <h2 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-2">{t('placeDetail.cuisineDiet')}</h2>
           <div className="flex flex-wrap gap-1.5">
             {place.cuisine_tags.map((t) => (
               <Chip key={t} tone="neutral">{CUISINE_LABELS[t] ?? t}</Chip>
@@ -201,19 +205,19 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
       {/* Synagogue features */}
       {place.type === 'synagogue' && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-2">Особенности</h2>
+          <h2 className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-2">{t('placeDetail.features')}</h2>
           <ul className="space-y-1 text-sm">
             {place.has_women_section != null && (
-              <li>{place.has_women_section ? '✓' : '✗'} Женская секция</li>
+              <li>{place.has_women_section ? '✓' : '✗'} {t('placeDetail.womenSection')}</li>
             )}
             {place.has_parking_shabbat != null && (
-              <li>{place.has_parking_shabbat ? '✓' : '✗'} Парковка в шаббат</li>
+              <li>{place.has_parking_shabbat ? '✓' : '✗'} {t('placeDetail.parkingShabbat')}</li>
             )}
-            {place.denomination && <li>Направление: {place.denomination}</li>}
+            {place.denomination && <li>{t('placeDetail.denomination', { value: place.denomination })}</li>}
             {place.prayer_times_url && (
               <li>
                 <a href={place.prayer_times_url} target="_blank" rel="noopener noreferrer" className="text-(--color-gold-dark) hover:underline">
-                  Расписание молитв →
+                  {t('placeDetail.prayerSchedule')}
                 </a>
               </li>
             )}
@@ -223,8 +227,8 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
 
       {/* Footer meta */}
       <section className="border-t pt-4 text-xs text-(--color-fg-subtle)">
-        {place.community && <>В общине: {place.community.name} · </>}
-        {place.submitter?.name && <>Добавил: {place.submitter.name}</>}
+        {place.community && <>{t('placeDetail.inCommunity', { name: place.community.name })} · </>}
+        {place.submitter?.name && <>{t('placeDetail.addedBy', { name: place.submitter.name })}</>}
       </section>
     </div>
   );

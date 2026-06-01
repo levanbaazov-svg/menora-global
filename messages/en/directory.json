@@ -1,0 +1,128 @@
+{
+  "directory": {
+    "members": {
+      "title": "Members",
+      "totalLine": "{count} total.",
+      "pendingHint": "{count, plural, one {# request awaiting review} other {# requests awaiting review}}",
+      "sectionPending": "Awaiting approval",
+      "sectionActive": "Active",
+      "sectionSuspended": "Suspended",
+      "sectionRejected": "Rejected",
+      "sectionLeft": "Left",
+      "empty": "No one in the community yet.",
+      "self": "Me",
+      "status": {
+        "pending": "Pending",
+        "active": "Active",
+        "suspended": "Suspended",
+        "rejected": "Rejected",
+        "left": "Left"
+      },
+      "role": {
+        "member": "member",
+        "rabbi": "rabbi",
+        "admin": "admin"
+      },
+      "entry": {
+        "invite": "invitation",
+        "self_request": "self-applied",
+        "rabbi_added": "added"
+      },
+      "invitedBy": "invited by {name}",
+      "memberSince": "since {date}",
+      "requestedOn": "requested {date}",
+      "reason": "Reason: {reason}",
+      "actions": {
+        "rejectPlaceholder": "Reason for rejection (visible to applicant)",
+        "cancel": "Cancel",
+        "reject": "Reject",
+        "accept": "✓ Approve",
+        "rejectShort": "✗ Reject",
+        "adminLocked": "admin · cannot change",
+        "roleMember": "member",
+        "roleRabbi": "rabbi",
+        "suspendTitle": "Suspend membership",
+        "unsuspend": "Restore"
+      }
+    },
+    "invitations": {
+      "title": "Invitations",
+      "count": "{count, plural, one {# invitation} other {# invitations}}",
+      "invite": "+ Invite",
+      "emptyText": "You haven't invited anyone yet.",
+      "emptyCta": "Create the first one",
+      "thEmail": "Email",
+      "thRole": "Role",
+      "thStatus": "Status",
+      "thExpires": "Expires",
+      "thActions": "Actions",
+      "status": {
+        "accepted": "✓ Accepted",
+        "revoked": "Revoked",
+        "expired": "Expired",
+        "pending": "Pending"
+      },
+      "new": {
+        "back": "← Back to invitations",
+        "title": "New invitation",
+        "subtitle": "We'll generate a magic link. Anyone who opens it and signs in with Google gets a membership.",
+        "createdTitle": "✓ Invitation created",
+        "createdFor": "For <strong>{email}</strong>. Copy the link and send it directly — email delivery isn't connected yet.",
+        "copied": "✓",
+        "copy": "Copy",
+        "toList": "← Back to list",
+        "another": "+ Another one",
+        "emailLabel": "Email",
+        "roleLabel": "Role",
+        "roleMember": "Member — regular participant",
+        "roleRabbi": "Rabbi — can manage the community",
+        "roleAdmin": "Admin — full control",
+        "ttlLabel": "Validity (days)",
+        "messageLabel": "Personal message (optional)",
+        "messagePlaceholder": "Hi! I'm inviting you to our community...",
+        "submit": "Create invitation"
+      }
+    },
+    "people": {
+      "back": "← Back to members",
+      "denomination": "Denomination",
+      "observance": "Observance",
+      "kashrut": "Kashrut",
+      "joinedAt": "In community since",
+      "memberSince": "Member since",
+      "interests": "Interests",
+      "contactNote": "Contact is only available through events and requests. Direct messaging — coming soon.",
+      "searchPlaceholder": "Search by name, interests, bio...",
+      "filterAll": "All",
+      "filterRabbis": "🕯 Rabbis",
+      "reset": "Reset",
+      "peopleCount": "{count, plural, one {# person} other {# people}}",
+      "foundOf": "Found {found} of {total}",
+      "noResults": "No one matched your search.",
+      "self": "Me"
+    },
+    "invite": {
+      "noTokenTitle": "No token",
+      "noTokenText": "This page accepts invitations of the form <code>/invite?token=...</code>",
+      "notFoundTitle": "Invitation not found",
+      "notFoundText": "The link may have a typo. Ask the sender to resend it.",
+      "alreadyAccepted": "This invitation has already been accepted",
+      "revoked": "This invitation has been revoked",
+      "expired": "This invitation has expired",
+      "forCommunity": "For {name}",
+      "invitesYou": "{name} is inviting you",
+      "defaultInviter": "A rabbi",
+      "emailLabel": "Email:",
+      "roleLabel": "Role:",
+      "messageLabel": "Message:",
+      "wrongAccount": "⚠️ You're signed in as <strong>{current}</strong>, but the invitation is for <strong>{invited}</strong>. You can still accept, but it's usually better to sign in with the right account.",
+      "signInAndAccept": "Sign in with Google and accept",
+      "accepting": "Accepting...",
+      "accept": "Accept invitation",
+      "errorInvalid": "The link is invalid or expired. Ask for a new one.",
+      "errorUnauthorized": "Sign in again and try once more.",
+      "errorGeneric": "Error: {error}",
+      "refreshNote": "After accepting, you may need to sign out and back in once so the new community appears in your roles."
+    }
+  }
+}

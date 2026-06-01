@@ -1,0 +1,99 @@
+{
+  "aiPublic": {
+    "landing": {
+      "whatsInside": "What's inside ↓",
+      "brandTag": "Menorah · Jewish community network",
+      "heroTitlePre": "Your",
+      "heroTitleEm": "Jewish home",
+      "heroTitlePost": "wherever you are",
+      "heroSubtitle": "Shabbat dinners. Kosher places. An AI rabbi in your pocket. Find your community or discover new ones — in any city in the world.",
+      "signInGoogle": "Sign in with Google",
+      "signInNote": "Setup ~3 minutes · Free · No ads",
+      "feature1Title": "Shabbat nearby",
+      "feature1Body": "Candle-lighting times for your location. Shabbat dinners in your community. Home out of the box.",
+      "feature2Title": "AI Rabbi",
+      "feature2Body": "6 scenarios plus free-form chat. Knows your community and the weekly parashah.",
+      "feature3Title": "Jewish ID",
+      "feature3Body": "A digital passport with a QR code. Any community worldwide can verify you in seconds.",
+      "footer": "A platform for Jewish communities around the world"
+    },
+    "assistant": {
+      "noCommunity": "No active community.",
+      "eyebrow": "✦ Rabbi assistant",
+      "backHome": "← Home",
+      "icalSummary": "Subscribe your calendar to tasks and events",
+      "icalDescription": "Copy the link and add it as a new calendar in Apple Calendar / Google Calendar / Outlook — your tasks and community events will appear there automatically and stay updated.",
+      "icalOpenCalendar": "Open in Calendar",
+      "icalGoogleCalendar": "Google Calendar",
+      "welcomeTitle": "I'm listening, Rabbi {name}",
+      "welcomeNamefallback": "",
+      "welcomeSubtitle": "Tap the microphone and speak, or type. I'll find people in the community, create tasks, set reminders, and send notifications.",
+      "voiceUnsupported": "Voice input isn't available in this browser — open it in Chrome or Safari.",
+      "suggestionsLabel": "For example, ask:",
+      "errorTitle": "Something went wrong",
+      "inputPlaceholder": "Remind me to call Yonatan on Wednesday...",
+      "stop": "Stop",
+      "send": "Send",
+      "toolRunning": "running...",
+      "toolDone": "done",
+      "lookupEmpty": "Couldn't find anyone matching.",
+      "taskDue": "Due: {date}",
+      "openGoogleCalendar": "🗓 Open in Google Calendar",
+      "starters": {
+        "activeMembers": "How many active members do we have?",
+        "birthdays": "Whose birthday is this week?",
+        "openTasks": "Show my open tasks",
+        "weekEvents": "What events are happening this week?",
+        "requests": "What requests have members left right now?"
+      },
+      "tools": {
+        "lookup_member": "Looking up a member",
+        "get_member_summary": "Opening the profile",
+        "add_member_note": "Saving a note",
+        "add_task": "Creating a task",
+        "list_tasks": "Reviewing tasks",
+        "complete_task": "Closing the task",
+        "get_upcoming_events": "Checking events",
+        "get_pending_requests": "Checking requests",
+        "community_stats": "Counting the community",
+        "birthdays_in_next_week": "Finding birthdays",
+        "send_notification_to_member": "Sending a notification",
+        "google_calendar_quick_add": "Preparing the calendar"
+      }
+    },
+    "chat": {
+      "suggestionsLabel": "You can ask:",
+      "errorTitle": "Something went wrong",
+      "inputPlaceholder": "Ask about {topic}...",
+      "stop": "Stop",
+      "send": "Send",
+      "disclaimer": "The AI Rabbi can make mistakes — for halachic questions, check with your local rabbi."
+    },
+    "scenario": {
+      "backToScenarios": "← Back to scenarios",
+      "yourConversations": "Your conversations in this scenario",
+      "untitled": "(untitled)",
+      "messageOne": "message",
+      "messageMany": "messages",
+      "examplesLabel": "Examples of what you can ask"
+    },
+    "coverGen": {
+      "needTitle": "Enter the event title first",
+      "aiError": "AI returned an error",
+      "network": "Network",
+      "placeholder": "The cover will appear here",
+      "drawing": "AI is drawing the cover...",
+      "drawingHint": "~15 seconds",
+      "generateAgain": "Generate again",
+      "generate": "Generate cover with AI",
+      "remove": "Remove"
+    },
+    "textHelper": {
+      "needDraft": "Write at least a few words first — the AI will improve them, not invent from scratch",
+      "aiError": "AI returned an error",
+      "network": "Network",
+      "writing": "AI is writing...",
+      "improve": "Improve with AI"
+    }
+  }
+}

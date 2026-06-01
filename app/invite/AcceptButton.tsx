@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   token: string;
@@ -13,6 +14,7 @@ export function AcceptButton({ token, signedIn }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('directory');
 
   async function handleAccept() {
     setError(null);
@@ -42,7 +44,7 @@ export function AcceptButton({ token, signedIn }: Props) {
         onClick={() => signIn('google', { callbackUrl: `/invite?token=${token}` })}
         className="px-8 py-3 rounded-full bg-(--color-gold) text-(--color-deep) font-semibold hover:scale-105 transition-transform"
       >
-        Войти через Google и принять
+        {t('invite.signInAndAccept')}
       </button>
     );
   }
@@ -55,20 +57,19 @@ export function AcceptButton({ token, signedIn }: Props) {
         onClick={handleAccept}
         className="px-8 py-3 rounded-full bg-(--color-gold) text-(--color-deep) font-semibold hover:scale-105 transition-transform disabled:opacity-50"
       >
-        {pending ? 'Принимаю...' : 'Принять приглашение'}
+        {pending ? t('invite.accepting') : t('invite.accept')}
       </button>
       {error && (
         <p className="text-sm text-red-600 mt-3">
           {error === 'invitation_invalid_or_expired'
-            ? 'Ссылка недействительна или истёк срок. Попроси прислать новую.'
+            ? t('invite.errorInvalid')
             : error === 'unauthorized'
-              ? 'Войди заново и попробуй снова.'
-              : `Ошибка: ${error}`}
+              ? t('invite.errorUnauthorized')
+              : t('invite.errorGeneric', { error })}
         </p>
       )}
       <p className="text-xs text-(--color-fg-muted) mt-4">
-        После принятия, возможно, потребуется один раз выйти и зайти заново,
-        чтобы новая община появилась в твоих ролях.
+        {t('invite.refreshNote')}
       </p>
     </div>
   );

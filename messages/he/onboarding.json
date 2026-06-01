@@ -1,0 +1,91 @@
+{
+  "onboarding": {
+    "common": {
+      "next": "הבא",
+      "selectPlaceholder": "— בחר —",
+      "skipPlaceholder": "— דלג —"
+    },
+    "identity": {
+      "firstName": "שם פרטי",
+      "lastName": "שם משפחה",
+      "hebrewName": "שם עברי",
+      "hebrewNamePlaceholder": "אברהם בן יצחק",
+      "gender": "מגדר",
+      "genderMale": "זכר",
+      "genderFemale": "נקבה",
+      "genderOther": "אחר",
+      "genderPreferNotSay": "מעדיף לא לציין",
+      "dateOfBirth": "תאריך לידה",
+      "phone": "טלפון",
+      "phonePlaceholder": "+972501234567 או 050-1234567"
+    },
+    "family": {
+      "maritalStatus": "מצב משפחתי",
+      "single": "רווק / רווקה",
+      "engaged": "מאורס / מאורסת",
+      "married": "נשוי / נשואה",
+      "divorced": "גרוש / גרושה",
+      "widowed": "אלמן / אלמנה",
+      "spouseHebrewName": "שם עברי של בן/בת הזוג (אופ׳)",
+      "hasChildren": "יש ילדים",
+      "childrenAges": "גיל הילדים (מופרד בפסיקים)",
+      "childrenAgesPlaceholder": "4, 7, 11"
+    },
+    "religious": {
+      "denomination": "זרם *",
+      "denominationOther": "אחר",
+      "observanceLevel": "רמת שמירת מצוות *",
+      "observanceCurious": "רק מתעניין",
+      "observanceTraditional": "מסורתי",
+      "observanceObservant": "שומר מצוות",
+      "observanceStrict": "שומר מצוות בקפדנות",
+      "kashrut": "כשרות *",
+      "kashrutNone": "לא שומר",
+      "kashrutBasic": "בסיסי",
+      "kashrutStrict": "מחמיר",
+      "kashrutMehadrin": "מהדרין"
+    },
+    "interests": {
+      "interests": "תחומי עניין",
+      "languages": "שפות",
+      "bio": "קצת עליך",
+      "bioPlaceholder": "מה תרצה לשתף עם חברי הקהילה האחרים?",
+      "i_torah_learning": "תורה / לימוד",
+      "i_prayer": "תפילה",
+      "i_social": "חברה",
+      "i_volunteering": "התנדבות",
+      "i_parenting": "הורות",
+      "i_sports": "ספורט",
+      "i_music": "מוזיקה",
+      "i_cooking": "בישול",
+      "i_hebrew": "עברית",
+      "i_israel": "ישראל",
+      "i_arts": "אמנות",
+      "i_outdoors": "טבע",
+      "i_meditation": "מדיטציה"
+    },
+    "community": {
+      "intro": "בחר קהילה שאליה תרצה להצטרף. הרב יבחן את הבקשה.",
+      "legend": "קהילה",
+      "empty": "אין קהילות עדיין. המתן להזמנה.",
+      "message": "למה אתה רוצה להצטרף? *",
+      "messagePlaceholder": "הרב יראה את ההודעה הזו בעת בחינת הבקשה...",
+      "submit": "שלח בקשה"
+    },
+    "privacy": {
+      "visibility": "מי רואה את הפרופיל שלי *",
+      "visibilityCommunity": "כל חברי הקהילה שלי",
+      "visibilityMembersOnly": "חברים מאומתים בלבד",
+      "visibilityPrivate": "אף אחד (רק אני והרב)",
+      "channels": "ערוצי התראות",
+      "channelEmail": "אימייל",
+      "channelPush": "Push (בדפדפן)",
+      "categories": "על מה להתריע",
+      "catEvents": "אירועים חדשים",
+      "catRequests": "בקשות בקהילה",
+      "catPrayers": "תזכורות לתפילה",
+      "catCommunity": "חדשות הקהילה",
+      "finish": "סיום"
+    }
+  }
+}

@@ -2,6 +2,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { Avatar } from '../../_Avatar';
 import {
   displayName, DENOMINATION_LABELS, OBSERVANCE_LABELS, KASHRUT_LABELS,
@@ -40,9 +42,9 @@ interface PersonData {
   }>;
 }
 
-function fmt(iso: string | null) {
+function fmt(iso: string | null, locale: Locale) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(LOCALE_BCP47[locale], { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
 export default async function PersonProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,6 +54,9 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
 
   // Viewing self → redirect to /dashboard/me (richer view)
   if (id === session.user.id) redirect('/dashboard/me');
+
+  const t = await getTranslations('directory');
+  const locale = (await getLocale()) as Locale;
 
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const data = await client.request<PersonData>(FETCH, {
@@ -71,7 +76,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
       <Link href="/dashboard/people" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
-        ← К списку участников
+        {t('people.back')}
       </Link>
 
       <header className="flex items-start gap-5 mb-8">
@@ -100,25 +105,25 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
 
       <section className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm mb-8">
         {p?.denomination && (
-          <DefRow label="Направление" value={DENOMINATION_LABELS[p.denomination] ?? p.denomination} />
+          <DefRow label={t('people.denomination')} value={DENOMINATION_LABELS[p.denomination] ?? p.denomination} />
         )}
         {p?.observance_level && (
-          <DefRow label="Соблюдение" value={OBSERVANCE_LABELS[p.observance_level] ?? p.observance_level} />
+          <DefRow label={t('people.observance')} value={OBSERVANCE_LABELS[p.observance_level] ?? p.observance_level} />
         )}
         {p?.kashrut_level && (
-          <DefRow label="Кашрут" value={KASHRUT_LABELS[p.kashrut_level] ?? p.kashrut_level} />
+          <DefRow label={t('people.kashrut')} value={KASHRUT_LABELS[p.kashrut_level] ?? p.kashrut_level} />
         )}
         {membership.joined_at && (
-          <DefRow label="В общине с" value={fmt(membership.joined_at)} />
+          <DefRow label={t('people.joinedAt')} value={fmt(membership.joined_at, locale)} />
         )}
         {membership.member_since && (
-          <DefRow label="Участник с" value={fmt(membership.member_since)} />
+          <DefRow label={t('people.memberSince')} value={fmt(membership.member_since, locale)} />
         )}
       </section>
 
       {interests.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Интересы</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">{t('people.interests')}</h2>
           <div className="flex flex-wrap gap-1.5">
             {interests.map((i) => (
               <span key={i} className="text-sm px-3 py-1 rounded-full bg-(--color-muted-bg)">
@@ -130,7 +135,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
       )}
 
       <section className="border-t pt-6 text-xs text-(--color-fg-muted)">
-        Контакты доступны только через события и просьбы. Возможность писать напрямую — скоро.
+        {t('people.contactNote')}
       </section>
     </div>
   );

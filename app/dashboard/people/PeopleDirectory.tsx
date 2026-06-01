@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Avatar } from '../_Avatar';
 import {
   displayName, DENOMINATION_LABELS, INTEREST_LABELS, ROLE_BADGES,
@@ -26,6 +27,7 @@ export function PeopleDirectory({ members, selfId }: Props) {
   const [query, setQuery] = useState('');
   const [denomination, setDenomination] = useState<string | null>(null);
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
+  const t = useTranslations('directory');
 
   // Build set of unique denominations from actual member data
   const denominations = useMemo(() => {
@@ -65,7 +67,7 @@ export function PeopleDirectory({ members, selfId }: Props) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Поиск по имени, интересам, bio..."
+            placeholder={t('people.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2.5 border rounded-full focus:outline-none focus:ring-2 focus:ring-(--color-gold)"
           />
         </div>
@@ -74,12 +76,12 @@ export function PeopleDirectory({ members, selfId }: Props) {
       {/* Filter chips */}
       <div className="mb-6 flex flex-wrap gap-2 items-center text-sm">
         <FilterChip
-          label="Все"
+          label={t('people.filterAll')}
           active={roleFilter === 'all' && !denomination}
           onClick={() => { setRoleFilter('all'); setDenomination(null); }}
         />
         <FilterChip
-          label="🕯 Раввины"
+          label={t('people.filterRabbis')}
           active={roleFilter === 'rabbi'}
           onClick={() => setRoleFilter(roleFilter === 'rabbi' ? 'all' : 'rabbi')}
         />
@@ -102,20 +104,20 @@ export function PeopleDirectory({ members, selfId }: Props) {
             onClick={() => { setQuery(''); setDenomination(null); setRoleFilter('all'); }}
             className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) underline ml-2"
           >
-            Сбросить
+            {t('people.reset')}
           </button>
         )}
       </div>
 
       <p className="text-sm text-(--color-fg-muted) mb-4">
         {filtered.length === members.length
-          ? `${members.length} ${members.length === 1 ? 'человек' : 'человек'}`
-          : `Найдено ${filtered.length} из ${members.length}`}
+          ? t('people.peopleCount', { count: members.length })
+          : t('people.foundOf', { found: filtered.length, total: members.length })}
       </p>
 
       {filtered.length === 0 ? (
         <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-fg-muted)">
-          Никого не нашёл по запросу.
+          {t('people.noResults')}
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -145,6 +147,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
 }
 
 function PersonCard({ m, isSelf }: { m: Row; isSelf: boolean }) {
+  const t = useTranslations('directory');
   const href = isSelf ? '/dashboard/me' : `/dashboard/people/${m.user_id}`;
   const name = displayName(m.user);
   const interests = (m.user.profile?.interests ?? []).slice(0, 3);
@@ -161,7 +164,7 @@ function PersonCard({ m, isSelf }: { m: Row; isSelf: boolean }) {
           <div className="flex items-center gap-2 mb-1">
             <h2 className="font-semibold truncate">{name}</h2>
             {isSelf && (
-              <span className="text-xs px-1.5 py-0.5 rounded-full bg-(--color-deep) text-white">Я</span>
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-(--color-deep) text-white">{t('people.self')}</span>
             )}
           </div>
           {m.user.profile?.hebrew_name && (

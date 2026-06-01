@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { InspirationCard } from './InspirationCard';
 import {
@@ -30,6 +31,8 @@ export default async function InspirePage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const t = await getTranslations('personal');
+
   const sp = await searchParams;
   const activeKind = sp.kind && (ALL_KINDS as readonly string[]).includes(sp.kind)
     ? (sp.kind as ItemKind)
@@ -52,14 +55,13 @@ export default async function InspirePage({
       {/* Header */}
       <header className="mb-6">
         <div className="text-xs uppercase tracking-widest text-(--color-gold) mb-1">
-          Inspire
+          {t('inspire.eyebrow')}
         </div>
         <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-tight">
-          Что-то для души
+          {t('inspire.title')}
         </h1>
         <p className="text-sm text-(--color-fg-muted) mt-2 max-w-xl">
-          Короткие материалы — праздники, мудрости, истории. Без длинных лекций. По одному
-          уроку за раз.
+          {t('inspire.intro')}
         </p>
       </header>
 
@@ -67,10 +69,10 @@ export default async function InspirePage({
       <section className="mb-10">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-lg font-semibold flex items-center gap-2">
-            ✦ Сегодня
+            ✦ {t('inspire.today')}
           </h2>
           <span className="text-xs text-(--color-fg-muted)">
-            Меняется каждый день
+            {t('inspire.changesDaily')}
           </span>
         </div>
         <InspirationCard item={today} variant="hero" />
@@ -81,7 +83,7 @@ export default async function InspirePage({
         <section className="mb-10">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-lg font-semibold flex items-center gap-2">
-              ★ Закладки
+              ★ {t('inspire.bookmarks')}
               <span className="text-xs font-normal text-(--color-fg-muted)">
                 {bookmarkedItems.length}
               </span>
@@ -98,7 +100,7 @@ export default async function InspirePage({
       {/* Category filter pills */}
       <div className="-mx-5 px-5 md:mx-0 md:px-0 overflow-x-auto scrollbar-hide mb-6">
         <div className="flex gap-2 min-w-max md:flex-wrap">
-          <CategoryPill href="/dashboard/inspire" label="Всё" emoji="✦" active={!activeKind} />
+          <CategoryPill href="/dashboard/inspire" label={t('inspire.all')} emoji="✦" active={!activeKind} />
           {ALL_KINDS.map((k) => {
             const meta = KIND_LABELS[k];
             return (
@@ -152,7 +154,7 @@ export default async function InspirePage({
                       href={`/dashboard/inspire?kind=${kind}`}
                       className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)"
                     >
-                      Все →
+                      {t('inspire.seeAll')}
                     </Link>
                   )}
                 </div>
@@ -169,7 +171,7 @@ export default async function InspirePage({
 
       {/* Library total */}
       <p className="text-center text-xs text-(--color-fg-subtle) mt-12">
-        Всего в библиотеке {INSPIRATION_LIBRARY.length} материалов · обновляется
+        {t('inspire.libraryTotal', { count: INSPIRATION_LIBRARY.length })}
       </p>
     </div>
   );

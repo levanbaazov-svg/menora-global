@@ -1,0 +1,122 @@
+{
+  "connectPage": {
+    "backToGroups": "לקבוצות",
+    "members": "{count, plural, one {משתתף #} two {# משתתפים} many {# משתתפים} other {# משתתפים}}",
+    "aiSuggested": "מוצע ע\"י AI",
+    "global": "גלובלי",
+    "admin": "מנהל",
+    "schedule": "לוח זמנים",
+    "place": "מקום",
+    "access": "גישה",
+    "creator": "יוצר",
+    "noName": "ללא שם",
+    "aboutGroup": "על הקבוצה",
+    "membersHeading": "משתתפים",
+    "noMembers": "עדיין אין אף אחד. היה הראשון!",
+    "memberAdmin": "מנהל",
+    "showingFirst": "מוצגים {shown} הראשונים מתוך {total}.",
+    "chatTitle": "צ'אט קבוצתי — בקרוב",
+    "chatHint": "בינתיים תאמו מפגשים בצ'אטים המשותפים של הקהילה שלכם. צ'אט בזמן אמת בתוך הקבוצה — בגרסה 1.1.",
+    "management": "ניהול",
+    "visibility": {
+      "public": "פתוחה",
+      "community": "קהילה בלבד",
+      "invite_only": "בהזמנה בלבד"
+    },
+    "visibilityHint": {
+      "public": "גלויה וניתנת להצטרפות מכל קהילה",
+      "community": "גלויה רק לחברי הקהילה שלך",
+      "invite_only": "רק מנהלים יכולים להזמין חברים חדשים"
+    },
+    "archive": {
+      "button": "העבר קבוצה לארכיון",
+      "warning": "הקבוצה תוסתר מהמדריך. לא ניתן לבטל זאת מהממשק.",
+      "cancel": "ביטול",
+      "confirm": "אישור"
+    },
+    "joinLeave": {
+      "joined": "✓ אני בקבוצה — יציאה",
+      "join": "+ הצטרפות"
+    },
+    "new": {
+      "backToGroups": "לקבוצות",
+      "eyebrow": "חיבור",
+      "title": "יצירת קבוצה",
+      "subtitle": "פרויקט אחד — קבוצה אחת. תאר בקצרה על מה נפגשים ובאיזו תדירות. את השאר תוסיף בהמשך.",
+      "categoryLabel": "קטגוריה",
+      "nameLabel": "שם",
+      "namePlaceholder": "לדוגמה: חוג פרשת השבוע בבוקר",
+      "descriptionLabel": "תיאור (אופציונלי)",
+      "descriptionPlaceholder": "על מה נפגשים, למי זה מיועד, למה לצפות במפגש הראשון...",
+      "photoLabel": "תמונה — כתובת URL (אופציונלי)",
+      "frequencyLabel": "תדירות (אופציונלי)",
+      "frequencyPlaceholder": "פעם בשבוע, בימי חמישי ב-20:00",
+      "meetingLocationLabel": "מקום מפגש (אופציונלי)",
+      "meetingLocationPlaceholder": "בבית הכנסת, בית קפה פרימן, אצל ראובן",
+      "visibilityLabel": "מי רואה את הקבוצה",
+      "tagsLabel": "תגיות (אופציונלי)",
+      "tagsPlaceholder": "עברית, בוקר, לנשים (מופרד בפסיקים)",
+      "tagsHint": "עד 12 תגיות. הן עוזרות לאנשים למצוא את הקבוצה.",
+      "submit": "יצירת קבוצה",
+      "submitHint": "תהפוך אוטומטית למנהל הקבוצה."
+    }
+  },
+  "requestsPage": {
+    "backToBoard": "ללוח הבקשות",
+    "status": {
+      "open": "פתוח",
+      "in_progress": "בטיפול",
+      "fulfilled": "✓ נסגר",
+      "expired": "פג תוקף",
+      "cancelled": "בוטל"
+    },
+    "urgent": "דחוף",
+    "expires": "פג תוקף ב-{date}",
+    "management": "ניהול",
+    "repliesHeading": "תגובות ({count})",
+    "noReplies": "אף אחד עדיין לא הגיב.",
+    "alreadyReplied": "כבר {count, plural, one {הגבת} other {השארת # תגובות}} — אפשר עוד.",
+    "waitingReplies": "ממתינים לתגובות.",
+    "closedThanks": "הבקשה נסגרה בזכות תגובה מאת",
+    "noName": "—",
+    "reply": {
+      "mine": "שלי",
+      "accepted": "✓ התקבל",
+      "withdrawn": "בוטל",
+      "visibleOnlyToYou": "(גלוי רק לך)"
+    },
+    "form": {
+      "bodyLabel": "התגובה שלך",
+      "bodyPlaceholder": "שלום! אני יכול לעזור...",
+      "contactLegend": "איך ליצור איתך קשר",
+      "contactPublic": "בשרשור הזה — שהמחבר יכתוב כאן",
+      "contactPhone": "הצג למחבר את הטלפון שלי",
+      "contactEmail": "הצג למחבר את האימייל שלי",
+      "phoneLabel": "טלפון",
+      "emailLabel": "אימייל",
+      "submit": "שליחת תגובה"
+    },
+    "actions": {
+      "inProgress": "🤝 בטיפול",
+      "fulfilled": "✓ סגור כבוצע",
+      "cancel": "ביטול",
+      "reopen": "↻ פתח מחדש",
+      "acceptReply": "✓ קבל תגובה זו",
+      "acceptReplyTitle": "תגובה זו פתרה את העניין — סגור את הבקשה",
+      "withdraw": "ביטול"
+    },
+    "new": {
+      "backToBoard": "ללוח הבקשות",
+      "title": "בקשה חדשה",
+      "subtitle": "תאר מה צריך. חברי הקהילה יראו ויוכלו להציע עזרה.",
+      "categoryLabel": "קטגוריה *",
+      "titleLabel": "כותרת *",
+      "titlePlaceholder": "דרושה שמרטפית לערב שבת, 7 ביוני",
+      "bodyLabel": "פרטים *",
+      "bodyPlaceholder": "שני ילדים בני 4 ו-7, נדרש מ-17:00 עד 22:00, אזור המרכז.",
+      "urgencyLabel": "דחיפות",
+      "expiresLabel": "פג תוקף בעוד ימים (0 = ללא מועד)",
+      "submit": "פרסום"
+    }
+  }
+}

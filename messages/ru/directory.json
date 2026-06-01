@@ -1,0 +1,128 @@
+{
+  "directory": {
+    "members": {
+      "title": "Участники",
+      "totalLine": "Всего {count}.",
+      "pendingHint": "{count, plural, one {# заявка ждёт рассмотрения} few {# заявки ждут рассмотрения} many {# заявок ждут рассмотрения} other {# заявок ждут рассмотрения}}",
+      "sectionPending": "Ждут одобрения",
+      "sectionActive": "Активные",
+      "sectionSuspended": "Заморожены",
+      "sectionRejected": "Отклонённые",
+      "sectionLeft": "Покинувшие",
+      "empty": "В общине пока никого нет.",
+      "self": "Я",
+      "status": {
+        "pending": "Ждёт",
+        "active": "Активен",
+        "suspended": "Заморожен",
+        "rejected": "Отклонён",
+        "left": "Покинул"
+      },
+      "role": {
+        "member": "member",
+        "rabbi": "rabbi",
+        "admin": "admin"
+      },
+      "entry": {
+        "invite": "приглашение",
+        "self_request": "сам подал",
+        "rabbi_added": "добавлен"
+      },
+      "invitedBy": "приглашён {name}",
+      "memberSince": "с {date}",
+      "requestedOn": "заявка {date}",
+      "reason": "Причина: {reason}",
+      "actions": {
+        "rejectPlaceholder": "Причина отказа (видна заявителю)",
+        "cancel": "Отмена",
+        "reject": "Отклонить",
+        "accept": "✓ Принять",
+        "rejectShort": "✗ Отклонить",
+        "adminLocked": "admin · нельзя менять",
+        "roleMember": "member",
+        "roleRabbi": "rabbi",
+        "suspendTitle": "Заморозить участие",
+        "unsuspend": "Восстановить"
+      }
+    },
+    "invitations": {
+      "title": "Приглашения",
+      "count": "{count, plural, one {# приглашение} few {# приглашения} many {# приглашений} other {# приглашений}}",
+      "invite": "+ Пригласить",
+      "emptyText": "Ещё никого не приглашал.",
+      "emptyCta": "Создать первое",
+      "thEmail": "Email",
+      "thRole": "Роль",
+      "thStatus": "Статус",
+      "thExpires": "Истекает",
+      "thActions": "Действия",
+      "status": {
+        "accepted": "✓ Принято",
+        "revoked": "Отозвано",
+        "expired": "Истекло",
+        "pending": "Ждёт"
+      },
+      "new": {
+        "back": "← К списку приглашений",
+        "title": "Новое приглашение",
+        "subtitle": "Сгенерируем магическую ссылку. Любой, кто откроет её и войдёт через Google, получит membership.",
+        "createdTitle": "✓ Приглашение создано",
+        "createdFor": "Для <strong>{email}</strong>. Скопируй ссылку и отправь напрямую — email-доставка ещё не подключена.",
+        "copied": "✓",
+        "copy": "Скопировать",
+        "toList": "← К списку",
+        "another": "+ Ещё одно",
+        "emailLabel": "Email",
+        "roleLabel": "Роль",
+        "roleMember": "Member — обычный участник",
+        "roleRabbi": "Rabbi — может управлять общиной",
+        "roleAdmin": "Admin — полный контроль",
+        "ttlLabel": "Срок действия (дней)",
+        "messageLabel": "Личное сообщение (опц.)",
+        "messagePlaceholder": "Привет! Приглашаю тебя в нашу общину...",
+        "submit": "Создать приглашение"
+      }
+    },
+    "people": {
+      "back": "← К списку участников",
+      "denomination": "Направление",
+      "observance": "Соблюдение",
+      "kashrut": "Кашрут",
+      "joinedAt": "В общине с",
+      "memberSince": "Участник с",
+      "interests": "Интересы",
+      "contactNote": "Контакты доступны только через события и просьбы. Возможность писать напрямую — скоро.",
+      "searchPlaceholder": "Поиск по имени, интересам, bio...",
+      "filterAll": "Все",
+      "filterRabbis": "🕯 Раввины",
+      "reset": "Сбросить",
+      "peopleCount": "{count, plural, one {# человек} few {# человека} many {# человек} other {# человек}}",
+      "foundOf": "Найдено {found} из {total}",
+      "noResults": "Никого не нашёл по запросу.",
+      "self": "Я"
+    },
+    "invite": {
+      "noTokenTitle": "Нет токена",
+      "noTokenText": "Эта страница принимает приглашения вида <code>/invite?token=...</code>",
+      "notFoundTitle": "Приглашение не найдено",
+      "notFoundText": "Возможно, ссылка с опечаткой. Попроси отправителя прислать заново.",
+      "alreadyAccepted": "Это приглашение уже принято",
+      "revoked": "Это приглашение было отозвано",
+      "expired": "Срок приглашения истёк",
+      "forCommunity": "Для {name}",
+      "invitesYou": "{name} приглашает тебя",
+      "defaultInviter": "Раввин",
+      "emailLabel": "Email:",
+      "roleLabel": "Роль:",
+      "messageLabel": "Сообщение:",
+      "wrongAccount": "⚠️ Ты вошёл как <strong>{current}</strong>, а приглашение для <strong>{invited}</strong>. Можно принять, но обычно стоит войти под нужным аккаунтом.",
+      "signInAndAccept": "Войти через Google и принять",
+      "accepting": "Принимаю...",
+      "accept": "Принять приглашение",
+      "errorInvalid": "Ссылка недействительна или истёк срок. Попроси прислать новую.",
+      "errorUnauthorized": "Войди заново и попробуй снова.",
+      "errorGeneric": "Ошибка: {error}",
+      "refreshNote": "После принятия, возможно, потребуется один раз выйти и зайти заново, чтобы новая община появилась в твоих ролях."
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { hasuraAdmin } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { EventForm } from '../../EventForm';
 import { CancelEventButton } from './CancelEventButton';
 
@@ -40,6 +41,7 @@ export default async function EditEventPage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
   const { id } = await params;
+  const t = await getTranslations('eventsPage');
 
   const data = await hasuraAdmin.request<{
     events_by_pk: {
@@ -67,11 +69,11 @@ export default async function EditEventPage({
         href={`/dashboard/events/${id}`}
         className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
       >
-        <ChevronLeft size={14} /> К событию
+        <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('backToEvent')}
       </Link>
 
       <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight mb-5">
-        Редактировать событие
+        {t('editEvent')}
       </h1>
 
       <EventForm
@@ -91,7 +93,7 @@ export default async function EditEventPage({
       {e.status !== 'cancelled' && (
         <div className="mt-8 pt-6 border-t border-border">
           <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-3">
-            Опасная зона
+            {t('dangerZone')}
           </h2>
           <CancelEventButton eventId={e.id} />
         </div>

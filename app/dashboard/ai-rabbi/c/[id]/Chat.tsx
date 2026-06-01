@@ -6,6 +6,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage } from 'ai';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface InitialMessage {
   id: string;
@@ -33,6 +34,7 @@ export function Chat({
   initialMessages,
   autoSendText,
 }: Props) {
+  const t = useTranslations('aiPublic');
   // useChat is the single source of truth for the message list once mounted.
   // We hydrate it with the server-rendered history.
   const { messages, sendMessage, status, error, stop } = useChat({
@@ -131,7 +133,7 @@ export function Chat({
         {showSuggestions && (
           <div className="pt-2">
             <div className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-2">
-              Можешь спросить:
+              {t('chat.suggestionsLabel')}
             </div>
             <div className="flex flex-col gap-2 max-w-md">
               {examplePrompts.map((p) => (
@@ -150,7 +152,7 @@ export function Chat({
 
         {error && (
           <div className="rounded-2xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
-            <div className="font-medium mb-1">Не получилось</div>
+            <div className="font-medium mb-1">{t('chat.errorTitle')}</div>
             <div className="text-xs">{error.message}</div>
           </div>
         )}
@@ -167,7 +169,7 @@ export function Chat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={`Спросить про ${scenarioTitle.toLowerCase()}...`}
+            placeholder={t('chat.inputPlaceholder', { topic: scenarioTitle.toLowerCase() })}
             rows={1}
             disabled={isDisabled}
             className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-(--color-fg-muted) max-h-32 disabled:opacity-50"
@@ -178,7 +180,7 @@ export function Chat({
               type="button"
               onClick={stop}
               className="shrink-0 w-10 h-10 rounded-full bg-(--color-fg-muted) text-white flex items-center justify-center hover:opacity-90"
-              aria-label="Остановить"
+              aria-label={t('chat.stop')}
             >
               ⏸
             </button>
@@ -187,14 +189,14 @@ export function Chat({
               type="submit"
               disabled={!input.trim()}
               className="shrink-0 w-10 h-10 rounded-full bg-(--color-deep) text-white flex items-center justify-center hover:opacity-90 disabled:opacity-30 transition-opacity"
-              aria-label="Отправить"
+              aria-label={t('chat.send')}
             >
               ↑
             </button>
           )}
         </div>
         <div className="text-[10px] text-(--color-fg-subtle) mt-1.5 px-1">
-          AI Раввин может ошибаться — по галахическим вопросам сверяйся с местным раввином.
+          {t('chat.disclaimer')}
         </div>
       </form>
     </>

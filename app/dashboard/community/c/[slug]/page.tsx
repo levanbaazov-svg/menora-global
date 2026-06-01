@@ -5,6 +5,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
   ChevronRight, ChevronLeft, CalendarDays, AtSign,
@@ -58,8 +60,6 @@ const FETCH_DATA = /* GraphQL */ `
   }
 `;
 
-const ROLE_TITLE: Record<string, string> = { rabbi: 'Раввин', admin: 'Администратор' };
-
 interface CommunityRow {
   id: string; slug: string; name: string; city: string | null; country_code: string | null;
   timezone: string; denomination: string | null; description: string | null;
@@ -97,6 +97,10 @@ export default async function VisitorCommunityPage({
 
   const membership = data.my_membership[0];
   const base = `/dashboard/community/c/${c.slug}`;
+  const t = await getTranslations('communityPages');
+  const locale = (await getLocale()) as Locale;
+  const roleTitle = (role: string) =>
+    role === 'rabbi' || role === 'admin' ? t(`visitor.roles.${role}`) : role;
 
   return (
     <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-32">
@@ -115,11 +119,11 @@ export default async function VisitorCommunityPage({
               href="/dashboard/community/discover"
               className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
             >
-              <ChevronLeft size={14} /> Общины
+              <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('back.communities')}
             </Link>
             <div className="absolute inset-x-0 bottom-0 p-5 text-white">
               <div className="text-[10px] uppercase tracking-[0.15em] text-white/80 mb-1">
-                {c.denomination ?? 'Община'}
+                {c.denomination ?? t('visitor.denomination')}
               </div>
               <h1 className="font-serif text-3xl font-semibold leading-tight drop-shadow-sm">{c.name}</h1>
               <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-white/90">
@@ -148,22 +152,22 @@ export default async function VisitorCommunityPage({
                 <Reveal delay={0.04}>
                   <section>
                     <p className="text-sm leading-relaxed text-foreground/85">{c.description}</p>
-                    {c.founded_year && <div className="mt-3 text-xs text-muted-foreground">Основана в {c.founded_year}</div>}
+                    {c.founded_year && <div className="mt-3 text-xs text-muted-foreground">{t('visitor.foundedIn', { year: c.founded_year })}</div>}
                   </section>
                 </Reveal>
               )}
 
               {data.leaders.length > 0 && (
                 <Reveal delay={0.06}>
-                  <Sect title="Руководство">
+                  <Sect title={t('visitor.leadership')}>
                     <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
                       {data.leaders.map((l) => (
                         <div key={l.user?.id} className="shrink-0 w-20 text-center">
                           <div className="mx-auto mb-1.5">
                             <Avatar user={{ id: l.user?.id ?? '', name: l.user?.name ?? null, email: null, image_url: l.user?.image_url ?? null }} size="lg" />
                           </div>
-                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? 'Без имени'}</div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5 truncate">{l.community_role ?? ROLE_TITLE[l.role] ?? l.role}</div>
+                          <div className="text-xs font-medium leading-tight truncate">{l.user?.name ?? t('visitor.noName')}</div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5 truncate">{l.community_role ?? roleTitle(l.role)}</div>
                         </div>
                       ))}
                     </div>
@@ -173,7 +177,7 @@ export default async function VisitorCommunityPage({
 
               {data.events.length > 0 && (
                 <Reveal delay={0.08}>
-                  <Sect title="Ближайшие события">
+                  <Sect title={t('visitor.upcomingEvents')}>
                     <div className="grid grid-cols-2 gap-3">
                       {data.events.map((e) => (
                         <div key={e.id} className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
@@ -188,7 +192,7 @@ export default async function VisitorCommunityPage({
                           <div className="p-3">
                             <div className="text-sm font-medium leading-tight line-clamp-2">{e.title}</div>
                             <div className="text-[11px] text-muted-foreground mt-0.5">
-                              {new Date(e.starts_at).toLocaleDateString('ru-RU', { timeZone: c.timezone || undefined, day: 'numeric', month: 'short' })}
+                              {new Date(e.starts_at).toLocaleDateString(LOCALE_BCP47[locale], { timeZone: c.timezone || undefined, day: 'numeric', month: 'short' })}
                             </div>
                           </div>
                         </div>
@@ -200,7 +204,7 @@ export default async function VisitorCommunityPage({
 
               {data.programs.length > 0 && (
                 <Reveal delay={0.1}>
-                  <Sect title="Программы">
+                  <Sect title={t('visitor.programs')}>
                     <div className="grid grid-cols-2 gap-3">
                       {data.programs.map((p) => (
                         <div key={p.id} className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
@@ -225,7 +229,7 @@ export default async function VisitorCommunityPage({
 
               {data.members.length > 0 && (
                 <Reveal delay={0.12}>
-                  <Sect title="Участники">
+                  <Sect title={t('visitor.members')}>
                     <div className="flex flex-wrap gap-2">
                       {data.members.map((m) => (
                         <Avatar key={m.user?.id} user={{ id: m.user?.id ?? '', name: m.user?.name ?? null, email: null, image_url: m.user?.image_url ?? null }} size="md" />
@@ -242,8 +246,8 @@ export default async function VisitorCommunityPage({
             </>
           )}
 
-          {tab === 'guide' && <GuideTab places={data.places} />}
-          {tab === 'contacts' && <ContactsTab c={c} />}
+          {tab === 'guide' && <GuideTab places={data.places} t={t} locale={locale} />}
+          {tab === 'contacts' && <ContactsTab c={c} t={t} />}
         </div>
       </div>
 
@@ -254,13 +258,13 @@ export default async function VisitorCommunityPage({
             <JoinCommunityButton communityId={c.id} />
           ) : membership.status === 'pending' ? (
             <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
-              ⏳ Заявка на рассмотрении
+              {t('visitor.pendingRequest')}
             </div>
           ) : membership.status === 'active' ? (
             <SwitchToCommunityButton communityId={c.id} />
           ) : (
             <div className="rounded-full h-13 leading-[3.25rem] bg-muted text-center font-medium text-foreground">
-              Вы участник
+              {t('visitor.youAreMember')}
             </div>
           )}
         </div>
@@ -270,9 +274,13 @@ export default async function VisitorCommunityPage({
 }
 
 // ── Guide tab ─────────────────────────────────────────────────────────────
-function GuideTab({ places }: { places: PlaceRow[] }) {
+function GuideTab({ places, t, locale }: {
+  places: PlaceRow[];
+  t: Awaited<ReturnType<typeof getTranslations>>;
+  locale: Locale;
+}) {
   if (places.length === 0) {
-    return <EmptyHint Icon={MapPin} text="Места ещё не добавлены в город-гид" />;
+    return <EmptyHint Icon={MapPin} text={t('visitor.guideEmpty')} />;
   }
   const byType = new Map<PlaceType, PlaceRow[]>();
   for (const p of places) {
@@ -286,7 +294,7 @@ function GuideTab({ places }: { places: PlaceRow[] }) {
         <Reveal key={type} delay={0.04}>
           <section>
             <h2 className="font-serif text-base font-semibold mb-2.5">
-              {PLACE_TYPE_LABELS[type]?.ru ?? type}
+              {PLACE_TYPE_LABELS[type]?.[locale] ?? type}
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {items.map((p) => (
@@ -315,17 +323,20 @@ function GuideTab({ places }: { places: PlaceRow[] }) {
 }
 
 // ── Contacts tab ──────────────────────────────────────────────────────────
-function ContactsTab({ c }: { c: CommunityRow }) {
+function ContactsTab({ c, t }: {
+  c: CommunityRow;
+  t: Awaited<ReturnType<typeof getTranslations>>;
+}) {
   const rows = [
-    c.contact_phone && { Icon: Phone, label: 'Телефон', value: c.contact_phone, href: `tel:${c.contact_phone}` },
-    c.whatsapp_url && { Icon: MessageCircle, label: 'WhatsApp', value: 'Написать в WhatsApp', href: c.whatsapp_url, external: true },
-    c.contact_email && { Icon: Mail, label: 'Email', value: c.contact_email, href: `mailto:${c.contact_email}` },
-    c.website_url && { Icon: Globe, label: 'Сайт', value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
-    c.instagram_url && { Icon: AtSign, label: 'Instagram', value: 'Открыть профиль', href: c.instagram_url, external: true },
-    c.address && { Icon: Navigation, label: 'Адрес', value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
+    c.contact_phone && { Icon: Phone, label: t('visitor.contact.phone'), value: c.contact_phone, href: `tel:${c.contact_phone}` },
+    c.whatsapp_url && { Icon: MessageCircle, label: t('visitor.contact.whatsapp'), value: t('visitor.contact.whatsappValue'), href: c.whatsapp_url, external: true },
+    c.contact_email && { Icon: Mail, label: t('visitor.contact.email'), value: c.contact_email, href: `mailto:${c.contact_email}` },
+    c.website_url && { Icon: Globe, label: t('visitor.contact.website'), value: c.website_url.replace(/^https?:\/\//, ''), href: c.website_url, external: true },
+    c.instagram_url && { Icon: AtSign, label: t('visitor.contact.instagram'), value: t('visitor.contact.instagramValue'), href: c.instagram_url, external: true },
+    c.address && { Icon: Navigation, label: t('visitor.contact.address'), value: c.address, href: `https://maps.google.com/?q=${encodeURIComponent(c.address)}`, external: true },
   ].filter(Boolean) as Array<{ Icon: typeof Phone; label: string; value: string; href: string; external?: boolean }>;
 
-  if (rows.length === 0) return <EmptyHint Icon={Phone} text="Контакты пока не указаны" />;
+  if (rows.length === 0) return <EmptyHint Icon={Phone} text={t('visitor.contactsEmpty')} />;
   return (
     <Reveal delay={0.04}>
       <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">

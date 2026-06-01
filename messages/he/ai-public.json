@@ -1,0 +1,99 @@
+{
+  "aiPublic": {
+    "landing": {
+      "whatsInside": "מה בפנים ↓",
+      "brandTag": "Menorah · רשת קהילות יהודיות",
+      "heroTitlePre": "הבית היהודי",
+      "heroTitleEm": "שלך",
+      "heroTitlePost": "בכל מקום שבו אתה נמצא",
+      "heroSubtitle": "ארוחות שבת. מקומות כשרים. רב בינה מלאכותית בכיס. מצא את הקהילה שלך או גלה חדשות — בכל עיר בעולם.",
+      "signInGoogle": "כניסה עם Google",
+      "signInNote": "הגדרה ~3 דקות · חינם · ללא פרסומות",
+      "feature1Title": "שבת בקרבת מקום",
+      "feature1Body": "זמני הדלקת נרות לפי מיקומך. ארוחות שבת בקהילה. בית מהקופסה.",
+      "feature2Title": "רב בינה מלאכותית",
+      "feature2Body": "6 תרחישים ושיחה חופשית. מכיר את הקהילה שלך ואת פרשת השבוע.",
+      "feature3Title": "Jewish ID",
+      "feature3Body": "דרכון דיגיטלי עם קוד QR. בכל קהילה בעולם יאמתו אותך תוך שניות.",
+      "footer": "פלטפורמה לקהילות יהודיות בכל העולם"
+    },
+    "assistant": {
+      "noCommunity": "אין קהילה פעילה.",
+      "eyebrow": "✦ עוזר הרב",
+      "backHome": "← דף הבית",
+      "icalSummary": "הירשם ליומן שלך למשימות ואירועים",
+      "icalDescription": "העתק את הקישור והוסף אותו כיומן חדש ב-Apple Calendar / Google Calendar / Outlook — המשימות ואירועי הקהילה שלך יופיעו שם אוטומטית ויתעדכנו.",
+      "icalOpenCalendar": "פתח ביומן",
+      "icalGoogleCalendar": "Google Calendar",
+      "welcomeTitle": "אני מקשיב, הרב {name}",
+      "welcomeNamefallback": "",
+      "welcomeSubtitle": "הקש על המיקרופון ודבר, או הקלד. אמצא אנשים בקהילה, אצור משימות, אזכיר ואשלח התראות.",
+      "voiceUnsupported": "קלט קולי אינו זמין בדפדפן זה — פתח ב-Chrome או Safari.",
+      "suggestionsLabel": "לדוגמה, שאל:",
+      "errorTitle": "משהו השתבש",
+      "inputPlaceholder": "הזכר לי להתקשר ליונתן ביום רביעי...",
+      "stop": "עצור",
+      "send": "שלח",
+      "toolRunning": "מבצע...",
+      "toolDone": "הושלם",
+      "lookupEmpty": "לא נמצא אף אחד מתאים.",
+      "taskDue": "תאריך יעד: {date}",
+      "openGoogleCalendar": "🗓 פתח ב-Google Calendar",
+      "starters": {
+        "activeMembers": "כמה חברים פעילים יש לנו?",
+        "birthdays": "למי יש יום הולדת השבוע?",
+        "openTasks": "הצג את המשימות הפתוחות שלי",
+        "weekEvents": "אילו אירועים יש השבוע?",
+        "requests": "אילו בקשות החברים השאירו כעת?"
+      },
+      "tools": {
+        "lookup_member": "מחפש חבר קהילה",
+        "get_member_summary": "פותח את הפרופיל",
+        "add_member_note": "רושם הערה",
+        "add_task": "יוצר משימה",
+        "list_tasks": "מעיין במשימות",
+        "complete_task": "סוגר את המשימה",
+        "get_upcoming_events": "בודק אירועים",
+        "get_pending_requests": "בודק בקשות",
+        "community_stats": "סופר את הקהילה",
+        "birthdays_in_next_week": "מחפש ימי הולדת",
+        "send_notification_to_member": "שולח התראה",
+        "google_calendar_quick_add": "מכין את היומן"
+      }
+    },
+    "chat": {
+      "suggestionsLabel": "אפשר לשאול:",
+      "errorTitle": "משהו השתבש",
+      "inputPlaceholder": "שאל על {topic}...",
+      "stop": "עצור",
+      "send": "שלח",
+      "disclaimer": "רב הבינה המלאכותית עלול לטעות — בשאלות הלכתיות היוועץ ברב המקומי שלך."
+    },
+    "scenario": {
+      "backToScenarios": "← חזרה לתרחישים",
+      "yourConversations": "השיחות שלך בתרחיש זה",
+      "untitled": "(ללא כותרת)",
+      "messageOne": "הודעה",
+      "messageMany": "הודעות",
+      "examplesLabel": "דוגמאות למה שאפשר לשאול"
+    },
+    "coverGen": {
+      "needTitle": "הזן תחילה את שם האירוע",
+      "aiError": "ה-AI החזיר שגיאה",
+      "network": "רשת",
+      "placeholder": "התמונה הראשית תופיע כאן",
+      "drawing": "ה-AI מצייר את התמונה הראשית...",
+      "drawingHint": "~15 שניות",
+      "generateAgain": "צור שוב",
+      "generate": "צור תמונה ראשית עם AI",
+      "remove": "הסר"
+    },
+    "textHelper": {
+      "needDraft": "כתוב תחילה לפחות כמה מילים — ה-AI ישפר אותן, לא ימציא מאפס",
+      "aiError": "ה-AI החזיר שגיאה",
+      "network": "רשת",
+      "writing": "ה-AI כותב...",
+      "improve": "שפר עם AI"
+    }
+  }
+}

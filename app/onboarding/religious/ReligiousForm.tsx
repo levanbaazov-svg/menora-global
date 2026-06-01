@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { submitReligious } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { RadioGroup, FormError, SubmitButton } from '../_FormPrimitives';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function ReligiousForm({ defaults, mode = 'onboarding' }: Props) {
+  const t = useTranslations('onboarding');
   const [state, action] = useActionState(submitReligious, INITIAL_STATE);
   const v = (k: keyof typeof defaults) => (state.values?.[k] as string | undefined) ?? defaults[k];
 
@@ -18,7 +20,7 @@ export function ReligiousForm({ defaults, mode = 'onboarding' }: Props) {
     <form action={action} className="space-y-5">
       <input type="hidden" name="from" value={mode} />
       <FormError message={state.formError} />
-      <RadioGroup label="Направление *" name="denomination"
+      <RadioGroup label={t('religious.denomination')} name="denomination"
                   defaultValue={v('denomination')} error={state.errors?.denomination}
                   options={[
                     ['reform', 'Reform'],
@@ -29,26 +31,26 @@ export function ReligiousForm({ defaults, mode = 'onboarding' }: Props) {
                     ['sephardi', 'Sephardi'],
                     ['reconstructionist', 'Reconstructionist'],
                     ['secular', 'Secular'],
-                    ['other', 'Другое'],
+                    ['other', t('religious.denominationOther')],
                   ]} />
-      <RadioGroup label="Уровень соблюдения *" name="observance_level"
+      <RadioGroup label={t('religious.observanceLevel')} name="observance_level"
                   defaultValue={v('observance_level')} error={state.errors?.observance_level}
                   options={[
-                    ['curious', 'Только интересуюсь'],
-                    ['traditional', 'Традиционный'],
-                    ['observant', 'Соблюдающий'],
-                    ['strictly_observant', 'Строго соблюдающий'],
+                    ['curious', t('religious.observanceCurious')],
+                    ['traditional', t('religious.observanceTraditional')],
+                    ['observant', t('religious.observanceObservant')],
+                    ['strictly_observant', t('religious.observanceStrict')],
                   ]} />
-      <RadioGroup label="Кашрут *" name="kashrut_level"
+      <RadioGroup label={t('religious.kashrut')} name="kashrut_level"
                   defaultValue={v('kashrut_level')} error={state.errors?.kashrut_level}
                   options={[
-                    ['none', 'Не соблюдаю'],
-                    ['basic', 'Базовый'],
-                    ['strict', 'Строгий'],
-                    ['mehadrin', 'Мехадрин'],
+                    ['none', t('religious.kashrutNone')],
+                    ['basic', t('religious.kashrutBasic')],
+                    ['strict', t('religious.kashrutStrict')],
+                    ['mehadrin', t('religious.kashrutMehadrin')],
                   ]} />
       <div className="pt-4">
-        <SubmitButton>Дальше</SubmitButton>
+        <SubmitButton>{t('common.next')}</SubmitButton>
       </div>
     </form>
   );

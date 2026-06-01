@@ -8,10 +8,15 @@ import { IdCard } from './IdCard';
 import { JewishIdControls } from './JewishIdControls';
 import { EmptyState } from '@/app/_components/ui/EmptyState';
 import { headers } from 'next/headers';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { type Locale } from '@/i18n/config';
 
 export default async function MyJewishIdPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const t = await getTranslations('personal');
+  const locale = (await getLocale()) as Locale;
 
   const card = await fetchOwnCard(session.user.id);
   if (!card) {
@@ -19,8 +24,8 @@ export default async function MyJewishIdPage() {
       <div className="max-w-2xl mx-auto px-5 md:px-6 pt-2 pb-12">
         <EmptyState
           emoji="🪪"
-          title="Профиль не найден"
-          description="Что-то пошло не так. Попробуй перезагрузить страницу."
+          title={t('jewishId.notFoundTitle')}
+          description={t('jewishId.notFoundDesc')}
         />
       </div>
     );
@@ -41,19 +46,18 @@ export default async function MyJewishIdPage() {
         href="/dashboard/me"
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
       >
-        ← Мой профиль
+        {t('jewishId.back')}
       </Link>
 
       <header className="mb-8 text-center md:text-left">
         <div className="text-xs uppercase tracking-widest text-(--color-gold) mb-1">
-          Jewish ID
+          {t('jewishId.eyebrow')}
         </div>
         <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-tight">
-          Твой цифровой паспорт
+          {t('jewishId.title')}
         </h1>
         <p className="text-sm text-(--color-fg-muted) mt-2 max-w-xl">
-          Покажи QR в любой общине Menorah — за пару секунд подтвердят что ты член.
-          Никакой личной инфы кроме того что показано на карте.
+          {t('jewishId.intro')}
         </p>
       </header>
 
@@ -61,13 +65,13 @@ export default async function MyJewishIdPage() {
         {/* The card itself */}
         <div>
           {card.enabled ? (
-            <IdCard card={card} qrDataUrl={qrDataUrl} publicUrl={publicUrl} />
+            <IdCard card={card} qrDataUrl={qrDataUrl} publicUrl={publicUrl} t={t} locale={locale} />
           ) : (
             <div className="rounded-2xl border-2 border-dashed border-(--color-border) p-10 text-center">
               <div className="text-5xl mb-4 opacity-40">🔒</div>
-              <h3 className="font-serif text-xl font-semibold mb-2">ID отключён</h3>
+              <h3 className="font-serif text-xl font-semibold mb-2">{t('jewishId.disabledTitle')}</h3>
               <p className="text-sm text-(--color-fg-muted) mb-4">
-                Никто не сможет открыть твою публичную страницу по QR.
+                {t('jewishId.disabledDesc')}
               </p>
             </div>
           )}
@@ -77,7 +81,7 @@ export default async function MyJewishIdPage() {
         <aside className="space-y-5">
           <section>
             <h3 className="text-xs uppercase tracking-widest text-(--color-fg-muted) mb-2">
-              Публичная ссылка
+              {t('jewishId.publicLink')}
             </h3>
             <div className="rounded-xl bg-(--color-bg-elevated) border border-(--color-border)/60 px-3 py-2 text-xs break-all font-mono text-(--color-fg-muted)">
               {publicUrl}
@@ -87,7 +91,7 @@ export default async function MyJewishIdPage() {
               target="_blank" rel="noopener noreferrer"
               className="text-xs text-(--color-gold-dark) hover:underline mt-1 inline-block"
             >
-              Открыть как чужой →
+              {t('jewishId.openAsStranger')}
             </a>
           </section>
 
@@ -97,18 +101,18 @@ export default async function MyJewishIdPage() {
           />
 
           <section className="rounded-2xl bg-(--color-pastel-cream) border border-(--color-gold)/20 p-4">
-            <div className="text-xs font-semibold mb-1">Что показывается публично</div>
+            <div className="text-xs font-semibold mb-1">{t('jewishId.shownPublicly')}</div>
             <ul className="text-xs text-(--color-fg-muted) space-y-1 list-disc list-inside">
-              <li>Имя + еврейское имя</li>
-              <li>Фото профиля</li>
-              <li>Община, город, роль</li>
-              <li>Дата вступления</li>
+              <li>{t('jewishId.shownItems.name')}</li>
+              <li>{t('jewishId.shownItems.photo')}</li>
+              <li>{t('jewishId.shownItems.community')}</li>
+              <li>{t('jewishId.shownItems.joinDate')}</li>
             </ul>
-            <div className="text-xs font-semibold mt-3 mb-1">Что НЕ показывается</div>
+            <div className="text-xs font-semibold mt-3 mb-1">{t('jewishId.notShown')}</div>
             <ul className="text-xs text-(--color-fg-muted) space-y-1 list-disc list-inside">
-              <li>Телефон, email, адрес</li>
-              <li>Семья, дата рождения</li>
-              <li>Любые приватные настройки</li>
+              <li>{t('jewishId.notShownItems.contact')}</li>
+              <li>{t('jewishId.notShownItems.family')}</li>
+              <li>{t('jewishId.notShownItems.private')}</li>
             </ul>
           </section>
         </aside>
@@ -116,11 +120,11 @@ export default async function MyJewishIdPage() {
 
       {/* How-to */}
       <section className="mt-12 border-t border-(--color-border) pt-8">
-        <h2 className="font-serif text-xl font-semibold mb-4">Как использовать</h2>
+        <h2 className="font-serif text-xl font-semibold mb-4">{t('jewishId.howToTitle')}</h2>
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
-          <HowTo n="1" title="Покажи QR" body="При визите в другую синагогу или на шаббатний ужин — открой карту, дай отсканировать." />
-          <HowTo n="2" title="Они сканируют" body="Камера телефона распознаёт QR и открывает страницу подтверждения." />
-          <HowTo n="3" title="Готово" body="На их экране — твоя карта. Никаких звонков раввину, никаких форм." />
+          <HowTo n="1" title={t('jewishId.howTo.step1Title')} body={t('jewishId.howTo.step1Body')} />
+          <HowTo n="2" title={t('jewishId.howTo.step2Title')} body={t('jewishId.howTo.step2Body')} />
+          <HowTo n="3" title={t('jewishId.howTo.step3Title')} body={t('jewishId.howTo.step3Body')} />
         </div>
       </section>
     </div>

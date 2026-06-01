@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import {
   approveMembership, rejectMembership,
@@ -33,6 +34,7 @@ function PendingActions({ membershipId }: { membershipId: string }) {
   const [approveState, approveAction] = useActionState(approveMembership, INITIAL_STATE);
   const [rejectState, rejectAction] = useActionState(rejectMembership, INITIAL_STATE);
   const [showReject, setShowReject] = useState(false);
+  const t = useTranslations('directory');
 
   if (showReject) {
     return (
@@ -42,7 +44,7 @@ function PendingActions({ membershipId }: { membershipId: string }) {
           name="reason"
           required
           rows={2}
-          placeholder="Причина отказа (видна заявителю)"
+          placeholder={t('members.actions.rejectPlaceholder')}
           className={`w-full max-w-xs px-3 py-2 border rounded text-xs ${rejectState.errors?.reason ? 'border-red-500' : ''}`}
         />
         <div className="flex gap-2">
@@ -51,13 +53,13 @@ function PendingActions({ membershipId }: { membershipId: string }) {
             onClick={() => setShowReject(false)}
             className="text-xs px-3 py-1 rounded border hover:bg-(--color-muted-bg)"
           >
-            Отмена
+            {t('members.actions.cancel')}
           </button>
           <button
             type="submit"
             className="text-xs px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
           >
-            Отклонить
+            {t('members.actions.reject')}
           </button>
         </div>
         {rejectState.formError && <p className="text-xs text-red-600">{rejectState.formError}</p>}
@@ -73,7 +75,7 @@ function PendingActions({ membershipId }: { membershipId: string }) {
           type="submit"
           className="text-xs px-3 py-1.5 rounded bg-green-600 text-white hover:bg-green-700 font-medium"
         >
-          ✓ Принять
+          {t('members.actions.accept')}
         </button>
       </form>
       <button
@@ -81,7 +83,7 @@ function PendingActions({ membershipId }: { membershipId: string }) {
         onClick={() => setShowReject(true)}
         className="text-xs px-3 py-1.5 rounded border hover:bg-red-50 hover:border-red-300 hover:text-red-700"
       >
-        ✗ Отклонить
+        {t('members.actions.rejectShort')}
       </button>
       {approveState.formError && (
         <span className="text-xs text-red-600">{approveState.formError}</span>
@@ -93,10 +95,11 @@ function PendingActions({ membershipId }: { membershipId: string }) {
 function ActiveActions({ membershipId, currentRole }: { membershipId: string; currentRole: 'member' | 'rabbi' | 'admin' }) {
   const [roleState, roleAction] = useActionState(changeMemberRole, INITIAL_STATE);
   const [suspState, suspAction] = useActionState(suspendMembership, INITIAL_STATE);
+  const t = useTranslations('directory');
 
   // Admin role is not changeable from this UI.
   if (currentRole === 'admin') {
-    return <span className="text-xs text-(--color-fg-muted) italic">admin · нельзя менять</span>;
+    return <span className="text-xs text-(--color-fg-muted) italic">{t('members.actions.adminLocked')}</span>;
   }
 
   return (
@@ -118,7 +121,7 @@ function ActiveActions({ membershipId, currentRole }: { membershipId: string; cu
         <button
           type="submit"
           className="text-xs px-3 py-1 rounded border hover:bg-yellow-50 hover:border-yellow-400"
-          title="Заморозить участие"
+          title={t('members.actions.suspendTitle')}
         >
           ⏸
         </button>
@@ -132,6 +135,7 @@ function ActiveActions({ membershipId, currentRole }: { membershipId: string; cu
 
 function UnsuspendOnly({ membershipId }: { membershipId: string }) {
   const [state, action] = useActionState(unsuspendMembership, INITIAL_STATE);
+  const t = useTranslations('directory');
   return (
     <form action={action} className="inline">
       <input type="hidden" name="membership_id" value={membershipId} />
@@ -139,7 +143,7 @@ function UnsuspendOnly({ membershipId }: { membershipId: string }) {
         type="submit"
         className="text-xs px-3 py-1.5 rounded border hover:bg-green-50 hover:border-green-400"
       >
-        Восстановить
+        {t('members.actions.unsuspend')}
       </button>
       {state.formError && <span className="text-xs text-red-600 ml-2">{state.formError}</span>}
     </form>

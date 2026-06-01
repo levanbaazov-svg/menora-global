@@ -2,7 +2,11 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { RevokeButton } from './RevokeButton';
+
+type T = Awaited<ReturnType<typeof getTranslations<'directory'>>>;
 
 const LIST_INVITATIONS = /* GraphQL */ `
   query ListInvitations($community_id: uuid!) {
@@ -24,20 +28,23 @@ interface Invitation {
   acceptor: { id: string; name: string | null; email: string } | null;
 }
 
-function statusOf(inv: Invitation): { label: string; cls: string } {
-  if (inv.accepted_at) return { label: '✓ Принято', cls: 'bg-green-100 text-green-800' };
-  if (inv.revoked_at)  return { label: 'Отозвано', cls: 'bg-gray-100 text-gray-600' };
-  if (new Date(inv.expires_at) < new Date()) return { label: 'Истекло', cls: 'bg-orange-100 text-orange-800' };
-  return { label: 'Ждёт', cls: 'bg-(--color-gold-soft) text-(--color-gold-dark)' };
+function statusOf(inv: Invitation, t: T): { label: string; cls: string } {
+  if (inv.accepted_at) return { label: t('invitations.status.accepted'), cls: 'bg-green-100 text-green-800' };
+  if (inv.revoked_at)  return { label: t('invitations.status.revoked'), cls: 'bg-gray-100 text-gray-600' };
+  if (new Date(inv.expires_at) < new Date()) return { label: t('invitations.status.expired'), cls: 'bg-orange-100 text-orange-800' };
+  return { label: t('invitations.status.pending'), cls: 'bg-(--color-gold-soft) text-(--color-gold-dark)' };
 }
 
-function fmt(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+function fmt(iso: string, locale: Locale) {
+  return new Date(iso).toLocaleDateString(LOCALE_BCP47[locale], { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 export default async function InvitationsListPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const t = await getTranslations('directory');
+  const locale = (await getLocale()) as Locale;
 
   const role = session.hasura.default_role;
   const client = await hasuraAsCurrentUser({ role });
@@ -49,27 +56,27 @@ export default async function InvitationsListPage() {
     <div className="container mx-auto max-w-2xl px-4 md:px-6 pt-3 pb-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">Приглашения</h1>
+          <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">{t('invitations.title')}</h1>
           <p className="text-sm text-(--color-fg-muted)">
-            {invitations.length} {invitations.length === 1 ? 'приглашение' : 'приглашений'}
+            {t('invitations.count', { count: invitations.length })}
           </p>
         </div>
         <Link
           href="/dashboard/invitations/new"
           className="px-5 py-2.5 rounded-full bg-(--color-deep) text-white text-sm font-semibold hover:opacity-90"
         >
-          + Пригласить
+          {t('invitations.invite')}
         </Link>
       </div>
 
       {invitations.length === 0 ? (
         <div className="border-2 border-dashed rounded-xl p-12 text-center">
-          <p className="text-(--color-fg-muted) mb-4">Ещё никого не приглашал.</p>
+          <p className="text-(--color-fg-muted) mb-4">{t('invitations.emptyText')}</p>
           <Link
             href="/dashboard/invitations/new"
             className="px-5 py-2.5 rounded-full bg-(--color-gold) text-(--color-deep) text-sm font-semibold hover:scale-105 inline-block transition-transform"
           >
-            Создать первое
+            {t('invitations.emptyCta')}
           </Link>
         </div>
       ) : (
@@ -77,16 +84,16 @@ export default async function InvitationsListPage() {
           <table className="w-full text-sm">
             <thead className="bg-(--color-muted-bg) text-(--color-fg-muted)">
               <tr>
-                <th className="text-left px-4 py-3 font-medium">Email</th>
-                <th className="text-left px-4 py-3 font-medium">Роль</th>
-                <th className="text-left px-4 py-3 font-medium">Статус</th>
-                <th className="text-left px-4 py-3 font-medium">Истекает</th>
-                <th className="text-right px-4 py-3 font-medium">Действия</th>
+                <th className="text-left px-4 py-3 font-medium">{t('invitations.thEmail')}</th>
+                <th className="text-left px-4 py-3 font-medium">{t('invitations.thRole')}</th>
+                <th className="text-left px-4 py-3 font-medium">{t('invitations.thStatus')}</th>
+                <th className="text-left px-4 py-3 font-medium">{t('invitations.thExpires')}</th>
+                <th className="text-right px-4 py-3 font-medium">{t('invitations.thActions')}</th>
               </tr>
             </thead>
             <tbody>
               {invitations.map((inv) => {
-                const s = statusOf(inv);
+                const s = statusOf(inv, t);
                 const pending = !inv.accepted_at && !inv.revoked_at && new Date(inv.expires_at) > new Date();
                 return (
                   <tr key={inv.id} className="border-t">
@@ -102,7 +109,7 @@ export default async function InvitationsListPage() {
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full ${s.cls}`}>{s.label}</span>
                     </td>
-                    <td className="px-4 py-3 text-(--color-fg-muted)">{fmt(inv.expires_at)}</td>
+                    <td className="px-4 py-3 text-(--color-fg-muted)">{fmt(inv.expires_at, locale)}</td>
                     <td className="px-4 py-3 text-right">
                       {pending && <RevokeButton id={inv.id} />}
                     </td>

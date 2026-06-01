@@ -5,6 +5,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
 import { IdentityForm } from '@/app/onboarding/identity/IdentityForm';
@@ -42,6 +43,8 @@ export default async function EditProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
+  const t = await getTranslations('personal');
+
   const data = await hasuraAdmin.request<{
     user_profiles_by_pk: Profile | null;
     users_by_pk: { name: string | null } | null;
@@ -57,15 +60,15 @@ export default async function EditProfilePage() {
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
       <Link href="/dashboard/me" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
-        ← К моему профилю
+        {t('profileEdit.back')}
       </Link>
-      <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-2">Редактировать профиль</h1>
+      <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-2">{t('profileEdit.title')}</h1>
       <p className="text-sm text-(--color-fg-muted) mb-8">
-        Каждый раздел сохраняется отдельно. После сохранения вернёшься на профиль.
+        {t('profileEdit.subtitle')}
       </p>
 
       <div className="space-y-10">
-        <Section title="Идентичность">
+        <Section title={t('profileEdit.sections.identity')}>
           <IdentityForm mode="edit" defaults={{
             legal_first_name: p?.legal_first_name ?? defaultFirst ?? '',
             legal_last_name:  p?.legal_last_name  ?? defaultLast  ?? '',
@@ -76,7 +79,7 @@ export default async function EditProfilePage() {
           }} />
         </Section>
 
-        <Section title="Семья">
+        <Section title={t('profileEdit.sections.family')}>
           <FamilyForm mode="edit" defaults={{
             marital_status: p?.marital_status ?? '',
             has_children: p?.has_children ?? false,
@@ -85,7 +88,7 @@ export default async function EditProfilePage() {
           }} />
         </Section>
 
-        <Section title="Религиозный профиль">
+        <Section title={t('profileEdit.sections.religious')}>
           <ReligiousForm mode="edit" defaults={{
             denomination: p?.denomination ?? '',
             observance_level: p?.observance_level ?? '',
@@ -93,7 +96,7 @@ export default async function EditProfilePage() {
           }} />
         </Section>
 
-        <Section title="Интересы">
+        <Section title={t('profileEdit.sections.interests')}>
           <InterestsForm mode="edit" defaults={{
             interests: p?.interests ?? [],
             languages: p?.languages ?? ['en'],
@@ -101,7 +104,7 @@ export default async function EditProfilePage() {
           }} />
         </Section>
 
-        <Section title="Приватность">
+        <Section title={t('profileEdit.sections.privacy')}>
           <PrivacyForm mode="edit" defaults={{
             profile_visibility: p?.profile_visibility ?? 'community',
             channels: { email: ch.has('email'), push: ch.has('push') },

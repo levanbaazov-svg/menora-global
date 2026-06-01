@@ -1,11 +1,13 @@
 'use client';
 
 import { useActionState, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { archiveGroup } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Button } from '@/app/_components/ui/Button';
 
 export function ArchiveGroupButton({ groupId }: { groupId: string }) {
+  const t = useTranslations('connectPage.archive');
   const [state, formAction, pending] = useActionState(archiveGroup, INITIAL_STATE);
   const [confirm, setConfirm] = useState(false);
 
@@ -17,7 +19,7 @@ export function ArchiveGroupButton({ groupId }: { groupId: string }) {
         size="sm"
         onClick={() => setConfirm(true)}
       >
-        Архивировать группу
+        {t('button')}
       </Button>
     );
   }
@@ -25,7 +27,7 @@ export function ArchiveGroupButton({ groupId }: { groupId: string }) {
   return (
     <form action={formAction} className="space-y-2">
       <p className="text-sm text-(--color-fg-muted)">
-        Группа будет скрыта из directory. Это нельзя отменить из UI.
+        {t('warning')}
       </p>
       <input type="hidden" name="group_id" value={groupId} />
       <div className="flex gap-2">
@@ -36,10 +38,10 @@ export function ArchiveGroupButton({ groupId }: { groupId: string }) {
           onClick={() => setConfirm(false)}
           disabled={pending}
         >
-          Отмена
+          {t('cancel')}
         </Button>
         <Button type="submit" variant="danger" size="sm" disabled={pending}>
-          {pending ? '...' : 'Подтвердить'}
+          {pending ? '...' : t('confirm')}
         </Button>
       </div>
       {state.formError && (

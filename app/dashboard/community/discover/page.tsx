@@ -6,6 +6,7 @@ import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { CommunityCard, type CommunityCardData } from '../CommunityCard';
 import { EmptyState } from '@/app/_components/ui/EmptyState';
 
@@ -35,6 +36,7 @@ export default async function DiscoverCommunitiesPage({
   if (!session?.user?.id) redirect('/');
 
   const activeCity = (await searchParams).city ?? null;
+  const t = await getTranslations('communityPages');
 
   const data = await hasuraAdmin.request<{
     communities: Row[];
@@ -60,22 +62,22 @@ export default async function DiscoverCommunitiesPage({
         href="/dashboard/community"
         className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-3 inline-block"
       >
-        ← Назад
+        ← {t('back.back')}
       </Link>
 
       <header className="mb-4 px-0.5">
         <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          Общины мира
+          {t('discover.title')}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Шаббат, синагога, кошерная еда — еврейская жизнь там, куда ты летишь или переезжаешь.
+          {t('discover.subtitle')}
         </p>
       </header>
 
       {/* City filter chips */}
       <div className="-mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto scrollbar-hide mb-5">
         <div className="flex gap-2 min-w-max md:flex-wrap">
-          <FilterChip href="/dashboard/community/discover" label="Все" active={!activeCity} />
+          <FilterChip href="/dashboard/community/discover" label={t('discover.all')} active={!activeCity} />
           {cities.map((city) => (
             <FilterChip
               key={city}
@@ -91,8 +93,8 @@ export default async function DiscoverCommunitiesPage({
       {filtered.length === 0 ? (
         <EmptyState
           emoji="🌍"
-          title="Ничего не найдено"
-          description="Попробуй другой город или вернись ко всем общинам."
+          title={t('discover.emptyTitle')}
+          description={t('discover.emptyDescription')}
         />
       ) : (
         <div className="space-y-4">

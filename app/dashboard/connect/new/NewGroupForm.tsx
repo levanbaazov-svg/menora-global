@@ -1,17 +1,21 @@
 'use client';
 
 import { useActionState, useState, useRef } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { createGroup } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
 import { AITextHelper } from '@/app/_components/ai/AITextHelper';
+import { type Locale } from '@/i18n/config';
 import {
   GROUP_CATEGORIES, GROUP_CATEGORY_LABELS,
-  GROUP_VISIBILITY, VISIBILITY_LABELS,
+  GROUP_VISIBILITY,
   type GroupCategory,
 } from '@/lib/groups/schema';
 
 export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategory }) {
+  const t = useTranslations('connectPage');
+  const locale = useLocale() as Locale;
   const [state, action] = useActionState(createGroup, INITIAL_STATE);
   const v = (k: string, fallback = '') =>
     (state.values?.[k] as string | undefined) ?? fallback;
@@ -34,29 +38,29 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
       <FormError message={state.formError} />
 
       <Select
-        label="Категория"
+        label={t('new.categoryLabel')}
         name="category"
         required
         defaultValue={v('category', presetCategory ?? 'learning')}
         error={state.errors?.category}
-        options={GROUP_CATEGORIES.map((c) => [c, `${GROUP_CATEGORY_LABELS[c].emoji} ${GROUP_CATEGORY_LABELS[c].ru}`])}
+        options={GROUP_CATEGORIES.map((c) => [c, `${GROUP_CATEGORY_LABELS[c].emoji} ${GROUP_CATEGORY_LABELS[c][locale]}`])}
       />
 
       <Field
-        label="Название"
+        label={t('new.nameLabel')}
         name="name"
         required
-        placeholder="Например: Утренний parsha-кружок"
+        placeholder={t('new.namePlaceholder')}
         defaultValue={v('name')}
         error={state.errors?.name}
         inputRef={nameRef}
       />
 
       <Textarea
-        label="Описание (опц.)"
+        label={t('new.descriptionLabel')}
         name="description"
         rows={4}
-        placeholder="О чём встречаемся, для кого, чего ожидать на первой встрече..."
+        placeholder={t('new.descriptionPlaceholder')}
         defaultValue={v('description')}
         error={state.errors?.description}
         inputRef={descRef}
@@ -64,7 +68,7 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
       />
 
       <Field
-        label="Фото — URL (опц.)"
+        label={t('new.photoLabel')}
         name="photo_url"
         type="url"
         placeholder="https://..."
@@ -74,38 +78,38 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
 
       <div className="grid sm:grid-cols-2 gap-4">
         <Field
-          label="Частота (опц.)"
+          label={t('new.frequencyLabel')}
           name="frequency"
-          placeholder="Раз в неделю, по четвергам 20:00"
+          placeholder={t('new.frequencyPlaceholder')}
           defaultValue={v('frequency')}
           error={state.errors?.frequency}
         />
         <Field
-          label="Место встречи (опц.)"
+          label={t('new.meetingLocationLabel')}
           name="meeting_location"
-          placeholder="У синагоги, кафе Friman, у Реувена"
+          placeholder={t('new.meetingLocationPlaceholder')}
           defaultValue={v('meeting_location')}
           error={state.errors?.meeting_location}
         />
       </div>
 
       <Select
-        label="Кто видит группу"
+        label={t('new.visibilityLabel')}
         name="visibility"
         defaultValue={v('visibility', 'community')}
         error={state.errors?.visibility}
-        options={GROUP_VISIBILITY.map((s) => [s, VISIBILITY_LABELS[s].ru])}
+        options={GROUP_VISIBILITY.map((s) => [s, t(`visibility.${s}`)])}
       />
 
       {/* Tags */}
       <div>
         <label className="block text-sm font-medium mb-1.5">
-          Теги (опц.)
+          {t('new.tagsLabel')}
         </label>
         <input
           value={tagsRaw}
           onChange={(e) => setTagsRaw(e.target.value)}
-          placeholder="иврит, утро, для женщин (через запятую)"
+          placeholder={t('new.tagsPlaceholder')}
           className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-(--color-gold)"
         />
         {/* hidden inputs so action receives `tags` as multi-value */}
@@ -125,14 +129,14 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
           </div>
         )}
         <p className="text-xs text-(--color-fg-muted) mt-1.5">
-          До 12 тегов. Помогают людям найти группу.
+          {t('new.tagsHint')}
         </p>
       </div>
 
       <div className="pt-4">
-        <SubmitButton variant="gold">Создать группу</SubmitButton>
+        <SubmitButton variant="gold">{t('new.submit')}</SubmitButton>
         <p className="text-xs text-(--color-fg-muted) mt-3">
-          Ты автоматически станешь админом группы.
+          {t('new.submitHint')}
         </p>
       </div>
     </form>

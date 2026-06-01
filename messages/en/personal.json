@@ -1,0 +1,167 @@
+{
+  "personal": {
+    "profileEdit": {
+      "back": "← Back to my profile",
+      "title": "Edit profile",
+      "subtitle": "Each section saves independently. After saving you'll return to your profile.",
+      "sections": {
+        "identity": "Identity",
+        "family": "Family",
+        "religious": "Religious profile",
+        "interests": "Interests",
+        "privacy": "Privacy"
+      }
+    },
+    "jewishId": {
+      "notFoundTitle": "Profile not found",
+      "notFoundDesc": "Something went wrong. Try reloading the page.",
+      "back": "← My profile",
+      "eyebrow": "Jewish ID",
+      "title": "Your digital passport",
+      "intro": "Show your QR at any Menorah community — they'll confirm you're a member in seconds. No personal info beyond what's shown on the card.",
+      "disabledTitle": "ID disabled",
+      "disabledDesc": "No one can open your public page via QR.",
+      "publicLink": "Public link",
+      "openAsStranger": "Open as a stranger →",
+      "shownPublicly": "What's shown publicly",
+      "shownItems": {
+        "name": "Name + Hebrew name",
+        "photo": "Profile photo",
+        "community": "Community, city, role",
+        "joinDate": "Join date"
+      },
+      "notShown": "What's NOT shown",
+      "notShownItems": {
+        "contact": "Phone, email, address",
+        "family": "Family, date of birth",
+        "private": "Any private settings"
+      },
+      "howToTitle": "How to use",
+      "howTo": {
+        "step1Title": "Show your QR",
+        "step1Body": "When visiting another synagogue or a Shabbat dinner — open the card and let them scan it.",
+        "step2Title": "They scan",
+        "step2Body": "The phone camera reads the QR and opens the verification page.",
+        "step3Title": "Done",
+        "step3Body": "Your card shows on their screen. No calls to the rabbi, no forms."
+      },
+      "controls": {
+        "title": "Manage",
+        "disable": "Disable ID",
+        "enable": "Enable ID",
+        "regenerate": "Regenerate QR",
+        "regenerateWarning": "The old link will stop working. All previously printed or saved QR codes will become invalid.",
+        "cancel": "Cancel",
+        "confirmRegenerate": "Regenerate",
+        "regeneratedAt": "Regenerated {date}"
+      },
+      "card": {
+        "roles": {
+          "member": "Member",
+          "rabbi": "Rabbi",
+          "admin": "Admin"
+        },
+        "community": "Community",
+        "memberSince": "Member since {date}",
+        "qrCaption": "Scan QR — verification page",
+        "disabledPlaceholderTitle": "ID disabled or doesn't exist",
+        "disabledPlaceholderDesc": "The link is outdated or the ID owner revoked it. Ask the person for a fresh QR code."
+      },
+      "public": {
+        "verified": "Verified",
+        "title": "This person is part of Menorah",
+        "subtitle": "Confirmed by their community",
+        "suspicious": "Tap/hover the ❌ if the card looks suspicious — we'll investigate",
+        "footerTagline": "Menorah Global — a Jewish network of communities worldwide",
+        "whatIsMenorah": "What is Menorah? →"
+      }
+    },
+    "inspire": {
+      "eyebrow": "Inspire",
+      "title": "Something for the soul",
+      "intro": "Short pieces — holidays, wisdom, stories. No long lectures. One lesson at a time.",
+      "today": "Today",
+      "changesDaily": "Changes every day",
+      "bookmarks": "Bookmarks",
+      "all": "All",
+      "seeAll": "See all →",
+      "libraryTotal": "{count} pieces in the library · updated regularly"
+    },
+    "routines": {
+      "title": "My routine",
+      "addShort": "Routine",
+      "addMore": "+ Add another routine",
+      "emptyHint": "Add prayers and habits — check them off each day and build your streak.",
+      "createFirst": "Create your first",
+      "anyTime": "Any time",
+      "buckets": {
+        "morning": "Morning",
+        "day": "Day",
+        "evening": "Evening"
+      },
+      "stats": {
+        "days": "{count, plural, one {day} other {days}}",
+        "streakActive": "Streak going — don't break it!",
+        "streakStart": "Start a new streak today",
+        "today": "today",
+        "record": "Record",
+        "totalCheckins": "Total check-ins"
+      },
+      "new": {
+        "back": "← Back to my routines",
+        "title": "New routine",
+        "subtitle": "Pick something from the usual list or create your own. Streaks start from your first check-in.",
+        "trackWhat": "What we're tracking",
+        "customLabel": "Name *",
+        "customPlaceholder": "For example: Study Tanya for 15 minutes",
+        "time": "Time",
+        "reminderOffset": "Remind before (min)",
+        "daysOfWeek": "Days of the week",
+        "daysHint": "Nothing selected or all 7 = every day",
+        "submit": "Add routine"
+      },
+      "types": {
+        "modeh_ani": "Modeh Ani",
+        "shacharit": "Shacharit",
+        "mincha": "Mincha",
+        "maariv": "Maariv",
+        "shema_al_hamita": "Bedtime Shema",
+        "tehilim": "Tehillim",
+        "torah_learning": "Torah study",
+        "custom": "Your own routine"
+      },
+      "descriptions": {
+        "modeh_ani": "Morning prayer of gratitude",
+        "shacharit": "Morning prayer",
+        "mincha": "Afternoon prayer",
+        "maariv": "Evening prayer",
+        "shema_al_hamita": "Bedtime prayer",
+        "tehilim": "Reading psalms",
+        "torah_learning": "Studying Torah / Talmud",
+        "custom": "Any habit of your own"
+      },
+      "days": {
+        "0": "Sun",
+        "1": "Mon",
+        "2": "Tue",
+        "3": "Wed",
+        "4": "Thu",
+        "5": "Fri",
+        "6": "Sat"
+      }
+    },
+    "calendar": {
+      "noLocation": "To see Shabbat times, set your community's city in settings.",
+      "today": "Today",
+      "yourZone": "· your zone",
+      "communityZone": "· community",
+      "yourZoneTitle": "Times for your time zone",
+      "communityZoneTitle": "Community times",
+      "shabbat": "Shabbat",
+      "parashat": "Parashat {name}",
+      "candleLighting": "🕯 Candle lighting",
+      "havdalah": "✨ Havdalah",
+      "upcomingHolidays": "Upcoming holidays"
+    }
+  }
+}

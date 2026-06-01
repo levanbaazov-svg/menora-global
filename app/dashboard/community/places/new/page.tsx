@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { NewPlaceForm } from './NewPlaceForm';
 import { PLACE_TYPES, type PlaceType } from '@/lib/places/schema';
 
@@ -19,6 +20,7 @@ export default async function NewPlacePage({
 
   const role = session.hasura.default_role;
   const isStaff = role === 'rabbi' || role === 'admin';
+  const t = await getTranslations('communityPages');
 
   return (
     <div className="max-w-2xl mx-auto px-5 md:px-6 pt-6 pb-12">
@@ -26,15 +28,13 @@ export default async function NewPlacePage({
         href="/dashboard/community"
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
       >
-        ← В город-гид
+        ← {t('back.cityGuide')}
       </Link>
       <h1 className="font-serif text-3xl font-semibold mb-2">
-        {isStaff ? 'Добавить место' : 'Предложить место'}
+        {isStaff ? t('newPlace.titleStaff') : t('newPlace.titleMember')}
       </h1>
       <p className="text-sm text-(--color-fg-muted) mb-8">
-        {isStaff
-          ? 'Сразу появится в city-guide для всех членов общины и туристов.'
-          : 'Раввин проверит и опубликует в городе-гиде.'}
+        {isStaff ? t('newPlace.subtitleStaff') : t('newPlace.subtitleMember')}
       </p>
 
       <NewPlaceForm defaultType={defaultType} isStaff={isStaff} />

@@ -2,12 +2,9 @@
 // Hero-gradient with photo, name, community badge, role chip, QR.
 
 import type { JewishIdCard } from '@/lib/jewish-id';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 
-const ROLE_LABELS = {
-  member: 'Участник',
-  rabbi:  'Раввин',
-  admin:  'Админ',
-} as const;
+type Translator = (key: string, values?: Record<string, string | number>) => string;
 
 const ROLE_TONES = {
   member: 'bg-white/15 text-white',
@@ -23,9 +20,13 @@ interface Props {
   publicUrl?: string;
   /** Compact mode hides QR (for nav previews) */
   compact?: boolean;
+  /** Translator from the `personal` namespace */
+  t: Translator;
+  /** Active locale for date formatting */
+  locale: Locale;
 }
 
-export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
+export function IdCard({ card, qrDataUrl, publicUrl, compact, t, locale }: Props) {
   const initials = (card.display_name || '?').slice(0, 1).toUpperCase();
 
   return (
@@ -61,7 +62,7 @@ export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
             <span
               className={`text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full font-semibold ${ROLE_TONES[card.role]}`}
             >
-              {ROLE_LABELS[card.role]}
+              {t(`jewishId.card.roles.${card.role}`)}
             </span>
           )}
         </header>
@@ -100,7 +101,7 @@ export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
         {card.community && (
           <div className="mb-6 rounded-2xl bg-white/8 border border-white/10 backdrop-blur p-3.5">
             <div className="text-[10px] uppercase tracking-widest opacity-60 mb-0.5">
-              Община
+              {t('jewishId.card.community')}
             </div>
             <div className="font-medium text-sm leading-tight">{card.community.name}</div>
             {(card.community.city || card.community.country_code) && (
@@ -110,8 +111,10 @@ export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
             )}
             {card.member_since && (
               <div className="text-[10px] opacity-60 mt-1.5">
-                Член с {new Date(card.member_since).toLocaleDateString('ru-RU', {
-                  month: 'long', year: 'numeric',
+                {t('jewishId.card.memberSince', {
+                  date: new Date(card.member_since).toLocaleDateString(LOCALE_BCP47[locale], {
+                    month: 'long', year: 'numeric',
+                  }),
                 })}
               </div>
             )}
@@ -135,7 +138,7 @@ export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
         )}
         {!compact && publicUrl && (
           <div className="text-[10px] text-white/60 mt-2 text-center tracking-wide uppercase">
-            Скан QR — страница подтверждения
+            {t('jewishId.card.qrCaption')}
           </div>
         )}
 
@@ -150,15 +153,15 @@ export function IdCard({ card, qrDataUrl, publicUrl, compact }: Props) {
 }
 
 /** Disabled-card placeholder (for /id/[token] when user revoked the card) */
-export function DisabledCardPlaceholder() {
+export function DisabledCardPlaceholder({ t }: { t: Translator }) {
   return (
     <article className="relative w-full max-w-[400px] mx-auto rounded-[28px] overflow-hidden shadow-[var(--shadow-md)] bg-(--color-bg-elevated) border border-(--color-border) p-8 text-center">
       <div className="text-6xl mb-4 opacity-30">🔒</div>
       <h2 className="font-serif text-xl font-semibold mb-2">
-        ID отключён или не существует
+        {t('jewishId.card.disabledPlaceholderTitle')}
       </h2>
       <p className="text-sm text-(--color-fg-muted)">
-        Ссылка устарела или владелец ID отозвал её. Попроси у человека свежий QR-код.
+        {t('jewishId.card.disabledPlaceholderDesc')}
       </p>
     </article>
   );

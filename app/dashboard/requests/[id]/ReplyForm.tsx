@@ -1,11 +1,13 @@
 'use client';
 
 import { useActionState, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { postReply } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
 
 export function ReplyForm({ requestId }: { requestId: string }) {
+  const t = useTranslations('requestsPage.form');
   const [state, action] = useActionState(postReply, INITIAL_STATE);
   const [contactMethod, setContactMethod] = useState<'public_thread' | 'share_phone' | 'share_email'>(
     (state.values?.contact_method as 'public_thread' | 'share_phone' | 'share_email') ?? 'public_thread',
@@ -16,13 +18,13 @@ export function ReplyForm({ requestId }: { requestId: string }) {
       <input type="hidden" name="request_id" value={requestId} />
       <FormError message={state.formError} />
       <Textarea
-        label="Твой ответ" name="body" rows={3} required
+        label={t('bodyLabel')} name="body" rows={3} required
         defaultValue={(state.values?.body as string) ?? ''}
-        placeholder="Привет! Могу помочь..."
+        placeholder={t('bodyPlaceholder')}
         error={state.errors?.body}
       />
       <fieldset>
-        <legend className="text-sm font-medium mb-2">Как с тобой связаться</legend>
+        <legend className="text-sm font-medium mb-2">{t('contactLegend')}</legend>
         <div className="space-y-2">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
@@ -30,7 +32,7 @@ export function ReplyForm({ requestId }: { requestId: string }) {
               checked={contactMethod === 'public_thread'}
               onChange={() => setContactMethod('public_thread')}
             />
-            <span className="text-sm">В этом треде — пусть автор напишет здесь</span>
+            <span className="text-sm">{t('contactPublic')}</span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input
@@ -38,7 +40,7 @@ export function ReplyForm({ requestId }: { requestId: string }) {
               checked={contactMethod === 'share_phone'}
               onChange={() => setContactMethod('share_phone')}
             />
-            <span className="text-sm">Показать автору мой телефон</span>
+            <span className="text-sm">{t('contactPhone')}</span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
             <input
@@ -46,13 +48,13 @@ export function ReplyForm({ requestId }: { requestId: string }) {
               checked={contactMethod === 'share_email'}
               onChange={() => setContactMethod('share_email')}
             />
-            <span className="text-sm">Показать автору мой email</span>
+            <span className="text-sm">{t('contactEmail')}</span>
           </label>
         </div>
       </fieldset>
       {contactMethod === 'share_phone' && (
         <label className="block">
-          <span className="text-sm font-medium block mb-1.5">Телефон</span>
+          <span className="text-sm font-medium block mb-1.5">{t('phoneLabel')}</span>
           <input
             name="contact_phone" type="tel" required
             placeholder="+972501234567"
@@ -66,7 +68,7 @@ export function ReplyForm({ requestId }: { requestId: string }) {
       )}
       {contactMethod === 'share_email' && (
         <label className="block">
-          <span className="text-sm font-medium block mb-1.5">Email</span>
+          <span className="text-sm font-medium block mb-1.5">{t('emailLabel')}</span>
           <input
             name="contact_email" type="email" required
             defaultValue={(state.values?.contact_email as string) ?? ''}
@@ -78,7 +80,7 @@ export function ReplyForm({ requestId }: { requestId: string }) {
         </label>
       )}
       <div className="pt-2">
-        <SubmitButton>Ответить</SubmitButton>
+        <SubmitButton>{t('submit')}</SubmitButton>
       </div>
     </form>
   );

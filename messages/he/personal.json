@@ -1,0 +1,167 @@
+{
+  "personal": {
+    "profileEdit": {
+      "back": "← חזרה לפרופיל שלי",
+      "title": "עריכת פרופיל",
+      "subtitle": "כל קטע נשמר בנפרד. לאחר השמירה תחזור לפרופיל.",
+      "sections": {
+        "identity": "זהות",
+        "family": "משפחה",
+        "religious": "פרופיל דתי",
+        "interests": "תחומי עניין",
+        "privacy": "פרטיות"
+      }
+    },
+    "jewishId": {
+      "notFoundTitle": "הפרופיל לא נמצא",
+      "notFoundDesc": "משהו השתבש. נסה לטעון מחדש את הדף.",
+      "back": "← הפרופיל שלי",
+      "eyebrow": "Jewish ID",
+      "title": "הדרכון הדיגיטלי שלך",
+      "intro": "הצג את ה-QR בכל קהילת Menorah — יאשרו תוך שניות שאתה חבר. ללא מידע אישי מעבר למה שמוצג בכרטיס.",
+      "disabledTitle": "ה-ID מושבת",
+      "disabledDesc": "אף אחד לא יוכל לפתוח את הדף הציבורי שלך דרך QR.",
+      "publicLink": "קישור ציבורי",
+      "openAsStranger": "פתח כזר →",
+      "shownPublicly": "מה מוצג לציבור",
+      "shownItems": {
+        "name": "שם + שם עברי",
+        "photo": "תמונת פרופיל",
+        "community": "קהילה, עיר, תפקיד",
+        "joinDate": "תאריך הצטרפות"
+      },
+      "notShown": "מה לא מוצג",
+      "notShownItems": {
+        "contact": "טלפון, אימייל, כתובת",
+        "family": "משפחה, תאריך לידה",
+        "private": "כל הגדרה פרטית"
+      },
+      "howToTitle": "איך משתמשים",
+      "howTo": {
+        "step1Title": "הצג את ה-QR",
+        "step1Body": "בביקור בבית כנסת אחר או בסעודת שבת — פתח את הכרטיס ותן לסרוק אותו.",
+        "step2Title": "הם סורקים",
+        "step2Body": "מצלמת הטלפון מזהה את ה-QR ופותחת את דף האימות.",
+        "step3Title": "מוכן",
+        "step3Body": "הכרטיס שלך מופיע על המסך שלהם. בלי טלפונים לרב, בלי טפסים."
+      },
+      "controls": {
+        "title": "ניהול",
+        "disable": "השבת ID",
+        "enable": "הפעל ID",
+        "regenerate": "צור QR מחדש",
+        "regenerateWarning": "הקישור הישן יפסיק לעבוד. כל קודי ה-QR שהודפסו או נשמרו בעבר יהפכו ללא תקפים.",
+        "cancel": "ביטול",
+        "confirmRegenerate": "צור מחדש",
+        "regeneratedAt": "נוצר מחדש {date}"
+      },
+      "card": {
+        "roles": {
+          "member": "חבר",
+          "rabbi": "רב",
+          "admin": "מנהל"
+        },
+        "community": "קהילה",
+        "memberSince": "חבר מאז {date}",
+        "qrCaption": "סריקת QR — דף אימות",
+        "disabledPlaceholderTitle": "ה-ID מושבת או לא קיים",
+        "disabledPlaceholderDesc": "הקישור פג תוקף או שבעל ה-ID ביטל אותו. בקש מהאדם קוד QR עדכני."
+      },
+      "public": {
+        "verified": "Verified",
+        "title": "האדם הזה הוא חלק מ-Menorah",
+        "subtitle": "מאומת על ידי הקהילה שלו",
+        "suspicious": "הקש/רחף על ה-❌ אם הכרטיס נראה חשוד — אנחנו נחקור",
+        "footerTagline": "Menorah Global — רשת קהילות יהודית ברחבי העולם",
+        "whatIsMenorah": "מה זה Menorah? →"
+      }
+    },
+    "inspire": {
+      "eyebrow": "Inspire",
+      "title": "משהו לנשמה",
+      "intro": "תכנים קצרים — חגים, חוכמה, סיפורים. בלי הרצאות ארוכות. שיעור אחד בכל פעם.",
+      "today": "היום",
+      "changesDaily": "מתחלף מדי יום",
+      "bookmarks": "סימניות",
+      "all": "הכול",
+      "seeAll": "הכול →",
+      "libraryTotal": "{count} תכנים בספרייה · מתעדכן"
+    },
+    "routines": {
+      "title": "השגרה שלי",
+      "addShort": "שגרה",
+      "addMore": "+ הוסף שגרה נוספת",
+      "emptyHint": "הוסף תפילות והרגלים — סמן ביצוע בכל יום ובנה רצף.",
+      "createFirst": "צור את הראשונה",
+      "anyTime": "כל שעה",
+      "buckets": {
+        "morning": "בוקר",
+        "day": "צהריים",
+        "evening": "ערב"
+      },
+      "stats": {
+        "days": "{count, plural, one {יום} two {ימים} other {ימים}}",
+        "streakActive": "הרצף נמשך — אל תפסיק!",
+        "streakStart": "התחל רצף חדש היום",
+        "today": "היום",
+        "record": "שיא",
+        "totalCheckins": "סך הסימונים"
+      },
+      "new": {
+        "back": "← חזרה לשגרות שלי",
+        "title": "שגרה חדשה",
+        "subtitle": "בחר משהו מהרשימה הרגילה או צור משלך. הרצפים מתחילים מהסימון הראשון.",
+        "trackWhat": "מה אנחנו עוקבים",
+        "customLabel": "שם *",
+        "customPlaceholder": "לדוגמה: לימוד תניא 15 דקות",
+        "time": "שעה",
+        "reminderOffset": "תזכורת לפני (דקות)",
+        "daysOfWeek": "ימי השבוע",
+        "daysHint": "ללא בחירה או כל 7 = כל יום",
+        "submit": "הוסף שגרה"
+      },
+      "types": {
+        "modeh_ani": "מודה אני",
+        "shacharit": "שחרית",
+        "mincha": "מנחה",
+        "maariv": "מעריב",
+        "shema_al_hamita": "קריאת שמע על המיטה",
+        "tehilim": "תהילים",
+        "torah_learning": "לימוד תורה",
+        "custom": "שגרה משלך"
+      },
+      "descriptions": {
+        "modeh_ani": "תפילת הודיה של הבוקר",
+        "shacharit": "תפילת הבוקר",
+        "mincha": "תפילת היום",
+        "maariv": "תפילת הערב",
+        "shema_al_hamita": "תפילה לפני השינה",
+        "tehilim": "קריאת תהילים",
+        "torah_learning": "לימוד תורה / תלמוד",
+        "custom": "כל הרגל לבחירתך"
+      },
+      "days": {
+        "0": "א׳",
+        "1": "ב׳",
+        "2": "ג׳",
+        "3": "ד׳",
+        "4": "ה׳",
+        "5": "ו׳",
+        "6": "ש׳"
+      }
+    },
+    "calendar": {
+      "noLocation": "כדי לראות זמני שבת, הגדר את עיר הקהילה בהגדרות.",
+      "today": "היום",
+      "yourZone": "· האזור שלך",
+      "communityZone": "· קהילה",
+      "yourZoneTitle": "זמנים לאזור הזמן שלך",
+      "communityZoneTitle": "זמני הקהילה",
+      "shabbat": "שבת",
+      "parashat": "פרשת {name}",
+      "candleLighting": "🕯 הדלקת נרות",
+      "havdalah": "✨ הבדלה",
+      "upcomingHolidays": "חגים קרובים"
+    }
+  }
+}

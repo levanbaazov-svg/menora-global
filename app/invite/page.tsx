@@ -6,7 +6,10 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { hashInviteToken } from '@/lib/invitations/server';
+import { getTranslations } from 'next-intl/server';
 import { AcceptButton } from './AcceptButton';
+
+type T = Awaited<ReturnType<typeof getTranslations<'directory'>>>;
 
 const FIND_INVITE = /* GraphQL */ `
   query FindInvite($token_hash: String!) {
@@ -26,10 +29,10 @@ interface Invitation {
   inviter: { name: string | null } | null;
 }
 
-function invitationState(inv: Invitation): { kind: 'ok' | 'accepted' | 'revoked' | 'expired'; label?: string } {
-  if (inv.accepted_at) return { kind: 'accepted', label: 'Это приглашение уже принято' };
-  if (inv.revoked_at)  return { kind: 'revoked', label: 'Это приглашение было отозвано' };
-  if (new Date(inv.expires_at) < new Date()) return { kind: 'expired', label: 'Срок приглашения истёк' };
+function invitationState(inv: Invitation, t: T): { kind: 'ok' | 'accepted' | 'revoked' | 'expired'; label?: string } {
+  if (inv.accepted_at) return { kind: 'accepted', label: t('invite.alreadyAccepted') };
+  if (inv.revoked_at)  return { kind: 'revoked', label: t('invite.revoked') };
+  if (new Date(inv.expires_at) < new Date()) return { kind: 'expired', label: t('invite.expired') };
   return { kind: 'ok' };
 }
 
@@ -39,11 +42,12 @@ export default async function InvitePage({
   searchParams: Promise<{ token?: string }>;
 }) {
   const { token } = await searchParams;
+  const t = await getTranslations('directory');
   if (!token) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
-        <h1 className="font-serif text-3xl mb-2">Нет токена</h1>
-        <p className="text-(--color-fg-muted)">Эта страница принимает приглашения вида <code>/invite?token=...</code></p>
+        <h1 className="font-serif text-3xl mb-2">{t('invite.noTokenTitle')}</h1>
+        <p className="text-(--color-fg-muted)">{t.rich('invite.noTokenText', { code: (c) => <code>{c}</code> })}</p>
       </div>
     );
   }
@@ -58,21 +62,21 @@ export default async function InvitePage({
   if (!inv) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-        <h1 className="font-serif text-3xl mb-2">Приглашение не найдено</h1>
+        <h1 className="font-serif text-3xl mb-2">{t('invite.notFoundTitle')}</h1>
         <p className="text-(--color-fg-muted) max-w-md">
-          Возможно, ссылка с опечаткой. Попроси отправителя прислать заново.
+          {t('invite.notFoundText')}
         </p>
       </div>
     );
   }
 
-  const status = invitationState(inv);
+  const status = invitationState(inv, t);
 
   if (status.kind !== 'ok') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <h1 className="font-serif text-3xl mb-2">{status.label}</h1>
-        <p className="text-(--color-fg-muted)">Для {inv.community?.name ?? '—'}</p>
+        <p className="text-(--color-fg-muted)">{t('invite.forCommunity', { name: inv.community?.name ?? '—' })}</p>
       </div>
     );
   }
@@ -81,7 +85,7 @@ export default async function InvitePage({
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="max-w-md w-full text-center space-y-6">
         <div className="text-sm text-(--color-fg-muted) uppercase tracking-wide">
-          {inv.inviter?.name ?? 'Раввин'} приглашает тебя
+          {t('invite.invitesYou', { name: inv.inviter?.name ?? t('invite.defaultInviter') })}
         </div>
         <h1 className="font-serif text-4xl font-semibold">
           {inv.community?.name ?? 'Menorah Global'}
@@ -93,17 +97,17 @@ export default async function InvitePage({
         )}
         <div className="text-sm space-y-1">
           <div>
-            <span className="text-(--color-fg-muted)">Email:</span>{' '}
+            <span className="text-(--color-fg-muted)">{t('invite.emailLabel')}</span>{' '}
             <span className="font-medium">{inv.email}</span>
           </div>
           <div>
-            <span className="text-(--color-fg-muted)">Роль:</span>{' '}
+            <span className="text-(--color-fg-muted)">{t('invite.roleLabel')}</span>{' '}
             <span className="font-medium">{inv.role}</span>
           </div>
         </div>
         {inv.message && (
           <div className="border rounded-lg p-4 text-left text-sm bg-(--color-muted-bg)">
-            <div className="text-xs text-(--color-fg-muted) mb-1">Сообщение:</div>
+            <div className="text-xs text-(--color-fg-muted) mb-1">{t('invite.messageLabel')}</div>
             <p className="whitespace-pre-wrap">{inv.message}</p>
           </div>
         )}
@@ -112,8 +116,11 @@ export default async function InvitePage({
         </div>
         {session?.user && session.user.email && session.user.email !== inv.email && (
           <p className="text-xs text-orange-600">
-            ⚠️ Ты вошёл как <strong>{session.user.email}</strong>, а приглашение для <strong>{inv.email}</strong>.
-            Можно принять, но обычно стоит войти под нужным аккаунтом.
+            {t.rich('invite.wrongAccount', {
+              current: session.user.email,
+              invited: inv.email,
+              strong: (c) => <strong>{c}</strong>,
+            })}
           </p>
         )}
       </div>

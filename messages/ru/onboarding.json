@@ -1,0 +1,91 @@
+{
+  "onboarding": {
+    "common": {
+      "next": "Дальше",
+      "selectPlaceholder": "— выбери —",
+      "skipPlaceholder": "— пропустить —"
+    },
+    "identity": {
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "hebrewName": "Еврейское имя",
+      "hebrewNamePlaceholder": "Авраам бен Ицхак",
+      "gender": "Пол",
+      "genderMale": "Мужской",
+      "genderFemale": "Женский",
+      "genderOther": "Другой",
+      "genderPreferNotSay": "Не указывать",
+      "dateOfBirth": "Дата рождения",
+      "phone": "Телефон",
+      "phonePlaceholder": "+972501234567 или 050-1234567"
+    },
+    "family": {
+      "maritalStatus": "Семейный статус",
+      "single": "Не женат / не замужем",
+      "engaged": "Помолвлен(-а)",
+      "married": "Женат / замужем",
+      "divorced": "В разводе",
+      "widowed": "Вдовец / вдова",
+      "spouseHebrewName": "Еврейское имя супруга (опц.)",
+      "hasChildren": "Есть дети",
+      "childrenAges": "Возраст детей (через запятую)",
+      "childrenAgesPlaceholder": "4, 7, 11"
+    },
+    "religious": {
+      "denomination": "Направление *",
+      "denominationOther": "Другое",
+      "observanceLevel": "Уровень соблюдения *",
+      "observanceCurious": "Только интересуюсь",
+      "observanceTraditional": "Традиционный",
+      "observanceObservant": "Соблюдающий",
+      "observanceStrict": "Строго соблюдающий",
+      "kashrut": "Кашрут *",
+      "kashrutNone": "Не соблюдаю",
+      "kashrutBasic": "Базовый",
+      "kashrutStrict": "Строгий",
+      "kashrutMehadrin": "Мехадрин"
+    },
+    "interests": {
+      "interests": "Интересы",
+      "languages": "Языки",
+      "bio": "Коротко о себе",
+      "bioPlaceholder": "Что хотел бы рассказать другим членам общины?",
+      "i_torah_learning": "Тора / учёба",
+      "i_prayer": "Молитва",
+      "i_social": "Общение",
+      "i_volunteering": "Волонтёрство",
+      "i_parenting": "Дети",
+      "i_sports": "Спорт",
+      "i_music": "Музыка",
+      "i_cooking": "Кулинария",
+      "i_hebrew": "Иврит",
+      "i_israel": "Израиль",
+      "i_arts": "Искусство",
+      "i_outdoors": "Природа",
+      "i_meditation": "Медитация"
+    },
+    "community": {
+      "intro": "Выбери общину, к которой хочешь присоединиться. Раввин рассмотрит заявку.",
+      "legend": "Община",
+      "empty": "Пока нет общин. Подожди приглашения.",
+      "message": "Почему хочешь присоединиться? *",
+      "messagePlaceholder": "Раввин увидит это сообщение при рассмотрении заявки...",
+      "submit": "Подать заявку"
+    },
+    "privacy": {
+      "visibility": "Кто видит мой профиль *",
+      "visibilityCommunity": "Все члены моей общины",
+      "visibilityMembersOnly": "Только подтверждённые члены",
+      "visibilityPrivate": "Никто (только я и раввин)",
+      "channels": "Каналы уведомлений",
+      "channelEmail": "Email",
+      "channelPush": "Push (в браузере)",
+      "categories": "О чём уведомлять",
+      "catEvents": "Новые события",
+      "catRequests": "Просьбы в общине",
+      "catPrayers": "Напоминания о молитвах",
+      "catCommunity": "Новости общины",
+      "finish": "Завершить"
+    }
+  }
+}

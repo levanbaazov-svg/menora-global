@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   markFulfilled, markInProgress, cancelRequest, reopenRequest, acceptReply,
 } from '../_actions';
@@ -12,17 +13,18 @@ interface AuthorActionsProps {
 }
 
 export function AuthorActions({ requestId, status }: AuthorActionsProps) {
+  const t = useTranslations('requestsPage.actions');
   if (status === 'open' || status === 'in_progress') {
     return (
       <div className="flex gap-2 flex-wrap">
-        {status === 'open' && <MarkButton requestId={requestId} action="in_progress" label="🤝 В работе" />}
-        <MarkButton requestId={requestId} action="fulfilled" label="✓ Закрыть как выполненную" variant="gold" />
-        <MarkButton requestId={requestId} action="cancel" label="Отменить" variant="ghost" />
+        {status === 'open' && <MarkButton requestId={requestId} action="in_progress" label={t('inProgress')} />}
+        <MarkButton requestId={requestId} action="fulfilled" label={t('fulfilled')} variant="gold" />
+        <MarkButton requestId={requestId} action="cancel" label={t('cancel')} variant="ghost" />
       </div>
     );
   }
   if (status === 'fulfilled' || status === 'cancelled' || status === 'expired') {
-    return <MarkButton requestId={requestId} action="reopen" label="↻ Открыть заново" variant="ghost" />;
+    return <MarkButton requestId={requestId} action="reopen" label={t('reopen')} variant="ghost" />;
   }
   return null;
 }
@@ -53,6 +55,7 @@ function MarkButton({
 }
 
 export function AcceptReplyButton({ requestId, replyId }: { requestId: string; replyId: string }) {
+  const t = useTranslations('requestsPage.actions');
   const [state, action] = useActionState(acceptReply, INITIAL_STATE);
   return (
     <form action={action} className="inline">
@@ -61,9 +64,9 @@ export function AcceptReplyButton({ requestId, replyId }: { requestId: string; r
       <button
         type="submit"
         className="text-xs px-3 py-1.5 rounded-full bg-(--color-gold) text-(--color-deep) font-semibold hover:opacity-90"
-        title="Этот ответ решил вопрос — закрыть просьбу"
+        title={t('acceptReplyTitle')}
       >
-        ✓ Принять этот ответ
+        {t('acceptReply')}
       </button>
       {state.formError && <span className="text-xs text-red-600 ml-2">{state.formError}</span>}
     </form>

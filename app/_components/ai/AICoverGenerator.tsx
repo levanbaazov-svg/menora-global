@@ -7,6 +7,7 @@
 
 import { useCallback, useState } from 'react';
 import type { RefObject } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   /** Ref to the form's title input — we read its value when generating. */
@@ -24,6 +25,7 @@ interface Props {
 export function AICoverGenerator({
   titleRef, typeRef, descriptionRef, initialUrl, communityCity,
 }: Props) {
+  const t = useTranslations('aiPublic');
   const [preview, setPreview] = useState<string | null>(initialUrl ?? null);
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export function AICoverGenerator({
   const onClick = useCallback(async () => {
     const title = titleRef.current?.value?.trim();
     if (!title || title.length < 2) {
-      setError('Сначала введи название события');
+      setError(t('coverGen.needTitle'));
       setState('error');
       setTimeout(() => setState('idle'), 4000);
       return;
@@ -52,7 +54,7 @@ export function AICoverGenerator({
       });
       const json: { ok: boolean; dataUrl?: string; error?: string } = await res.json();
       if (!json.ok || !json.dataUrl) {
-        setError(json.error ?? 'AI вернул ошибку');
+        setError(json.error ?? t('coverGen.aiError'));
         setState('error');
         setTimeout(() => setState('idle'), 5000);
         return;
@@ -60,11 +62,11 @@ export function AICoverGenerator({
       setPreview(json.dataUrl);
       setState('idle');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Сеть');
+      setError(e instanceof Error ? e.message : t('coverGen.network'));
       setState('error');
       setTimeout(() => setState('idle'), 5000);
     }
-  }, [titleRef, typeRef, descriptionRef, communityCity]);
+  }, [titleRef, typeRef, descriptionRef, communityCity, t]);
 
   const clear = () => {
     setPreview(null);
@@ -85,14 +87,14 @@ export function AICoverGenerator({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-(--color-fg-muted)">
             <div className="text-4xl mb-2 opacity-50">🖼</div>
-            <div className="text-xs">Обложка появится здесь</div>
+            <div className="text-xs">{t('coverGen.placeholder')}</div>
           </div>
         )}
         {state === 'loading' && (
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm flex flex-col items-center justify-center text-white">
             <div className="w-8 h-8 border-3 border-white border-r-transparent rounded-full animate-spin mb-3" />
-            <div className="text-sm font-medium">AI рисует обложку...</div>
-            <div className="text-xs opacity-80 mt-1">~15 секунд</div>
+            <div className="text-sm font-medium">{t('coverGen.drawing')}</div>
+            <div className="text-xs opacity-80 mt-1">{t('coverGen.drawingHint')}</div>
           </div>
         )}
       </div>
@@ -111,7 +113,7 @@ export function AICoverGenerator({
             disabled:opacity-50 disabled:pointer-events-none
           "
         >
-          ✨ {preview ? 'Сгенерировать ещё раз' : 'Сгенерировать обложку с AI'}
+          ✨ {preview ? t('coverGen.generateAgain') : t('coverGen.generate')}
         </button>
         {preview && (
           <button
@@ -119,7 +121,7 @@ export function AICoverGenerator({
             onClick={clear}
             className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors px-2 py-1"
           >
-            Убрать
+            {t('coverGen.remove')}
           </button>
         )}
         {state === 'error' && error && (

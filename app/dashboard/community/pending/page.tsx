@@ -4,6 +4,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 import { EmptyState } from '@/app/_components/ui/EmptyState';
 import { PendingPlaceActions } from './PendingPlaceActions';
@@ -47,6 +49,8 @@ export default async function PendingQueuePage() {
   const role = session.hasura.default_role;
   if (role !== 'rabbi' && role !== 'admin') redirect('/dashboard/community');
 
+  const t = await getTranslations('communityPages');
+  const locale = (await getLocale()) as Locale;
   const client = await hasuraAsCurrentUser({ role });
   const { places } = await client.request<{ places: PendingPlace[] }>(
     FETCH, { community_id: session.hasura.community_id },
@@ -58,32 +62,31 @@ export default async function PendingQueuePage() {
         href="/dashboard/community"
         className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block"
       >
-        ← В город-гид
+        ← {t('back.cityGuide')}
       </Link>
 
       <header className="mb-6">
         <div className="text-xs uppercase tracking-widest text-(--color-warning) mb-1">
-          Модерация
+          {t('pending.eyebrow')}
         </div>
         <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          Предложенные места
+          {t('pending.title')}
         </h1>
         <p className="text-sm text-(--color-fg-muted) mt-2">
-          Места предложенные участниками. Одобри — появятся в city-guide для всех.
-          Отклони — никто кроме автора их не увидит.
+          {t('pending.subtitle')}
         </p>
       </header>
 
       {places.length === 0 ? (
         <EmptyState
           emoji="✓"
-          title="Нет заявок на рассмотрение"
-          description="Участники ещё не предлагали новые места. Когда предложат — увидишь их здесь."
+          title={t('pending.emptyTitle')}
+          description={t('pending.emptyDescription')}
         />
       ) : (
         <div className="space-y-4">
           {places.map((p) => (
-            <PendingCard key={p.id} p={p} />
+            <PendingCard key={p.id} p={p} t={t} locale={locale} />
           ))}
         </div>
       )}
@@ -91,7 +94,11 @@ export default async function PendingQueuePage() {
   );
 }
 
-function PendingCard({ p }: { p: PendingPlace }) {
+function PendingCard({ p, t, locale }: {
+  p: PendingPlace;
+  t: Awaited<ReturnType<typeof getTranslations>>;
+  locale: Locale;
+}) {
   const meta = PLACE_TYPE_LABELS[p.type];
   return (
     <div className="rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/60 overflow-hidden">
@@ -104,7 +111,7 @@ function PendingCard({ p }: { p: PendingPlace }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
-            <span className="text-xs text-(--color-fg-muted)">{meta.emoji} {meta.ru.slice(0, -1)}</span>
+            <span className="text-xs text-(--color-fg-muted)">{meta.emoji} {meta[locale]}</span>
             {p.kashrut_authority && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-(--color-gold-soft) text-(--color-gold-dark)">
                 {p.kashrut_authority}
@@ -117,14 +124,14 @@ function PendingCard({ p }: { p: PendingPlace }) {
           {p.description && <p className="text-sm text-(--color-fg-muted) mt-2 line-clamp-3">{p.description}</p>}
 
           <div className="mt-3 text-xs text-(--color-fg-subtle)">
-            Предложил: {p.submitter?.name ?? p.submitter?.email ?? '—'} · {new Date(p.created_at).toLocaleDateString('ru-RU')}
+            {t('pending.submittedBy', { name: p.submitter?.name ?? p.submitter?.email ?? '—' })} · {new Date(p.created_at).toLocaleDateString(LOCALE_BCP47[locale])}
           </div>
         </div>
       </div>
 
       <div className="border-t border-(--color-border)/60 px-4 py-3 flex items-center justify-between gap-2 bg-(--color-bg-muted)/30">
         <Link href={`/dashboard/community/places/${p.id}`} className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)">
-          Открыть детали →
+          {t('pending.openDetails')}
         </Link>
         <PendingPlaceActions placeId={p.id} />
       </div>

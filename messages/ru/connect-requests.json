@@ -1,0 +1,122 @@
+{
+  "connectPage": {
+    "backToGroups": "К группам",
+    "members": "{count, plural, one {# участник} few {# участника} many {# участников} other {# участников}}",
+    "aiSuggested": "AI Suggested",
+    "global": "Global",
+    "admin": "Админ",
+    "schedule": "Расписание",
+    "place": "Место",
+    "access": "Доступ",
+    "creator": "Создатель",
+    "noName": "Без имени",
+    "aboutGroup": "О группе",
+    "membersHeading": "Участники",
+    "noMembers": "Пока никого. Будь первым!",
+    "memberAdmin": "АДМИН",
+    "showingFirst": "Показаны первые {shown} из {total}.",
+    "chatTitle": "Чат группы — скоро",
+    "chatHint": "Сейчас договаривайтесь о встречах в общих чатах вашей общины. Real-time чат прямо внутри группы — в v1.1.",
+    "management": "Управление",
+    "visibility": {
+      "public": "Открытая",
+      "community": "Только община",
+      "invite_only": "По приглашению"
+    },
+    "visibilityHint": {
+      "public": "Видна и доступна для вступления из любой общины",
+      "community": "Видна только участникам твоей общины",
+      "invite_only": "Только админы могут приглашать новых"
+    },
+    "archive": {
+      "button": "Архивировать группу",
+      "warning": "Группа будет скрыта из directory. Это нельзя отменить из UI.",
+      "cancel": "Отмена",
+      "confirm": "Подтвердить"
+    },
+    "joinLeave": {
+      "joined": "✓ Я в группе — Выйти",
+      "join": "+ Вступить"
+    },
+    "new": {
+      "backToGroups": "К группам",
+      "eyebrow": "Связь",
+      "title": "Создать группу",
+      "subtitle": "Один проект — одна группа. Кратко опиши о чём встречаемся и как часто. Остальное добавишь позже.",
+      "categoryLabel": "Категория",
+      "nameLabel": "Название",
+      "namePlaceholder": "Например: Утренний parsha-кружок",
+      "descriptionLabel": "Описание (опц.)",
+      "descriptionPlaceholder": "О чём встречаемся, для кого, чего ожидать на первой встрече...",
+      "photoLabel": "Фото — URL (опц.)",
+      "frequencyLabel": "Частота (опц.)",
+      "frequencyPlaceholder": "Раз в неделю, по четвергам 20:00",
+      "meetingLocationLabel": "Место встречи (опц.)",
+      "meetingLocationPlaceholder": "У синагоги, кафе Friman, у Реувена",
+      "visibilityLabel": "Кто видит группу",
+      "tagsLabel": "Теги (опц.)",
+      "tagsPlaceholder": "иврит, утро, для женщин (через запятую)",
+      "tagsHint": "До 12 тегов. Помогают людям найти группу.",
+      "submit": "Создать группу",
+      "submitHint": "Ты автоматически станешь админом группы."
+    }
+  },
+  "requestsPage": {
+    "backToBoard": "К доске просьб",
+    "status": {
+      "open": "Открыто",
+      "in_progress": "В работе",
+      "fulfilled": "✓ Закрыто",
+      "expired": "Истекло",
+      "cancelled": "Отменено"
+    },
+    "urgent": "Срочно",
+    "expires": "истекает {date}",
+    "management": "Управление",
+    "repliesHeading": "Ответы ({count})",
+    "noReplies": "Пока никто не ответил.",
+    "alreadyReplied": "Ты уже {count, plural, one {ответил} other {оставил # ответа}} — можно ещё.",
+    "waitingReplies": "Ждём ответы.",
+    "closedThanks": "Просьба закрыта благодаря ответу от",
+    "noName": "—",
+    "reply": {
+      "mine": "Мой",
+      "accepted": "✓ Принят",
+      "withdrawn": "отозван",
+      "visibleOnlyToYou": "(видно только тебе)"
+    },
+    "form": {
+      "bodyLabel": "Твой ответ",
+      "bodyPlaceholder": "Привет! Могу помочь...",
+      "contactLegend": "Как с тобой связаться",
+      "contactPublic": "В этом треде — пусть автор напишет здесь",
+      "contactPhone": "Показать автору мой телефон",
+      "contactEmail": "Показать автору мой email",
+      "phoneLabel": "Телефон",
+      "emailLabel": "Email",
+      "submit": "Ответить"
+    },
+    "actions": {
+      "inProgress": "🤝 В работе",
+      "fulfilled": "✓ Закрыть как выполненную",
+      "cancel": "Отменить",
+      "reopen": "↻ Открыть заново",
+      "acceptReply": "✓ Принять этот ответ",
+      "acceptReplyTitle": "Этот ответ решил вопрос — закрыть просьбу",
+      "withdraw": "Отозвать"
+    },
+    "new": {
+      "backToBoard": "К доске просьб",
+      "title": "Новая просьба",
+      "subtitle": "Опиши что нужно. Члены общины увидят и смогут предложить помощь.",
+      "categoryLabel": "Категория *",
+      "titleLabel": "Заголовок *",
+      "titlePlaceholder": "Нужна няня в шаббат вечер 7 июня",
+      "bodyLabel": "Подробнее *",
+      "bodyPlaceholder": "Двое детей 4 и 7 лет, нужно с 17:00 до 22:00, район центра.",
+      "urgencyLabel": "Срочность",
+      "expiresLabel": "Истечёт через дней (0 = без срока)",
+      "submit": "Опубликовать"
+    }
+  }
+}

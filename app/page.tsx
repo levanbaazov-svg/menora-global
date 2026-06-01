@@ -1,9 +1,12 @@
 import { auth, signIn } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 export default async function HomePage() {
   const session = await auth();
   if (session?.user) redirect('/dashboard');
+
+  const t = await getTranslations('aiPublic');
 
   return (
     <main className="min-h-screen overflow-hidden relative flex flex-col">
@@ -40,7 +43,7 @@ export default async function HomePage() {
           href="#features"
           className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) transition-colors"
         >
-          Что внутри ↓
+          {t('landing.whatsInside')}
         </a>
       </header>
 
@@ -48,21 +51,20 @@ export default async function HomePage() {
       <section className="flex-1 flex flex-col items-center justify-center px-6 py-10 md:py-16">
         <div className="hero-pulse w-full max-w-xl text-center fade-up">
           <div className="text-[11px] uppercase tracking-[0.25em] text-(--color-gold-dark) mb-5 font-semibold">
-            Menorah · Jewish community network
+            {t('landing.brandTag')}
           </div>
 
           <h1 className="font-serif text-[2.75rem] sm:text-5xl md:text-6xl font-semibold leading-[1.02] tracking-tight mb-5">
-            Свой{' '}
+            {t('landing.heroTitlePre')}{' '}
             <em className="italic font-normal text-(--color-gold-dark) relative inline-block">
-              еврейский дом
+              {t('landing.heroTitleEm')}
             </em>
             <br />
-            везде, где ты
+            {t('landing.heroTitlePost')}
           </h1>
 
           <p className="text-base md:text-lg text-(--color-fg-muted) leading-relaxed mb-8 max-w-md mx-auto">
-            Шаббат-ужины. Кошерные места. AI-раввин в кармане.
-            Найди свою общину или открой новые — в любом городе мира.
+            {t('landing.heroSubtitle')}
           </p>
 
           <form
@@ -83,12 +85,12 @@ export default async function HomePage() {
               "
             >
               <GoogleLogo />
-              <span>Войти через Google</span>
+              <span>{t('landing.signInGoogle')}</span>
             </button>
           </form>
 
           <p className="text-xs text-(--color-fg-subtle) mt-5">
-            Setup ~3 минуты · Бесплатно · Без рекламы
+            {t('landing.signInNote')}
           </p>
         </div>
       </section>
@@ -98,25 +100,25 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-4 fade-up-stagger">
           <FeatureCard
             emoji="🕯"
-            title="Шаббат рядом"
-            body="Времена свечей по твоей геолокации. Шаббат-ужины в общине. Дом из коробки."
+            title={t('landing.feature1Title')}
+            body={t('landing.feature1Body')}
           />
           <FeatureCard
             emoji="✦"
-            title="AI Раввин"
-            body="6 сценариев плюс свободный разговор. Знает твою общину и недельную парашу."
+            title={t('landing.feature2Title')}
+            body={t('landing.feature2Body')}
           />
           <FeatureCard
             emoji="🪪"
-            title="Jewish ID"
-            body="Цифровой паспорт с QR. В любой общине по миру тебя подтвердят за пару секунд."
+            title={t('landing.feature3Title')}
+            body={t('landing.feature3Body')}
           />
         </div>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer className="px-6 py-6 text-center text-xs text-(--color-fg-subtle) safe-bottom">
-        <p>Платформа для еврейских общин по всему миру</p>
+        <p>{t('landing.footer')}</p>
       </footer>
     </main>
   );

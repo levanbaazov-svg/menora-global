@@ -1,0 +1,122 @@
+{
+  "connectPage": {
+    "backToGroups": "To groups",
+    "members": "{count, plural, one {# member} other {# members}}",
+    "aiSuggested": "AI Suggested",
+    "global": "Global",
+    "admin": "Admin",
+    "schedule": "Schedule",
+    "place": "Place",
+    "access": "Access",
+    "creator": "Creator",
+    "noName": "No name",
+    "aboutGroup": "About the group",
+    "membersHeading": "Members",
+    "noMembers": "No one yet. Be the first!",
+    "memberAdmin": "ADMIN",
+    "showingFirst": "Showing the first {shown} of {total}.",
+    "chatTitle": "Group chat — coming soon",
+    "chatHint": "For now, arrange meetups in your community's shared chats. Real-time chat right inside the group is coming in v1.1.",
+    "management": "Management",
+    "visibility": {
+      "public": "Open",
+      "community": "Community only",
+      "invite_only": "Invite only"
+    },
+    "visibilityHint": {
+      "public": "Visible and joinable from any community",
+      "community": "Visible only to members of your community",
+      "invite_only": "Only admins can invite new members"
+    },
+    "archive": {
+      "button": "Archive group",
+      "warning": "The group will be hidden from the directory. This cannot be undone from the UI.",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "joinLeave": {
+      "joined": "✓ You're in — Leave",
+      "join": "+ Join"
+    },
+    "new": {
+      "backToGroups": "To groups",
+      "eyebrow": "Connect",
+      "title": "Create a group",
+      "subtitle": "One project — one group. Briefly describe what you meet about and how often. You can add the rest later.",
+      "categoryLabel": "Category",
+      "nameLabel": "Name",
+      "namePlaceholder": "E.g.: Morning parsha circle",
+      "descriptionLabel": "Description (opt.)",
+      "descriptionPlaceholder": "What you meet about, who it's for, what to expect at the first meeting...",
+      "photoLabel": "Photo — URL (opt.)",
+      "frequencyLabel": "Frequency (opt.)",
+      "frequencyPlaceholder": "Weekly, Thursdays at 20:00",
+      "meetingLocationLabel": "Meeting place (opt.)",
+      "meetingLocationPlaceholder": "At the synagogue, Friman café, at Reuven's",
+      "visibilityLabel": "Who sees the group",
+      "tagsLabel": "Tags (opt.)",
+      "tagsPlaceholder": "hebrew, morning, for women (comma-separated)",
+      "tagsHint": "Up to 12 tags. They help people find the group.",
+      "submit": "Create group",
+      "submitHint": "You'll automatically become the group admin."
+    }
+  },
+  "requestsPage": {
+    "backToBoard": "To the requests board",
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "fulfilled": "✓ Closed",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "urgent": "Urgent",
+    "expires": "expires {date}",
+    "management": "Management",
+    "repliesHeading": "Replies ({count})",
+    "noReplies": "No one has replied yet.",
+    "alreadyReplied": "You've already {count, plural, one {replied} other {posted # replies}} — you can add more.",
+    "waitingReplies": "Waiting for replies.",
+    "closedThanks": "Request closed thanks to a reply from",
+    "noName": "—",
+    "reply": {
+      "mine": "Mine",
+      "accepted": "✓ Accepted",
+      "withdrawn": "withdrawn",
+      "visibleOnlyToYou": "(visible only to you)"
+    },
+    "form": {
+      "bodyLabel": "Your reply",
+      "bodyPlaceholder": "Hi! I can help...",
+      "contactLegend": "How to reach you",
+      "contactPublic": "In this thread — let the author write here",
+      "contactPhone": "Show the author my phone",
+      "contactEmail": "Show the author my email",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email",
+      "submit": "Reply"
+    },
+    "actions": {
+      "inProgress": "🤝 In progress",
+      "fulfilled": "✓ Close as fulfilled",
+      "cancel": "Cancel",
+      "reopen": "↻ Reopen",
+      "acceptReply": "✓ Accept this reply",
+      "acceptReplyTitle": "This reply solved it — close the request",
+      "withdraw": "Withdraw"
+    },
+    "new": {
+      "backToBoard": "To the requests board",
+      "title": "New request",
+      "subtitle": "Describe what you need. Community members will see it and can offer help.",
+      "categoryLabel": "Category *",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "Need a babysitter Shabbat evening, June 7",
+      "bodyLabel": "Details *",
+      "bodyPlaceholder": "Two kids aged 4 and 7, needed from 17:00 to 22:00, central area.",
+      "urgencyLabel": "Urgency",
+      "expiresLabel": "Expires in days (0 = no deadline)",
+      "submit": "Publish"
+    }
+  }
+}

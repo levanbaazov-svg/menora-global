@@ -7,17 +7,12 @@ import Link from 'next/link';
 import {
   CalendarClock, MapPin, Wallet, Users, ChevronLeft, Navigation,
 } from 'lucide-react';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { RsvpBar } from './RsvpBar';
 import { HostBar } from './HostBar';
-
-const EVENT_TYPE_LABELS: Record<string, string> = {
-  shabbat_dinner: 'Шаббатний ужин', shabbat_lunch: 'Шаббатний обед',
-  holiday_meal: 'Праздничная трапеза', lecture: 'Лекция / шиур',
-  minyan: 'Миньян', learning: 'Учёба', social: 'Социальное',
-  volunteer: 'Волонтёрство', kids: 'Для детей', other: 'Другое',
-};
 
 const FETCH = /* GraphQL */ `
   query EventDetail($id: uuid!, $user_id: uuid!) {
@@ -50,6 +45,8 @@ export default async function EventDetailPage({
   const session = await auth();
   if (!session?.user?.id) redirect('/');
   const { id } = await params;
+  const t = await getTranslations('eventsPage');
+  const locale = (await getLocale()) as Locale;
 
   const data = await hasuraAdmin.request<{
     events_by_pk: {
@@ -70,20 +67,21 @@ export default async function EventDetailPage({
 
   const myStatus = data.my_rsvp[0]?.status ?? null;
   const isHost = e.host?.id === session.user.id;
-  const typeLabel = EVENT_TYPE_LABELS[e.type] ?? e.type;
+  const bcp47 = LOCALE_BCP47[locale];
+  const typeLabel = t.has(`type.${e.type}`) ? t(`type.${e.type}`) : e.type;
 
   const tz = e.timezone || undefined;
   const start = new Date(e.starts_at);
-  const dateStr = start.toLocaleDateString('ru-RU', {
+  const dateStr = start.toLocaleDateString(bcp47, {
     timeZone: tz, weekday: 'long', day: 'numeric', month: 'long',
   });
   const timeStr = e.all_day
-    ? 'Весь день'
-    : start.toLocaleTimeString('ru-RU', { timeZone: tz, hour: '2-digit', minute: '2-digit' })
-      + (e.ends_at ? `–${new Date(e.ends_at).toLocaleTimeString('ru-RU', { timeZone: tz, hour: '2-digit', minute: '2-digit' })}` : '');
+    ? t('allDay')
+    : start.toLocaleTimeString(bcp47, { timeZone: tz, hour: '2-digit', minute: '2-digit' })
+      + (e.ends_at ? `–${new Date(e.ends_at).toLocaleTimeString(bcp47, { timeZone: tz, hour: '2-digit', minute: '2-digit' })}` : '');
 
   const priceStr = e.is_free || e.price_amount == null || e.price_amount === 0
-    ? 'Бесплатно'
+    ? t('free')
     : `${e.price_amount} ${e.price_currency ?? ''}`;
 
   const goingCount = e.attendee_count_cached;
@@ -103,9 +101,9 @@ export default async function EventDetailPage({
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/5" />
             <Link
               href="/dashboard/events"
-              className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
+              className="absolute top-3 start-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
             >
-              <ChevronLeft size={14} /> События
+              <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('backToEvents')}
             </Link>
             <div className="absolute inset-x-0 bottom-0 p-5 text-white">
               <span className="inline-block rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-foreground mb-2">
@@ -123,18 +121,18 @@ export default async function EventDetailPage({
       <div className="px-4 md:px-0 space-y-6 mt-5">
         {e.status === 'cancelled' && (
           <div className="rounded-2xl bg-destructive/10 text-destructive px-4 py-3 text-sm font-medium">
-            Событие отменено
+            {t('cancelled')}
           </div>
         )}
 
         <Reveal delay={0.04}>
           <div className="grid grid-cols-2 gap-3">
-            <Fact Icon={CalendarClock} label="Когда" value={dateStr} sub={timeStr} />
-            <Fact Icon={Wallet} label="Стоимость" value={priceStr} />
+            <Fact Icon={CalendarClock} label={t('factWhen')} value={dateStr} sub={timeStr} />
+            <Fact Icon={Wallet} label={t('factPrice')} value={priceStr} />
             {(e.location_text || e.location_address) && (
-              <Fact Icon={MapPin} label="Где" value={e.location_text ?? e.location_address ?? '—'} />
+              <Fact Icon={MapPin} label={t('factWhere')} value={e.location_text ?? e.location_address ?? '—'} />
             )}
-            <Fact Icon={Users} label="Идут" value={`${goingCount}${e.max_attendees ? ` / ${e.max_attendees}` : ''}`} />
+            <Fact Icon={Users} label={t('factGoing')} value={`${goingCount}${e.max_attendees ? ` / ${e.max_attendees}` : ''}`} />
           </div>
         </Reveal>
 
@@ -145,7 +143,7 @@ export default async function EventDetailPage({
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80"
             >
-              <Navigation size={15} /> Построить маршрут
+              <Navigation size={15} /> {t('directions')}
             </a>
           </Reveal>
         )}
@@ -158,10 +156,10 @@ export default async function EventDetailPage({
             >
               <Avatar user={{ id: e.host.id, name: e.host.name, email: null, image_url: e.host.image_url }} size="md" />
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Хост</div>
-                <div className="text-sm font-medium leading-tight">{e.host.name ?? 'Без имени'}</div>
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{t('host')}</div>
+                <div className="text-sm font-medium leading-tight">{e.host.name ?? t('noName')}</div>
               </div>
-              {isHost && <span className="text-[11px] text-primary font-medium">Это вы</span>}
+              {isHost && <span className="text-[11px] text-primary font-medium">{t('itsYou')}</span>}
             </Link>
           </Reveal>
         )}
@@ -176,7 +174,7 @@ export default async function EventDetailPage({
           <Reveal delay={0.1}>
             <section>
               <h2 className="font-serif text-lg font-semibold leading-tight mb-3">
-                Кто идёт <span className="text-sm font-normal text-muted-foreground">· {goingCount}</span>
+                {t('whoIsGoing')} <span className="text-sm font-normal text-muted-foreground">· {goingCount}</span>
               </h2>
               <div className="flex flex-wrap gap-2">
                 {data.going.map((r) => (

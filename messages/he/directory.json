@@ -1,0 +1,128 @@
+{
+  "directory": {
+    "members": {
+      "title": "חברים",
+      "totalLine": "סך הכול {count}.",
+      "pendingHint": "{count, plural, one {בקשה # ממתינה לבדיקה} two {# בקשות ממתינות לבדיקה} many {# בקשות ממתינות לבדיקה} other {# בקשות ממתינות לבדיקה}}",
+      "sectionPending": "ממתינים לאישור",
+      "sectionActive": "פעילים",
+      "sectionSuspended": "מושהים",
+      "sectionRejected": "נדחו",
+      "sectionLeft": "עזבו",
+      "empty": "אין עדיין אף אחד בקהילה.",
+      "self": "אני",
+      "status": {
+        "pending": "ממתין",
+        "active": "פעיל",
+        "suspended": "מושהה",
+        "rejected": "נדחה",
+        "left": "עזב"
+      },
+      "role": {
+        "member": "member",
+        "rabbi": "rabbi",
+        "admin": "admin"
+      },
+      "entry": {
+        "invite": "הזמנה",
+        "self_request": "הגיש בעצמו",
+        "rabbi_added": "נוסף"
+      },
+      "invitedBy": "הוזמן על ידי {name}",
+      "memberSince": "מאז {date}",
+      "requestedOn": "בקשה {date}",
+      "reason": "סיבה: {reason}",
+      "actions": {
+        "rejectPlaceholder": "סיבת הדחייה (גלויה למבקש)",
+        "cancel": "ביטול",
+        "reject": "דחה",
+        "accept": "✓ אשר",
+        "rejectShort": "✗ דחה",
+        "adminLocked": "admin · לא ניתן לשנות",
+        "roleMember": "member",
+        "roleRabbi": "rabbi",
+        "suspendTitle": "השהה חברות",
+        "unsuspend": "שחזר"
+      }
+    },
+    "invitations": {
+      "title": "הזמנות",
+      "count": "{count, plural, one {הזמנה #} two {# הזמנות} many {# הזמנות} other {# הזמנות}}",
+      "invite": "+ הזמן",
+      "emptyText": "עדיין לא הזמנת אף אחד.",
+      "emptyCta": "צור את הראשונה",
+      "thEmail": "אימייל",
+      "thRole": "תפקיד",
+      "thStatus": "סטטוס",
+      "thExpires": "פג תוקף",
+      "thActions": "פעולות",
+      "status": {
+        "accepted": "✓ התקבלה",
+        "revoked": "בוטלה",
+        "expired": "פג תוקף",
+        "pending": "ממתינה"
+      },
+      "new": {
+        "back": "← חזרה להזמנות",
+        "title": "הזמנה חדשה",
+        "subtitle": "ניצור קישור קסם. כל מי שיפתח אותו ויתחבר דרך Google יקבל חברות.",
+        "createdTitle": "✓ ההזמנה נוצרה",
+        "createdFor": "עבור <strong>{email}</strong>. העתק את הקישור ושלח ישירות — שליחת אימייל עדיין לא מחוברת.",
+        "copied": "✓",
+        "copy": "העתק",
+        "toList": "← חזרה לרשימה",
+        "another": "+ עוד אחת",
+        "emailLabel": "אימייל",
+        "roleLabel": "תפקיד",
+        "roleMember": "Member — משתתף רגיל",
+        "roleRabbi": "Rabbi — יכול לנהל את הקהילה",
+        "roleAdmin": "Admin — שליטה מלאה",
+        "ttlLabel": "תוקף (ימים)",
+        "messageLabel": "הודעה אישית (אופציונלי)",
+        "messagePlaceholder": "היי! אני מזמין אותך לקהילה שלנו...",
+        "submit": "צור הזמנה"
+      }
+    },
+    "people": {
+      "back": "← חזרה לחברים",
+      "denomination": "זרם",
+      "observance": "שמירת מצוות",
+      "kashrut": "כשרות",
+      "joinedAt": "בקהילה מאז",
+      "memberSince": "חבר מאז",
+      "interests": "תחומי עניין",
+      "contactNote": "יצירת קשר זמינה רק דרך אירועים ובקשות. הודעות ישירות — בקרוב.",
+      "searchPlaceholder": "חיפוש לפי שם, תחומי עניין, ביו...",
+      "filterAll": "הכול",
+      "filterRabbis": "🕯 רבנים",
+      "reset": "אפס",
+      "peopleCount": "{count, plural, one {אדם #} two {# אנשים} many {# אנשים} other {# אנשים}}",
+      "foundOf": "נמצאו {found} מתוך {total}",
+      "noResults": "לא נמצא אף אחד בחיפוש.",
+      "self": "אני"
+    },
+    "invite": {
+      "noTokenTitle": "אין טוקן",
+      "noTokenText": "דף זה מקבל הזמנות מהצורה <code>/invite?token=...</code>",
+      "notFoundTitle": "ההזמנה לא נמצאה",
+      "notFoundText": "ייתכן שיש טעות בקישור. בקש מהשולח לשלוח שוב.",
+      "alreadyAccepted": "ההזמנה הזו כבר התקבלה",
+      "revoked": "ההזמנה הזו בוטלה",
+      "expired": "תוקף ההזמנה פג",
+      "forCommunity": "עבור {name}",
+      "invitesYou": "{name} מזמין אותך",
+      "defaultInviter": "רב",
+      "emailLabel": "אימייל:",
+      "roleLabel": "תפקיד:",
+      "messageLabel": "הודעה:",
+      "wrongAccount": "⚠️ נכנסת כ-<strong>{current}</strong>, אך ההזמנה היא עבור <strong>{invited}</strong>. אפשר לאשר, אך בדרך כלל עדיף להיכנס עם החשבון הנכון.",
+      "signInAndAccept": "התחבר דרך Google ואשר",
+      "accepting": "מקבל...",
+      "accept": "קבל הזמנה",
+      "errorInvalid": "הקישור לא תקין או שפג תוקפו. בקש קישור חדש.",
+      "errorUnauthorized": "התחבר שוב ונסה שנית.",
+      "errorGeneric": "שגיאה: {error}",
+      "refreshNote": "לאחר האישור, ייתכן שתצטרך להתנתק ולהתחבר פעם אחת כדי שהקהילה החדשה תופיע בתפקידים שלך."
+    }
+  }
+}

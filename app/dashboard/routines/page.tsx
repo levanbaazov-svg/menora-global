@@ -4,13 +4,15 @@
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { Plus, Sunrise, Sun, Moon } from 'lucide-react';
 import { CheckinToggle } from './CheckinToggle';
 import { StreakHeader } from './StreakHeader';
 import { Reveal } from '@/components/motion/Reveal';
-import { ROUTINE_META, type RoutineType } from '@/lib/routines/schema';
+import { type RoutineType } from '@/lib/routines/schema';
 import { hebrewDate } from '@/lib/hebcal';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 
 const FETCH = /* GraphQL */ `
   query Routines($user_id: uuid!, $since: date!) {
@@ -70,14 +72,17 @@ function timeBucket(t: string | null): 'morning' | 'day' | 'evening' {
 }
 
 const BUCKETS = [
-  { key: 'morning', label: 'Утро', Icon: Sunrise },
-  { key: 'day',     label: 'День', Icon: Sun },
-  { key: 'evening', label: 'Вечер', Icon: Moon },
+  { key: 'morning', Icon: Sunrise },
+  { key: 'day',     Icon: Sun },
+  { key: 'evening', Icon: Moon },
 ] as const;
 
 export default async function RoutinesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect('/');
+
+  const t = await getTranslations('personal');
+  const locale = (await getLocale()) as Locale;
 
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const today = new Date();
@@ -88,7 +93,7 @@ export default async function RoutinesPage() {
 
   const todayISO = toISO(today);
   const todayDow = today.getDay();
-  const hebToday = hebrewDate(today, 'ru');
+  const hebToday = hebrewDate(today, locale);
 
   // Aggregate stats across all routines
   const allDates: string[] = [];
@@ -117,10 +122,10 @@ export default async function RoutinesPage() {
       <header className="flex items-start justify-between gap-3 mb-4 px-0.5">
         <div>
           <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-            Моя рутина
+            {t('routines.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5 capitalize">
-            {today.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {today.toLocaleDateString(LOCALE_BCP47[locale], { weekday: 'long', day: 'numeric', month: 'long' })}
             <span className="text-muted-foreground/70"> · {hebToday}</span>
           </p>
         </div>
@@ -128,12 +133,12 @@ export default async function RoutinesPage() {
           href="/dashboard/routines/new"
           className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all"
         >
-          <Plus size={15} strokeWidth={2.4} /> Рутина
+          <Plus size={15} strokeWidth={2.4} /> {t('routines.addShort')}
         </Link>
       </header>
 
       {data.routines.length === 0 ? (
-        <EmptyRoutines />
+        <EmptyRoutines t={t} />
       ) : (
         <div className="space-y-6">
           {/* Stats */}
@@ -153,7 +158,7 @@ export default async function RoutinesPage() {
               <Reveal key={bucket.key} delay={0.05}>
                 <section>
                   <h2 className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
-                    <bucket.Icon size={13} strokeWidth={2} /> {bucket.label}
+                    <bucket.Icon size={13} strokeWidth={2} /> {t(`routines.buckets.${bucket.key}`)}
                   </h2>
                   <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
                     {items.map((r) => {
@@ -165,10 +170,10 @@ export default async function RoutinesPage() {
                           <CheckinToggle routineId={r.id} checked={checked} />
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium leading-tight">
-                              {r.custom_label ?? ROUTINE_META[r.type].label}
+                              {r.custom_label ?? t(`routines.types.${r.type}`)}
                             </div>
                             <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                              {r.target_time?.slice(0, 5) ?? 'Любое время'}
+                              {r.target_time?.slice(0, 5) ?? t('routines.anyTime')}
                               {rStreak > 0 && (
                                 <span className="text-orange-600 font-medium">🔥 {rStreak}</span>
                               )}
@@ -188,7 +193,7 @@ export default async function RoutinesPage() {
             href="/dashboard/routines/new"
             className="block rounded-2xl border border-dashed border-border px-4 py-3 text-center text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
           >
-            + Добавить ещё рутину
+            {t('routines.addMore')}
           </Link>
         </div>
       )}
@@ -196,18 +201,18 @@ export default async function RoutinesPage() {
   );
 }
 
-function EmptyRoutines() {
+function EmptyRoutines({ t }: { t: (key: string) => string }) {
   return (
     <div className="rounded-2xl border border-dashed border-border px-4 py-10 text-center">
       <div className="text-4xl mb-3">🔥</div>
       <p className="text-sm text-muted-foreground mb-4 max-w-xs mx-auto">
-        Добавь молитвы и привычки — каждый день отмечай выполнение и собирай серию.
+        {t('routines.emptyHint')}
       </p>
       <Link
         href="/dashboard/routines/new"
         className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold"
       >
-        Создать первую
+        {t('routines.createFirst')}
       </Link>
     </div>
   );

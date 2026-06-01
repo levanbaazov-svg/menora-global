@@ -5,6 +5,8 @@ import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, isLocale } from '@/i18n/config';
 import {
   SCENARIOS, SCENARIO_SLUG_TO_ENUM, type AIScenario,
 } from '@/lib/ai/scenarios';
@@ -36,6 +38,10 @@ export default async function ScenarioPage({
 
   const meta = SCENARIOS[scenarioEnum];
 
+  const t = await getTranslations('aiPublic');
+  const locale = await getLocale();
+  const bcp47 = isLocale(locale) ? LOCALE_BCP47[locale] : 'ru-RU';
+
   const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
   const data = await client.request<{
     ai_conversations: Array<{
@@ -49,7 +55,7 @@ export default async function ScenarioPage({
         href="/dashboard/ai-rabbi"
         className="inline-block text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6"
       >
-        ← К сценариям
+        {t('scenario.backToScenarios')}
       </Link>
 
       {/* Hero */}
@@ -73,7 +79,7 @@ export default async function ScenarioPage({
       {data.ai_conversations.length > 0 && (
         <section className="mb-8">
           <h2 className="font-serif text-base font-semibold mb-3">
-            Твои разговоры в этом сценарии
+            {t('scenario.yourConversations')}
           </h2>
           <div className="space-y-2">
             {data.ai_conversations.map((c) => (
@@ -83,11 +89,11 @@ export default async function ScenarioPage({
                 className="block rounded-2xl bg-(--color-bg-elevated) border border-(--color-border)/60 p-3 hover:border-(--color-gold)/40 transition-colors"
               >
                 <div className="font-medium text-sm truncate">
-                  {c.title ?? '(без названия)'}
+                  {c.title ?? t('scenario.untitled')}
                 </div>
                 <div className="text-xs text-(--color-fg-muted) mt-0.5">
-                  {c.message_count} {c.message_count === 1 ? 'сообщение' : 'сообщений'}
-                  {c.last_message_at && ` · ${new Date(c.last_message_at).toLocaleDateString('ru-RU')}`}
+                  {c.message_count} {c.message_count === 1 ? t('scenario.messageOne') : t('scenario.messageMany')}
+                  {c.last_message_at && ` · ${new Date(c.last_message_at).toLocaleDateString(bcp47)}`}
                 </div>
               </Link>
             ))}
@@ -98,7 +104,7 @@ export default async function ScenarioPage({
       {/* Example prompts */}
       <section>
         <div className="text-xs uppercase tracking-wider text-(--color-fg-muted) mb-3">
-          Примеры того что можно спросить
+          {t('scenario.examplesLabel')}
         </div>
         <div className="space-y-2">
           {meta.examplePrompts.map((q, i) => (
