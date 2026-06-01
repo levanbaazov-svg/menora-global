@@ -79,7 +79,7 @@ export default async function MyProfilePage() {
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
-      <Link href="/dashboard" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-6 inline-block">
+      <Link href="/dashboard" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
         ← К дашборду
       </Link>
 
@@ -87,8 +87,8 @@ export default async function MyProfilePage() {
         <Avatar user={user} size="xl" />
         <div className="flex-1 min-w-0">
           <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">{name}</h1>
-          {p?.hebrew_name && <p className="text-(--color-muted) mb-2">{p.hebrew_name}</p>}
-          <p className="text-sm text-(--color-muted)">{user.email}</p>
+          {p?.hebrew_name && <p className="text-(--color-fg-muted) mb-2">{p.hebrew_name}</p>}
+          <p className="text-sm text-(--color-fg-muted)">{user.email}</p>
         </div>
         <Link
           href="/dashboard/me/edit"
@@ -108,7 +108,7 @@ export default async function MyProfilePage() {
               <div key={m.community_id} className="border rounded-xl p-4 flex items-center justify-between">
                 <div>
                   <div className="font-medium">{m.community.name}</div>
-                  <div className="text-xs text-(--color-muted) mt-0.5">
+                  <div className="text-xs text-(--color-fg-muted) mt-0.5">
                     {[m.community.city, m.community.country_code].filter(Boolean).join(', ')}
                     {m.joined_at && ` · с ${fmt(m.joined_at)}`}
                   </div>
@@ -130,7 +130,7 @@ export default async function MyProfilePage() {
       {/* Bio */}
       {p?.bio && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-muted) mb-2">О себе</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">О себе</h2>
           <p className="whitespace-pre-wrap">{p.bio}</p>
         </section>
       )}
@@ -158,7 +158,7 @@ export default async function MyProfilePage() {
       {/* Interests */}
       {p?.interests && p.interests.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-muted) mb-2">Интересы</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Интересы</h2>
           <div className="flex flex-wrap gap-1.5">
             {p.interests.map((i) => (
               <span key={i} className="text-sm px-3 py-1 rounded-full bg-(--color-muted-bg)">
@@ -172,8 +172,8 @@ export default async function MyProfilePage() {
       {/* Notifications */}
       {p?.notification_prefs && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-muted) mb-2">Уведомления</h2>
-          <p className="text-sm text-(--color-muted)">
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Уведомления</h2>
+          <p className="text-sm text-(--color-fg-muted)">
             Каналы: {p.notification_prefs.channels?.join(', ') ?? '—'}<br />
             Категории: {p.notification_prefs.categories?.join(', ') ?? '—'}
           </p>
@@ -187,7 +187,7 @@ function Row({ k, v }: { k: string; v: string | null }) {
   if (!v) return null;
   return (
     <>
-      <dt className="text-(--color-muted)">{k}</dt>
+      <dt className="text-(--color-fg-muted)">{k}</dt>
       <dd>{v}</dd>
     </>
   );
@@ -197,7 +197,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border rounded-xl p-4 text-center">
       <div className="font-serif text-2xl font-semibold">{value}</div>
-      <div className="text-xs text-(--color-muted) mt-1">{label}</div>
+      <div className="text-xs text-(--color-fg-muted) mt-1">{label}</div>
     </div>
   );
 }

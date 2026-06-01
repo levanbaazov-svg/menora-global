@@ -104,7 +104,7 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={markAllRead}
-                className="text-xs text-(--color-muted) hover:text-(--color-deep)"
+                className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)"
               >
                 Прочитать все
               </button>
@@ -112,7 +112,7 @@ export function NotificationBell() {
           </div>
 
           {items.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-(--color-muted)">
+            <div className="px-4 py-8 text-center text-sm text-(--color-fg-muted)">
               Пока пусто.
             </div>
           ) : (
@@ -133,9 +133,9 @@ export function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium leading-tight">{n.title}</div>
                         {n.body && (
-                          <div className="text-xs text-(--color-muted) mt-1 line-clamp-2">{n.body}</div>
+                          <div className="text-xs text-(--color-fg-muted) mt-1 line-clamp-2">{n.body}</div>
                         )}
-                        <div className="text-xs text-(--color-muted) mt-1">
+                        <div className="text-xs text-(--color-fg-muted) mt-1">
                           {n.actor?.name && `${n.actor.name} · `}{ago(n.created_at)}
                         </div>
                       </div>
@@ -150,7 +150,7 @@ export function NotificationBell() {
             <Link
               href="/dashboard/notifications"
               onClick={() => setOpen(false)}
-              className="text-xs text-(--color-muted) hover:text-(--color-deep)"
+              className="text-xs text-(--color-fg-muted) hover:text-(--color-deep)"
             >
               Вся история →
             </Link>

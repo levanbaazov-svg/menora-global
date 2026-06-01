@@ -11,7 +11,7 @@ export function WithdrawReplyButton({ replyId }: { replyId: string }) {
       <input type="hidden" name="reply_id" value={replyId} />
       <button
         type="submit"
-        className="text-xs text-(--color-muted) hover:text-red-700"
+        className="text-xs text-(--color-fg-muted) hover:text-red-700"
       >
         Отозвать
       </button>

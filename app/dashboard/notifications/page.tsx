@@ -38,13 +38,13 @@ export default async function NotificationsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <Link href="/dashboard" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-4 inline-block">
+      <Link href="/dashboard" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block">
         ← К дашборду
       </Link>
       <h1 className="font-serif text-3xl font-semibold mb-6">Уведомления</h1>
 
       {notifications.length === 0 ? (
-        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-muted)">
+        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-fg-muted)">
           Пока пусто.
         </div>
       ) : (
@@ -62,9 +62,9 @@ export default async function NotificationsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-medium">{n.title}</div>
                       {n.body && (
-                        <div className="text-sm text-(--color-muted) mt-0.5">{n.body}</div>
+                        <div className="text-sm text-(--color-fg-muted) mt-0.5">{n.body}</div>
                       )}
-                      <div className="text-xs text-(--color-muted) mt-1">
+                      <div className="text-xs text-(--color-fg-muted) mt-1">
                         {n.actor?.name && `${n.actor.name} · `}{fmt(n.created_at)}
                       </div>
                     </div>

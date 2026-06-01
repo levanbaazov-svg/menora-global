@@ -19,7 +19,7 @@ export function NewInvitationForm() {
       <div className="space-y-5">
         <div className="border-2 border-(--color-gold) rounded-xl p-6 bg-(--color-gold-soft)">
           <div className="font-serif text-xl font-semibold mb-2">✓ Приглашение создано</div>
-          <p className="text-sm text-(--color-muted) mb-4">
+          <p className="text-sm text-(--color-fg-muted) mb-4">
             Для <strong>{email}</strong>. Скопируй ссылку и отправь напрямую — email-доставка ещё не подключена.
           </p>
           <div className="flex gap-2">

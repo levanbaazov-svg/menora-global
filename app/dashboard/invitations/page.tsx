@@ -50,7 +50,7 @@ export default async function InvitationsListPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">Приглашения</h1>
-          <p className="text-sm text-(--color-muted)">
+          <p className="text-sm text-(--color-fg-muted)">
             {invitations.length} {invitations.length === 1 ? 'приглашение' : 'приглашений'}
           </p>
         </div>
@@ -64,7 +64,7 @@ export default async function InvitationsListPage() {
 
       {invitations.length === 0 ? (
         <div className="border-2 border-dashed rounded-xl p-12 text-center">
-          <p className="text-(--color-muted) mb-4">Ещё никого не приглашал.</p>
+          <p className="text-(--color-fg-muted) mb-4">Ещё никого не приглашал.</p>
           <Link
             href="/dashboard/invitations/new"
             className="px-5 py-2.5 rounded-full bg-(--color-gold) text-(--color-deep) text-sm font-semibold hover:scale-105 inline-block transition-transform"
@@ -75,7 +75,7 @@ export default async function InvitationsListPage() {
       ) : (
         <div className="border rounded-xl overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-(--color-muted-bg) text-(--color-muted)">
+            <thead className="bg-(--color-muted-bg) text-(--color-fg-muted)">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Email</th>
                 <th className="text-left px-4 py-3 font-medium">Роль</th>
@@ -93,7 +93,7 @@ export default async function InvitationsListPage() {
                     <td className="px-4 py-3">
                       <div>{inv.email}</div>
                       {inv.acceptor && (
-                        <div className="text-xs text-(--color-muted) mt-0.5">
+                        <div className="text-xs text-(--color-fg-muted) mt-0.5">
                           → {inv.acceptor.name ?? inv.acceptor.email}
                         </div>
                       )}
@@ -102,7 +102,7 @@ export default async function InvitationsListPage() {
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full ${s.cls}`}>{s.label}</span>
                     </td>
-                    <td className="px-4 py-3 text-(--color-muted)">{fmt(inv.expires_at)}</td>
+                    <td className="px-4 py-3 text-(--color-fg-muted)">{fmt(inv.expires_at)}</td>
                     <td className="px-4 py-3 text-right">
                       {pending && <RevokeButton id={inv.id} />}
                     </td>

@@ -14,7 +14,7 @@ export function CommunityChoiceForm({ communities }: { communities: Community[] 
   return (
     <form action={action} className="space-y-5">
       <FormError message={state.formError} />
-      <p className="text-sm text-(--color-muted) mb-4">
+      <p className="text-sm text-(--color-fg-muted) mb-4">
         Выбери общину, к которой хочешь присоединиться. Раввин рассмотрит заявку.
       </p>
       <fieldset className={`space-y-2 max-h-96 overflow-y-auto border rounded-lg p-3 ${
@@ -22,7 +22,7 @@ export function CommunityChoiceForm({ communities }: { communities: Community[] 
       }`}>
         <legend className="sr-only">Община</legend>
         {communities.length === 0 ? (
-          <p className="text-sm text-(--color-muted) p-4 text-center">
+          <p className="text-sm text-(--color-fg-muted) p-4 text-center">
             Пока нет общин. Подожди приглашения.
           </p>
         ) : communities.map((c) => (
@@ -30,7 +30,7 @@ export function CommunityChoiceForm({ communities }: { communities: Community[] 
             <input type="radio" name="community_id" value={c.id} defaultChecked={selected === c.id} className="mt-1 w-4 h-4" />
             <div>
               <div className="font-medium">{c.name}</div>
-              <div className="text-xs text-(--color-muted) mt-0.5">
+              <div className="text-xs text-(--color-fg-muted) mt-0.5">
                 {[c.city, c.country_code].filter(Boolean).join(', ') || c.slug}
               </div>
             </div>

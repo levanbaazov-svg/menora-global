@@ -60,7 +60,7 @@ export function PeopleDirectory({ members, selfId }: Props) {
       {/* Search bar */}
       <div className="mb-4">
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-muted) text-sm">🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-fg-muted) text-sm">🔍</span>
           <input
             type="search"
             value={query}
@@ -85,7 +85,7 @@ export function PeopleDirectory({ members, selfId }: Props) {
         />
         {denominations.length > 1 && (
           <>
-            <span className="text-(--color-muted) text-xs">·</span>
+            <span className="text-(--color-fg-muted) text-xs">·</span>
             {denominations.map((d) => (
               <FilterChip
                 key={d}
@@ -100,21 +100,21 @@ export function PeopleDirectory({ members, selfId }: Props) {
           <button
             type="button"
             onClick={() => { setQuery(''); setDenomination(null); setRoleFilter('all'); }}
-            className="text-xs text-(--color-muted) hover:text-(--color-deep) underline ml-2"
+            className="text-xs text-(--color-fg-muted) hover:text-(--color-deep) underline ml-2"
           >
             Сбросить
           </button>
         )}
       </div>
 
-      <p className="text-sm text-(--color-muted) mb-4">
+      <p className="text-sm text-(--color-fg-muted) mb-4">
         {filtered.length === members.length
           ? `${members.length} ${members.length === 1 ? 'человек' : 'человек'}`
           : `Найдено ${filtered.length} из ${members.length}`}
       </p>
 
       {filtered.length === 0 ? (
-        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-muted)">
+        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-fg-muted)">
           Никого не нашёл по запросу.
         </div>
       ) : (
@@ -165,14 +165,14 @@ function PersonCard({ m, isSelf }: { m: Row; isSelf: boolean }) {
             )}
           </div>
           {m.user.profile?.hebrew_name && (
-            <p className="text-xs text-(--color-muted) truncate">{m.user.profile.hebrew_name}</p>
+            <p className="text-xs text-(--color-fg-muted) truncate">{m.user.profile.hebrew_name}</p>
           )}
           <div className="flex items-center gap-2 mt-1">
             {m.role !== 'member' && (
               <span className={`text-xs px-2 py-0.5 rounded-full ${roleBadge.cls}`}>{roleBadge.label}</span>
             )}
             {m.user.profile?.denomination && (
-              <span className="text-xs text-(--color-muted)">
+              <span className="text-xs text-(--color-fg-muted)">
                 {DENOMINATION_LABELS[m.user.profile.denomination] ?? m.user.profile.denomination}
               </span>
             )}
@@ -183,12 +183,12 @@ function PersonCard({ m, isSelf }: { m: Row; isSelf: boolean }) {
       {interests.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-3">
           {interests.map((i) => (
-            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-(--color-muted-bg) text-(--color-muted)">
+            <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-(--color-muted-bg) text-(--color-fg-muted)">
               {INTEREST_LABELS[i] ?? i}
             </span>
           ))}
           {(m.user.profile?.interests?.length ?? 0) > 3 && (
-            <span className="text-xs text-(--color-muted)">
+            <span className="text-xs text-(--color-fg-muted)">
               +{(m.user.profile?.interests?.length ?? 0) - 3}
             </span>
           )}
@@ -196,7 +196,7 @@ function PersonCard({ m, isSelf }: { m: Row; isSelf: boolean }) {
       )}
 
       {m.user.profile?.bio && (
-        <p className="text-sm text-(--color-muted) mt-3 line-clamp-2">{m.user.profile.bio}</p>
+        <p className="text-sm text-(--color-fg-muted) mt-3 line-clamp-2">{m.user.profile.bio}</p>
       )}
     </Link>
   );

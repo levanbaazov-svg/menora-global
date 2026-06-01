@@ -87,7 +87,7 @@ export default async function MembersPage() {
     <div className="container mx-auto max-w-2xl px-4 md:px-6 pt-3 pb-8">
       <div className="mb-8">
         <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-1">Участники</h1>
-        <p className="text-sm text-(--color-muted)">
+        <p className="text-sm text-(--color-fg-muted)">
           Всего {memberships.length}.
           {groups.pending.length > 0 && (
             <span className="ml-2 text-(--color-gold-dark) font-medium">
@@ -138,7 +138,7 @@ export default async function MembersPage() {
       )}
 
       {memberships.length === 0 && (
-        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-muted)">
+        <div className="border-2 border-dashed rounded-xl p-12 text-center text-(--color-fg-muted)">
           В общине пока никого нет.
         </div>
       )}
@@ -154,7 +154,7 @@ function Section({
       <h2 className="font-serif text-xl font-semibold mb-3 flex items-center gap-2">
         {title}
         <span className={`text-xs px-2 py-0.5 rounded-full ${
-          primary ? 'bg-(--color-gold) text-(--color-deep)' : 'bg-(--color-muted-bg) text-(--color-muted)'
+          primary ? 'bg-(--color-gold) text-(--color-deep)' : 'bg-(--color-muted-bg) text-(--color-fg-muted)'
         }`}>{badge}</span>
       </h2>
       <div className="border rounded-xl overflow-hidden divide-y">
@@ -179,16 +179,16 @@ function Row({ m, selfId }: { m: Membership; selfId: string }) {
           <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_BADGE[m.status].cls}`}>
             {STATUS_BADGE[m.status].label}
           </span>
-          <span className="text-xs px-2 py-0.5 rounded border text-(--color-muted)">
+          <span className="text-xs px-2 py-0.5 rounded border text-(--color-fg-muted)">
             {m.role}
           </span>
         </div>
-        <div className="text-xs text-(--color-muted) flex flex-wrap gap-x-3">
+        <div className="text-xs text-(--color-fg-muted) flex flex-wrap gap-x-3">
           <span>{m.user.email}</span>
           {m.user.profile?.hebrew_name && <span>· {m.user.profile.hebrew_name}</span>}
           {m.user.profile?.denomination && <span>· {m.user.profile.denomination}</span>}
         </div>
-        <div className="text-xs text-(--color-muted) mt-1">
+        <div className="text-xs text-(--color-fg-muted) mt-1">
           {ENTRY_LABEL[m.entry_method]}
           {m.inviter?.name && ` · приглашён ${m.inviter.name}`}
           {m.status === 'active' && m.joined_at && ` · с ${fmt(m.joined_at)}`}

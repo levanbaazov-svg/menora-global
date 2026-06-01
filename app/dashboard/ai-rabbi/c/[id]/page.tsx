@@ -42,10 +42,13 @@ interface Resp {
 
 export default async function ConversationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ q?: string }>;
 }) {
   const { id } = await params;
+  const { q } = await searchParams;
   const session = await auth();
   if (!session?.user?.id) redirect('/');
 
@@ -104,6 +107,7 @@ export default async function ConversationPage({
         scenarioTint={meta.tint}
         examplePrompts={meta.examplePrompts}
         initialMessages={initialMessages}
+        autoSendText={data.ai_messages.length === 0 ? (q?.trim() || undefined) : undefined}
       />
     </div>
   );

@@ -96,7 +96,7 @@ function ActiveActions({ membershipId, currentRole }: { membershipId: string; cu
 
   // Admin role is not changeable from this UI.
   if (currentRole === 'admin') {
-    return <span className="text-xs text-(--color-muted) italic">admin · нельзя менять</span>;
+    return <span className="text-xs text-(--color-fg-muted) italic">admin · нельзя менять</span>;
   }
 
   return (

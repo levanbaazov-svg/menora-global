@@ -29,7 +29,7 @@ export async function HebrewCalendarCard({ community }: Props) {
     return (
       <>
         <UserLocationDetector currentTz={userTz} />
-        <div className="border rounded-xl p-5 text-sm text-(--color-muted)">
+        <div className="border rounded-xl p-5 text-sm text-(--color-fg-muted)">
           Чтобы видеть шаббатние времена, укажи город общины в настройках.
         </div>
       </>
@@ -48,16 +48,16 @@ export async function HebrewCalendarCard({ community }: Props) {
       {/* Today */}
       <div className="border rounded-xl p-5 bg-gradient-to-br from-(--color-gold-soft) to-white">
         <div className="flex items-baseline justify-between mb-2">
-          <span className="text-xs uppercase tracking-wide text-(--color-muted)">Сегодня</span>
+          <span className="text-xs uppercase tracking-wide text-(--color-fg-muted)">Сегодня</span>
           <span
-            className="text-xs text-(--color-muted)"
+            className="text-xs text-(--color-fg-muted)"
             title={source === 'user' ? 'Времена для твоего часового пояса' : 'Времена общины'}
           >
             {locName} {source === 'user' ? '· твой пояс' : '· община'}
           </span>
         </div>
         <div className="font-serif text-xl font-semibold">{today.hebrewDate}</div>
-        <div className="text-sm text-(--color-muted) mt-0.5">{today.hebrewDateHe}</div>
+        <div className="text-sm text-(--color-fg-muted) mt-0.5">{today.hebrewDateHe}</div>
         {today.todaysEvents.length > 0 && (
           <div className="text-sm mt-2">
             {today.todaysEvents.map((e, i) => <div key={i}>· {e}</div>)}
@@ -71,7 +71,7 @@ export async function HebrewCalendarCard({ community }: Props) {
       {/* Upcoming holidays */}
       {holidays.length > 0 && (
         <div className="border rounded-xl p-5">
-          <h3 className="text-xs uppercase tracking-wide text-(--color-muted) mb-3">
+          <h3 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-3">
             Ближайшие праздники
           </h3>
           <ul className="space-y-2">
@@ -87,32 +87,32 @@ function ShabbatBlock({ shabbat, tz }: { shabbat: ShabbatInfo; tz: string }) {
   return (
     <div className="border rounded-xl p-5">
       <div className="flex items-baseline justify-between mb-2">
-        <span className="text-xs uppercase tracking-wide text-(--color-muted)">Шаббат</span>
-        <span className="text-xs text-(--color-muted)">{tzDate(shabbat.shabbatGregorianDate, tz)}</span>
+        <span className="text-xs uppercase tracking-wide text-(--color-fg-muted)">Шаббат</span>
+        <span className="text-xs text-(--color-fg-muted)">{tzDate(shabbat.shabbatGregorianDate, tz)}</span>
       </div>
       {shabbat.parshaRu && (
         <div className="mb-2">
           <div className="font-serif text-lg font-semibold">Парашат {shabbat.parshaRu}</div>
           {shabbat.parsha && shabbat.parsha !== shabbat.parshaRu && (
-            <div className="text-xs text-(--color-muted)">Parashat {shabbat.parsha}</div>
+            <div className="text-xs text-(--color-fg-muted)">Parashat {shabbat.parsha}</div>
           )}
         </div>
       )}
       <div className="grid grid-cols-2 gap-3 text-sm">
         {shabbat.candleLighting && (
           <div>
-            <div className="text-xs text-(--color-muted)">🕯 Зажигание свечей</div>
+            <div className="text-xs text-(--color-fg-muted)">🕯 Зажигание свечей</div>
             <div className="font-medium">{tzTime(shabbat.candleLighting, tz)}</div>
           </div>
         )}
         {shabbat.havdalah && (
           <div>
-            <div className="text-xs text-(--color-muted)">✨ Гавдала</div>
+            <div className="text-xs text-(--color-fg-muted)">✨ Гавдала</div>
             <div className="font-medium">{tzTime(shabbat.havdalah, tz)}</div>
           </div>
         )}
       </div>
-      <div className="text-xs text-(--color-muted) mt-3">{shabbat.hebrewDateRu}</div>
+      <div className="text-xs text-(--color-fg-muted) mt-3">{shabbat.hebrewDateRu}</div>
     </div>
   );
 }
@@ -125,9 +125,9 @@ function HolidayRow({ h, tz }: { h: HolidayLine; tz: string }) {
       <div className="flex-1 min-w-0">
         <div className={h.isMajor ? 'font-medium' : ''}>
           {h.title}
-          {showEn && <span className="text-(--color-muted) text-xs ml-2">· {h.titleEn}</span>}
+          {showEn && <span className="text-(--color-fg-muted) text-xs ml-2">· {h.titleEn}</span>}
         </div>
-        <div className="text-xs text-(--color-muted)">
+        <div className="text-xs text-(--color-fg-muted)">
           {tzDate(h.date, tz)} · {h.hebrewDateRu}
         </div>
       </div>

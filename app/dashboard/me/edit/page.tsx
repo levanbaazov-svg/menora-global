@@ -56,11 +56,11 @@ export default async function EditProfilePage() {
 
   return (
     <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
-      <Link href="/dashboard/me" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-6 inline-block">
+      <Link href="/dashboard/me" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
         ← К моему профилю
       </Link>
       <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight mb-2">Редактировать профиль</h1>
-      <p className="text-sm text-(--color-muted) mb-8">
+      <p className="text-sm text-(--color-fg-muted) mb-8">
         Каждый раздел сохраняется отдельно. После сохранения вернёшься на профиль.
       </p>
 

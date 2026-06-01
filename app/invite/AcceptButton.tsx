@@ -66,7 +66,7 @@ export function AcceptButton({ token, signedIn }: Props) {
               : `Ошибка: ${error}`}
         </p>
       )}
-      <p className="text-xs text-(--color-muted) mt-4">
+      <p className="text-xs text-(--color-fg-muted) mt-4">
         После принятия, возможно, потребуется один раз выйти и зайти заново,
         чтобы новая община появилась в твоих ролях.
       </p>

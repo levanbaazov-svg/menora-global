@@ -70,7 +70,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <Link href="/dashboard/people" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-6 inline-block">
+      <Link href="/dashboard/people" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-6 inline-block">
         ← К списку участников
       </Link>
 
@@ -78,7 +78,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
         <Avatar user={user} size="xl" />
         <div className="flex-1 min-w-0">
           <h1 className="font-serif text-3xl font-semibold mb-1">{name}</h1>
-          {p?.hebrew_name && <p className="text-(--color-muted) mb-2">{p.hebrew_name}</p>}
+          {p?.hebrew_name && <p className="text-(--color-fg-muted) mb-2">{p.hebrew_name}</p>}
           <div className="flex flex-wrap gap-2">
             {membership.role !== 'member' && (
               <span className={`text-xs px-2 py-1 rounded-full ${roleBadge.cls}`}>
@@ -118,7 +118,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
 
       {interests.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs uppercase tracking-wide text-(--color-muted) mb-2">Интересы</h2>
+          <h2 className="text-xs uppercase tracking-wide text-(--color-fg-muted) mb-2">Интересы</h2>
           <div className="flex flex-wrap gap-1.5">
             {interests.map((i) => (
               <span key={i} className="text-sm px-3 py-1 rounded-full bg-(--color-muted-bg)">
@@ -129,7 +129,7 @@ export default async function PersonProfilePage({ params }: { params: Promise<{ 
         </section>
       )}
 
-      <section className="border-t pt-6 text-xs text-(--color-muted)">
+      <section className="border-t pt-6 text-xs text-(--color-fg-muted)">
         Контакты доступны только через события и просьбы. Возможность писать напрямую — скоро.
       </section>
     </div>
@@ -140,7 +140,7 @@ function DefRow({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
     <>
-      <dt className="text-(--color-muted)">{label}</dt>
+      <dt className="text-(--color-fg-muted)">{label}</dt>
       <dd>{value}</dd>
     </>
   );

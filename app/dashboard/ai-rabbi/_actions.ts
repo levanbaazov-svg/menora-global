@@ -77,6 +77,35 @@ export async function startConversation(_prev: ActionState, formData: FormData):
   }
 }
 
+/**
+ * Free-text entry point from the home screen's "Спросить раввина" bar.
+ * Creates an `open` conversation and hands off to the chat view, passing the
+ * first message as a `?q=` param so the chat auto-sends it on mount.
+ */
+export async function askRabbiFromHome(text: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/');
+
+  const trimmed = text.trim().slice(0, 2000);
+  if (!trimmed) return;
+
+  const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
+  const r = await client.request<{ insert_ai_conversations_one: { id: string } | null }>(
+    INSERT_CONVERSATION,
+    {
+      obj: {
+        user_id: session.user.id,
+        scenario: 'open' satisfies AIScenario,
+        community_id: session.hasura.community_id,
+      },
+    },
+  );
+  const id = r.insert_ai_conversations_one?.id;
+  if (!id) throw new Error('Не удалось создать разговор');
+  revalidatePath('/dashboard/ai-rabbi');
+  redirect(`/dashboard/ai-rabbi/c/${id}?q=${encodeURIComponent(trimmed)}`);
+}
+
 const idSchema = z.object({ conversation_id: z.string().uuid() });
 
 export async function archiveConversation(_prev: ActionState, formData: FormData): Promise<ActionState> {

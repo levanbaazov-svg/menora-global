@@ -20,6 +20,8 @@ interface Props {
   scenarioTint: string;
   examplePrompts: string[];
   initialMessages: InitialMessage[];
+  /** When set (and conversation is empty), auto-send this as the first message. */
+  autoSendText?: string;
 }
 
 export function Chat({
@@ -29,6 +31,7 @@ export function Chat({
   scenarioTint,
   examplePrompts,
   initialMessages,
+  autoSendText,
 }: Props) {
   // useChat is the single source of truth for the message list once mounted.
   // We hydrate it with the server-rendered history.
@@ -48,6 +51,18 @@ export function Chat({
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-send the first message handed off from the home "Ask" bar (?q=…).
+  const autoSentRef = useRef(false);
+  useEffect(() => {
+    if (autoSentRef.current || !autoSendText) return;
+    autoSentRef.current = true;
+    sendMessage({ text: autoSendText });
+    // Strip the q param so a refresh doesn't re-send.
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, [autoSendText, sendMessage]);
 
   // Auto-scroll on new tokens.
   useEffect(() => {

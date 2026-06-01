@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { Reveal } from '@/components/motion/Reveal';
 import { ScenarioTile, type ScenarioTint } from './_ScenarioTile';
 import { DailyHomeCard } from '@/app/_components/ai/DailyHomeCard';
+import { HomeAskBar } from '@/app/_components/ai/HomeAskBar';
 import { RoutineHomeCard } from './_RoutineHomeCard';
 
 const SCENARIOS: Array<{ href: string; title: string; subtitle: string; tint: ScenarioTint }> = [
@@ -39,7 +40,7 @@ export default async function DashboardPage() {
     ?? 'друг';
 
   return (
-    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-4 space-y-4">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-36 space-y-4">
       {/* 1. Greeting + question (compact) */}
       <Reveal>
         <header className="px-0.5">
@@ -73,6 +74,9 @@ export default async function DashboardPage() {
       <Reveal delay={0.1}>
         <RoutineHomeCard userId={session.user.id} />
       </Reveal>
+
+      {/* 5. Free-chat bar — floats above the tab bar */}
+      <HomeAskBar />
     </div>
   );
 }

@@ -19,7 +19,7 @@ const FETCH = /* GraphQL */ `
       tags community_id created_at archived_at
       created_by_user_id
       community { id slug name city country_code }
-      creator { id name image }
+      creator { id name image: image_url }
       meeting_place { id name address }
     }
 
@@ -32,7 +32,7 @@ const FETCH = /* GraphQL */ `
       limit: 30
     ) {
       id role joined_at
-      user { id name image }
+      user { id name image: image_url }
     }
 
     my_membership: group_memberships(

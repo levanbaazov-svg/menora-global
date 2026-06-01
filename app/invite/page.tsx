@@ -43,7 +43,7 @@ export default async function InvitePage({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <h1 className="font-serif text-3xl mb-2">Нет токена</h1>
-        <p className="text-(--color-muted)">Эта страница принимает приглашения вида <code>/invite?token=...</code></p>
+        <p className="text-(--color-fg-muted)">Эта страница принимает приглашения вида <code>/invite?token=...</code></p>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default async function InvitePage({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <h1 className="font-serif text-3xl mb-2">Приглашение не найдено</h1>
-        <p className="text-(--color-muted) max-w-md">
+        <p className="text-(--color-fg-muted) max-w-md">
           Возможно, ссылка с опечаткой. Попроси отправителя прислать заново.
         </p>
       </div>
@@ -72,7 +72,7 @@ export default async function InvitePage({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <h1 className="font-serif text-3xl mb-2">{status.label}</h1>
-        <p className="text-(--color-muted)">Для {inv.community?.name ?? '—'}</p>
+        <p className="text-(--color-fg-muted)">Для {inv.community?.name ?? '—'}</p>
       </div>
     );
   }
@@ -80,30 +80,30 @@ export default async function InvitePage({
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="max-w-md w-full text-center space-y-6">
-        <div className="text-sm text-(--color-muted) uppercase tracking-wide">
+        <div className="text-sm text-(--color-fg-muted) uppercase tracking-wide">
           {inv.inviter?.name ?? 'Раввин'} приглашает тебя
         </div>
         <h1 className="font-serif text-4xl font-semibold">
           {inv.community?.name ?? 'Menorah Global'}
         </h1>
         {inv.community?.city && (
-          <p className="text-(--color-muted)">
+          <p className="text-(--color-fg-muted)">
             {[inv.community.city, inv.community.country_code].filter(Boolean).join(', ')}
           </p>
         )}
         <div className="text-sm space-y-1">
           <div>
-            <span className="text-(--color-muted)">Email:</span>{' '}
+            <span className="text-(--color-fg-muted)">Email:</span>{' '}
             <span className="font-medium">{inv.email}</span>
           </div>
           <div>
-            <span className="text-(--color-muted)">Роль:</span>{' '}
+            <span className="text-(--color-fg-muted)">Роль:</span>{' '}
             <span className="font-medium">{inv.role}</span>
           </div>
         </div>
         {inv.message && (
           <div className="border rounded-lg p-4 text-left text-sm bg-(--color-muted-bg)">
-            <div className="text-xs text-(--color-muted) mb-1">Сообщение:</div>
+            <div className="text-xs text-(--color-fg-muted) mb-1">Сообщение:</div>
             <p className="whitespace-pre-wrap">{inv.message}</p>
           </div>
         )}

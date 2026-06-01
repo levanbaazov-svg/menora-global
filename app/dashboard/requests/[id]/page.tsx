@@ -71,12 +71,12 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <Link href="/dashboard/requests" className="text-sm text-(--color-muted) hover:text-(--color-deep) mb-4 inline-block">
+      <Link href="/dashboard/requests" className="text-sm text-(--color-fg-muted) hover:text-(--color-deep) mb-4 inline-block">
         ← К доске просьб
       </Link>
 
       <div className="flex items-center gap-2 flex-wrap mb-4">
-        <span className="text-sm text-(--color-muted)">{REQUEST_CATEGORY_LABELS[req.category]}</span>
+        <span className="text-sm text-(--color-fg-muted)">{REQUEST_CATEGORY_LABELS[req.category]}</span>
         <span className={`text-xs px-2 py-0.5 rounded-full ${status.cls}`}>{status.label}</span>
         {req.urgency === 'high' && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">🔥 Срочно</span>
@@ -84,7 +84,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <h1 className="font-serif text-3xl font-semibold mb-3">{req.title}</h1>
-      <p className="text-sm text-(--color-muted) mb-6">
+      <p className="text-sm text-(--color-fg-muted) mb-6">
         {req.author?.name ?? '—'} · {fmt(req.created_at)}
         {req.expires_at && ` · истекает ${fmt(req.expires_at)}`}
       </p>
@@ -106,7 +106,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           Ответы ({visibleReplies.length})
         </h2>
         {visibleReplies.length === 0 ? (
-          <p className="text-sm text-(--color-muted) mb-6">Пока никто не ответил.</p>
+          <p className="text-sm text-(--color-fg-muted) mb-6">Пока никто не ответил.</p>
         ) : (
           <div className="space-y-3 mb-6">
             {visibleReplies.map((reply) => (
@@ -127,7 +127,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
         {!isAuthor && (req.status === 'open' || req.status === 'in_progress') && (
           <>
             {myReplyCount > 0 && (
-              <p className="text-xs text-(--color-muted) mb-2">
+              <p className="text-xs text-(--color-fg-muted) mb-2">
                 Ты уже {myReplyCount > 1 ? `оставил ${myReplyCount} ответа` : 'ответил'} — можно ещё.
               </p>
             )}
@@ -135,12 +135,12 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           </>
         )}
         {isAuthor && req.status === 'open' && visibleReplies.length === 0 && (
-          <p className="text-sm text-(--color-muted)">Ждём ответы.</p>
+          <p className="text-sm text-(--color-fg-muted)">Ждём ответы.</p>
         )}
       </section>
 
       {acceptedReply && (
-        <section className="border-t pt-6 text-sm text-(--color-muted)">
+        <section className="border-t pt-6 text-sm text-(--color-fg-muted)">
           ✓ Просьба закрыта благодаря ответу от <strong>{acceptedReply.user?.name ?? '—'}</strong>
         </section>
       )}
@@ -171,9 +171,9 @@ function ReplyCard({
             <span className="font-medium text-sm">{reply.user?.name ?? '—'}</span>
             {isMine && <span className="text-xs px-2 py-0.5 rounded-full bg-(--color-deep) text-white">Мой</span>}
             {isAccepted && <span className="text-xs px-2 py-0.5 rounded-full bg-(--color-gold) text-(--color-deep)">✓ Принят</span>}
-            {reply.withdrawn_at && <span className="text-xs px-2 py-0.5 rounded border text-(--color-muted)">отозван</span>}
+            {reply.withdrawn_at && <span className="text-xs px-2 py-0.5 rounded border text-(--color-fg-muted)">отозван</span>}
           </div>
-          <div className="text-xs text-(--color-muted)">{ts}</div>
+          <div className="text-xs text-(--color-fg-muted)">{ts}</div>
         </div>
       </div>
       <p className="text-sm whitespace-pre-wrap">{reply.body}</p>
@@ -185,7 +185,7 @@ function ReplyCard({
           {reply.contact_method === 'share_email' && reply.contact_email && (
             <>✉️ <a href={`mailto:${reply.contact_email}`} className="font-medium hover:underline">{reply.contact_email}</a></>
           )}
-          <span className="text-xs text-(--color-muted) ml-2">(видно только тебе)</span>
+          <span className="text-xs text-(--color-fg-muted) ml-2">(видно только тебе)</span>
         </div>
       )}
       <div className="mt-3 flex items-center gap-3">

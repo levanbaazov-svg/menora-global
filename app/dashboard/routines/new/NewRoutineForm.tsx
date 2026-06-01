@@ -51,7 +51,7 @@ export function NewRoutineForm() {
         {state.errors?.type && <p className="text-xs text-red-600 mt-2">{state.errors.type}</p>}
       </fieldset>
 
-      <p className="text-sm text-(--color-muted) -mt-2">{meta.description}</p>
+      <p className="text-sm text-(--color-fg-muted) -mt-2">{meta.description}</p>
 
       {type === 'custom' && (
         <Field
@@ -76,7 +76,7 @@ export function NewRoutineForm() {
 
       <fieldset>
         <legend className="text-sm font-medium mb-2">Дни недели</legend>
-        <p className="text-xs text-(--color-muted) mb-2">Ничего не выбрано или все 7 = каждый день</p>
+        <p className="text-xs text-(--color-fg-muted) mb-2">Ничего не выбрано или все 7 = каждый день</p>
         <div className="flex flex-wrap gap-2">
           {DAYS_OF_WEEK.map((d) => (
             <label key={d.value} className="cursor-pointer">
