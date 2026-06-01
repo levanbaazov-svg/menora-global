@@ -123,6 +123,11 @@
       "address": "Address"
     }
   },
+  "notifications": {
+    "title": "Notifications",
+    "back": "← To dashboard",
+    "empty": "Nothing yet."
+  },
   "connect": {
     "title": "Connect",
     "subtitle": "Interest groups — in your community and worldwide",
