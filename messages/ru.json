@@ -40,6 +40,7 @@
     "myProfile": "Мой профиль",
     "notifications": "Уведомления",
     "rabbiConsole": "Пульт раввина",
+    "rabbiConsole": "Пульт раввина",
     "aiAssistant": "AI Ассистент",
     "moderatePlaces": "Модерация мест",
     "accessRequests": "Заявки и доступ",
@@ -121,6 +122,37 @@
       "instagram": "Instagram",
       "instagramValue": "Открыть профиль",
       "address": "Адрес"
+    }
+  },
+  "admin": {
+    "title": "Пульт раввина",
+    "subtitle": "Управление общиной",
+    "needsAttention": "Требует внимания",
+    "allDone": "Всё разобрано — отличная работа. 🎉",
+    "actionsTitle": "Быстрые действия",
+    "attention": {
+      "members": "Заявки на вступление",
+      "membersWaiting": "Ждут одобрения",
+      "membersClear": "Новых заявок нет",
+      "places": "Места на модерации",
+      "placesWaiting": "Ждут проверки",
+      "placesClear": "Очередь пуста"
+    },
+    "stats": {
+      "members": "участников",
+      "events": "предстоящих событий"
+    },
+    "actions": {
+      "createEvent": "Создать событие",
+      "addPlace": "Добавить место",
+      "addProgram": "Создать программу",
+      "invite": "Пригласить",
+      "communityProfile": "Профиль общины",
+      "allMembers": "Все участники"
+    },
+    "assistant": {
+      "title": "AI-ассистент раввина",
+      "desc": "Спроси про общину: дни рождения, активность, задачи, кто давно не заходил."
     }
   },
   "discover": {

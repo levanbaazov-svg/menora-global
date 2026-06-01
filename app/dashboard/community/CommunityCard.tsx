@@ -91,7 +91,10 @@ export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: 
 
         {/* Description */}
         {c.description && (
-          <p className="px-4 py-3 text-[13px] leading-snug text-muted-foreground line-clamp-2">
+          <p
+            className="px-4 pt-2.5 pb-3.5 text-[13px] leading-relaxed text-foreground/70 overflow-hidden"
+            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
+          >
             {c.description}
           </p>
         )}

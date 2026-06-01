@@ -95,7 +95,7 @@ export default async function DiscoverCommunitiesPage({
           description="Попробуй другой город или вернись ко всем общинам."
         />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filtered.map((c, i) => (
             <CommunityCard
               key={c.slug}

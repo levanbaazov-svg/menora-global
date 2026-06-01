@@ -6,6 +6,7 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import {
   UserPlus, ShieldCheck, Users, CalendarDays, CalendarPlus, MapPinPlus,
@@ -48,6 +49,7 @@ export default async function RabbiConsolePage() {
   const cid = session.hasura.community_id;
   if (!cid || cid === '00000000-0000-0000-0000-000000000000') redirect('/dashboard/community/discover');
 
+  const t = await getTranslations('admin');
   const d = await hasuraAdmin.request<Resp>(FETCH, { cid });
   const pendingMembers = d.pending_members.aggregate?.count ?? 0;
   const pendingPlaces = d.pending_places.aggregate?.count ?? 0;
@@ -60,10 +62,10 @@ export default async function RabbiConsolePage() {
       <Reveal>
         <header className="px-0.5">
           <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-            Пульт раввина
+            {t('title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {d.communities_by_pk?.name ?? 'Управление общиной'}
+            {d.communities_by_pk?.name ?? t('subtitle')}
           </p>
         </header>
       </Reveal>
@@ -72,20 +74,20 @@ export default async function RabbiConsolePage() {
       <Reveal delay={0.04}>
         <section className="space-y-2.5">
           <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium px-0.5">
-            Требует внимания
+            {t('needsAttention')}
           </h2>
           <AttentionRow
-            Icon={UserPlus} label="Заявки на вступление"
-            sub={pendingMembers > 0 ? 'Ждут одобрения' : 'Новых заявок нет'}
+            Icon={UserPlus} label={t('attention.members')}
+            sub={pendingMembers > 0 ? t('attention.membersWaiting') : t('attention.membersClear')}
             count={pendingMembers} href="/dashboard/members"
           />
           <AttentionRow
-            Icon={ShieldCheck} label="Места на модерации"
-            sub={pendingPlaces > 0 ? 'Ждут проверки' : 'Очередь пуста'}
+            Icon={ShieldCheck} label={t('attention.places')}
+            sub={pendingPlaces > 0 ? t('attention.placesWaiting') : t('attention.placesClear')}
             count={pendingPlaces} href="/dashboard/community/pending"
           />
           {needsAttention === 0 && (
-            <p className="text-xs text-muted-foreground px-1 pt-1">Всё разобрано — отличная работа. 🎉</p>
+            <p className="text-xs text-muted-foreground px-1 pt-1">{t('allDone')}</p>
           )}
         </section>
       </Reveal>
@@ -93,8 +95,8 @@ export default async function RabbiConsolePage() {
       {/* Overview stats */}
       <Reveal delay={0.06}>
         <section className="grid grid-cols-2 gap-2.5">
-          <StatCard Icon={Users} value={activeMembers} label="участников" href="/dashboard/members" />
-          <StatCard Icon={CalendarDays} value={upcomingEvents} label="предстоящих событий" href="/dashboard/events" />
+          <StatCard Icon={Users} value={activeMembers} label={t('stats.members')} href="/dashboard/members" />
+          <StatCard Icon={CalendarDays} value={upcomingEvents} label={t('stats.events')} href="/dashboard/events" />
         </section>
       </Reveal>
 
@@ -102,15 +104,15 @@ export default async function RabbiConsolePage() {
       <Reveal delay={0.08}>
         <section>
           <h2 className="text-xs uppercase tracking-wide text-muted-foreground font-medium px-0.5 mb-2.5">
-            Быстрые действия
+            {t('actionsTitle')}
           </h2>
           <div className="grid grid-cols-2 gap-2.5">
-            <Action Icon={CalendarPlus} label="Создать событие" href="/dashboard/events/new" />
-            <Action Icon={MapPinPlus} label="Добавить место" href="/dashboard/community/places/new" />
-            <Action Icon={BookPlus} label="Создать программу" href="/dashboard/community/programs/new" />
-            <Action Icon={MailPlus} label="Пригласить" href="/dashboard/invitations/new" />
-            <Action Icon={Settings2} label="Профиль общины" href="/dashboard/community/manage/edit" />
-            <Action Icon={Users} label="Все участники" href="/dashboard/members" />
+            <Action Icon={CalendarPlus} label={t('actions.createEvent')} href="/dashboard/events/new" />
+            <Action Icon={MapPinPlus} label={t('actions.addPlace')} href="/dashboard/community/places/new" />
+            <Action Icon={BookPlus} label={t('actions.addProgram')} href="/dashboard/community/manage" />
+            <Action Icon={MailPlus} label={t('actions.invite')} href="/dashboard/invitations/new" />
+            <Action Icon={Settings2} label={t('actions.communityProfile')} href="/dashboard/community/manage/edit" />
+            <Action Icon={Users} label={t('actions.allMembers')} href="/dashboard/members" />
           </div>
         </section>
       </Reveal>
@@ -128,9 +130,9 @@ export default async function RabbiConsolePage() {
               <Bot size={18} strokeWidth={2} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-serif text-[15px] font-semibold leading-tight">AI-ассистент раввина</div>
+              <div className="font-serif text-[15px] font-semibold leading-tight">{t('assistant.title')}</div>
               <p className="text-[12px] text-background/75 leading-snug mt-0.5">
-                Спроси про общину: дни рождения, активность, задачи, кто давно не заходил.
+                {t('assistant.desc')}
               </p>
             </div>
             <ChevronRight size={16} className="text-primary rtl:-scale-x-100" />

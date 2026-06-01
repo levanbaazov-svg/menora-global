@@ -40,6 +40,7 @@
     "myProfile": "My profile",
     "notifications": "Notifications",
     "rabbiConsole": "Rabbi Console",
+    "rabbiConsole": "Rabbi Console",
     "aiAssistant": "AI Assistant",
     "moderatePlaces": "Moderate places",
     "accessRequests": "Requests & access",
@@ -121,6 +122,37 @@
       "instagram": "Instagram",
       "instagramValue": "Open profile",
       "address": "Address"
+    }
+  },
+  "admin": {
+    "title": "Rabbi Console",
+    "subtitle": "Manage your community",
+    "needsAttention": "Needs attention",
+    "allDone": "All caught up — great work. 🎉",
+    "actionsTitle": "Quick actions",
+    "attention": {
+      "members": "Join requests",
+      "membersWaiting": "Awaiting approval",
+      "membersClear": "No new requests",
+      "places": "Places to review",
+      "placesWaiting": "Awaiting review",
+      "placesClear": "Queue is empty"
+    },
+    "stats": {
+      "members": "members",
+      "events": "upcoming events"
+    },
+    "actions": {
+      "createEvent": "Create event",
+      "addPlace": "Add a place",
+      "addProgram": "Create program",
+      "invite": "Invite",
+      "communityProfile": "Community profile",
+      "allMembers": "All members"
+    },
+    "assistant": {
+      "title": "Rabbi's AI assistant",
+      "desc": "Ask about the community: birthdays, activity, tasks, who hasn't visited in a while."
     }
   },
   "discover": {

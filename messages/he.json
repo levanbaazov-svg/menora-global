@@ -40,6 +40,7 @@
     "myProfile": "הפרופיל שלי",
     "notifications": "התראות",
     "rabbiConsole": "לוח הבקרה של הרב",
+    "rabbiConsole": "פאנל הרב",
     "aiAssistant": "עוזר AI",
     "moderatePlaces": "אישור מקומות",
     "accessRequests": "בקשות וגישה",
@@ -121,6 +122,37 @@
       "instagram": "אינסטגרם",
       "instagramValue": "פתיחת פרופיל",
       "address": "כתובת"
+    }
+  },
+  "admin": {
+    "title": "פאנל הרב",
+    "subtitle": "ניהול הקהילה",
+    "needsAttention": "דורש טיפול",
+    "allDone": "הכול טופל — עבודה מצוינת. 🎉",
+    "actionsTitle": "פעולות מהירות",
+    "attention": {
+      "members": "בקשות הצטרפות",
+      "membersWaiting": "ממתינים לאישור",
+      "membersClear": "אין בקשות חדשות",
+      "places": "מקומות לבדיקה",
+      "placesWaiting": "ממתינים לבדיקה",
+      "placesClear": "התור ריק"
+    },
+    "stats": {
+      "members": "חברים",
+      "events": "אירועים קרובים"
+    },
+    "actions": {
+      "createEvent": "יצירת אירוע",
+      "addPlace": "הוספת מקום",
+      "addProgram": "יצירת תוכנית",
+      "invite": "הזמנה",
+      "communityProfile": "פרופיל הקהילה",
+      "allMembers": "כל החברים"
+    },
+    "assistant": {
+      "title": "עוזר ה-AI של הרב",
+      "desc": "שאלו על הקהילה: ימי הולדת, פעילות, משימות, מי לא ביקר מזמן."
     }
   },
   "discover": {
