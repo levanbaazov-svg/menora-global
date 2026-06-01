@@ -205,6 +205,36 @@
       "seniors": "Seniors",
       "women": "Women",
       "men": "Men"
+    },
+    "newProgram": {
+      "title": "New program",
+      "subtitle": "Add a community program or class.",
+      "categoryLabel": "Category",
+      "nameLabel": "Name",
+      "namePlaceholder": "Sunday school, Talmud class…",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "What it is, who it is for, format…",
+      "scheduleLabel": "Schedule",
+      "schedulePlaceholder": "e.g. Every Sunday 10:00",
+      "photoLabel": "Photo (URL)",
+      "ageMinLabel": "Age from",
+      "ageMaxLabel": "Age to",
+      "priceLabel": "Price",
+      "currencyLabel": "Currency",
+      "periodLabel": "Billing period",
+      "capacityLabel": "Max seats",
+      "registrationUrlLabel": "Registration link (optional)",
+      "locationLabel": "Location (address/name)",
+      "registrationOpenLabel": "Registration open",
+      "requiresApprovalLabel": "Requires approval",
+      "submit": "Create program",
+      "submitHint": "Once created, the program appears in your community.",
+      "period": {
+        "one_time": "One-time",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "per_session": "Per session"
+      }
     }
   }
 }

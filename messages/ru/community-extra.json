@@ -205,6 +205,36 @@
       "seniors": "Старшее поколение",
       "women": "Женские",
       "men": "Мужские"
+    },
+    "newProgram": {
+      "title": "Новая программа",
+      "subtitle": "Добавь программу или класс общины.",
+      "categoryLabel": "Категория",
+      "nameLabel": "Название",
+      "namePlaceholder": "Воскресная школа, класс Талмуда…",
+      "descriptionLabel": "Описание",
+      "descriptionPlaceholder": "О чём программа, для кого, формат…",
+      "scheduleLabel": "Расписание",
+      "schedulePlaceholder": "Например: каждое воскресенье 10:00",
+      "photoLabel": "Фото (URL)",
+      "ageMinLabel": "Возраст от",
+      "ageMaxLabel": "Возраст до",
+      "priceLabel": "Цена",
+      "currencyLabel": "Валюта",
+      "periodLabel": "Период оплаты",
+      "capacityLabel": "Макс. мест",
+      "registrationUrlLabel": "Ссылка на запись (необязательно)",
+      "locationLabel": "Место (адрес/название)",
+      "registrationOpenLabel": "Запись открыта",
+      "requiresApprovalLabel": "Требует одобрения",
+      "submit": "Создать программу",
+      "submitHint": "После создания программа появится в общине.",
+      "period": {
+        "one_time": "Разово",
+        "monthly": "В месяц",
+        "yearly": "В год",
+        "per_session": "За занятие"
+      }
     }
   }
 }

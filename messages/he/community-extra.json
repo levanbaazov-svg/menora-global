@@ -205,6 +205,36 @@
       "seniors": "הדור המבוגר",
       "women": "נשים",
       "men": "גברים"
+    },
+    "newProgram": {
+      "title": "תוכנית חדשה",
+      "subtitle": "הוסיפו תוכנית או חוג קהילתי.",
+      "categoryLabel": "קטגוריה",
+      "nameLabel": "שם",
+      "namePlaceholder": "בית ספר של יום ראשון, שיעור תלמוד…",
+      "descriptionLabel": "תיאור",
+      "descriptionPlaceholder": "על מה התוכנית, למי היא מיועדת, פורמט…",
+      "scheduleLabel": "לוח זמנים",
+      "schedulePlaceholder": "לדוגמה: כל יום ראשון 10:00",
+      "photoLabel": "תמונה (URL)",
+      "ageMinLabel": "גיל מ-",
+      "ageMaxLabel": "גיל עד",
+      "priceLabel": "מחיר",
+      "currencyLabel": "מטבע",
+      "periodLabel": "תקופת חיוב",
+      "capacityLabel": "מקומות מקס׳",
+      "registrationUrlLabel": "קישור להרשמה (אופציונלי)",
+      "locationLabel": "מיקום (כתובת/שם)",
+      "registrationOpenLabel": "ההרשמה פתוחה",
+      "requiresApprovalLabel": "דורש אישור",
+      "submit": "יצירת תוכנית",
+      "submitHint": "לאחר היצירה התוכנית תופיע בקהילה.",
+      "period": {
+        "one_time": "חד-פעמי",
+        "monthly": "חודשי",
+        "yearly": "שנתי",
+        "per_session": "לכל מפגש"
+      }
     }
   }
 }
