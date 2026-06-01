@@ -729,7 +729,7 @@ function permissionsFor(table) {
       const activeFilter = { archived_at: { _is_null: true } };
 
       // Member: see active groups in own community + global + public.
-      out.select.push(selectPerm('member', C, {
+      const groupVisibility = {
         _and: [
           activeFilter,
           { _or: [
@@ -738,7 +738,10 @@ function permissionsFor(table) {
             { visibility: { _eq: 'public' } },
           ] },
         ],
-      }, { allow_aggregations: true }));
+      };
+      out.select.push(selectPerm('member', C, groupVisibility, { allow_aggregations: true }));
+      // Rabbi is an elevated role — same read access as members.
+      out.select.push(selectPerm('rabbi', C, groupVisibility, { allow_aggregations: true }));
 
       out.insert.push(insertPerm('member',
         ['community_id','category','name','description','photo_url','visibility',
@@ -769,6 +772,8 @@ function permissionsFor(table) {
       const selfFilter = { user_id: { _eq: USER_ID } };
       // Expose all rows — visibility enforced upstream via interest_groups perm.
       out.select.push(selectPerm('member', C, {}, { allow_aggregations: true }));
+      // Rabbi is an elevated role — same read access as members.
+      out.select.push(selectPerm('rabbi', C, {}, { allow_aggregations: true }));
       out.insert.push(insertPerm('member',
         ['group_id'],
         { user_id: { _eq: USER_ID } },
