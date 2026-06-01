@@ -63,9 +63,12 @@ function rangeRefs(base, n) {
   return Array.from({ length: n }, (_, i) => `${base} ${i + 1}`);
 }
 function tanyaRefs() {
-  // Likutei Amarim 1-53 + Shaar HaYichud (12) + Iggeret HaTeshuvah (12)
+  // Tanya is a "complex" Sefaria text — refs need the semicolon node path.
+  // Core Chabad chassidut: Likutei Amarim (53) + Shaar HaYichud (12) + Iggeret HaTeshuvah (12).
   return [
-    ...Array.from({ length: 53 }, (_, i) => `Tanya, Part I, Chapter ${i + 1}`),
+    ...Array.from({ length: 53 }, (_, i) => `Tanya, Part I; Likkutei Amarim ${i + 1}`),
+    ...Array.from({ length: 12 }, (_, i) => `Tanya, Part II; Shaar HaYichud VehaEmunah ${i + 1}`),
+    ...Array.from({ length: 12 }, (_, i) => `Tanya, Part III; Iggeret HaTeshuvah ${i + 1}`),
   ];
 }
 
