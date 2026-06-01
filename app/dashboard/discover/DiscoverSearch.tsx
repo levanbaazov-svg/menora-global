@@ -1,14 +1,17 @@
 'use client';
 
 // Full-screen-ish global search. Debounced fetch to /api/search, grouped
-// results with lucide icons. Empty state shows category shortcuts.
+// results with lucide icons. Empty state shows visual category tiles.
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import {
-  Search, X, Building2, BookOpen, CalendarDays, Users2, HandHeart,
-  UserRound, ChevronRight, MapPin,
+  Search, X, Building2, BookOpenText, CalendarDays, MessageCircle, HandHeart,
+  UserRound, ChevronRight, MapPin, Sparkles,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 
 interface Results {
   communities: Array<{ slug: string; name: string; city: string | null; country_code: string | null; denomination: string | null; member_count_cached: number }>;
@@ -21,15 +24,20 @@ interface Results {
 
 const EMPTY: Results = { communities: [], programs: [], events: [], interest_groups: [], requests: [], people: [] };
 
-const SHORTCUTS = [
-  { href: '/dashboard/community/discover', Icon: Building2, label: 'Общины мира' },
-  { href: '/dashboard/connect', Icon: Users2, label: 'Группы по интересам' },
-  { href: '/dashboard/events', Icon: CalendarDays, label: 'События' },
-  { href: '/dashboard/requests', Icon: HandHeart, label: 'Просьбы' },
-  { href: '/dashboard/people', Icon: UserRound, label: 'Участники' },
+const TILES: Array<{ key: string; href: string; Icon: LucideIcon; grad: string }> = [
+  { key: 'communities', href: '/dashboard/community/discover', Icon: Building2,     grad: 'from-amber-300 to-orange-500' },
+  { key: 'guide',       href: '/dashboard/community?tab=guide', Icon: MapPin,        grad: 'from-emerald-300 to-teal-500' },
+  { key: 'events',      href: '/dashboard/events',             Icon: CalendarDays,  grad: 'from-violet-300 to-purple-500' },
+  { key: 'groups',      href: '/dashboard/connect',            Icon: MessageCircle, grad: 'from-sky-300 to-blue-500' },
+  { key: 'requests',    href: '/dashboard/requests',           Icon: HandHeart,     grad: 'from-rose-300 to-pink-500' },
+  { key: 'people',      href: '/dashboard/people',             Icon: UserRound,     grad: 'from-fuchsia-300 to-pink-500' },
+  { key: 'aiRabbi',     href: '/dashboard/ai-rabbi',           Icon: Sparkles,      grad: 'from-yellow-300 to-amber-500' },
+  { key: 'inspire',     href: '/dashboard/inspire',            Icon: BookOpenText,  grad: 'from-cyan-300 to-blue-400' },
 ];
 
 export function DiscoverSearch() {
+  const t = useTranslations('discover');
+  const locale = useLocale() as Locale;
   const [q, setQ] = useState('');
   const [results, setResults] = useState<Results>(EMPTY);
   const [loading, setLoading] = useState(false);
@@ -40,14 +48,14 @@ export function DiscoverSearch() {
   useEffect(() => {
     if (q.trim().length < 2) { setResults(EMPTY); setLoading(false); return; }
     setLoading(true);
-    const t = setTimeout(async () => {
+    const id = setTimeout(async () => {
       try {
         const r = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
         const data = await r.json();
         setResults({ ...EMPTY, ...data });
       } catch { /* ignore */ } finally { setLoading(false); }
     }, 280);
-    return () => clearTimeout(t);
+    return () => clearTimeout(id);
   }, [q]);
 
   const total =
@@ -56,42 +64,46 @@ export function DiscoverSearch() {
   const hasQuery = q.trim().length >= 2;
 
   return (
-    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-8">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-32">
       {/* Search input */}
       <div className="relative mb-5">
-        <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Search size={18} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           ref={inputRef}
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Общины, программы, события, люди…"
-          className="w-full h-12 pl-11 pr-10 rounded-2xl bg-card ring-1 ring-border text-base outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+          placeholder={t('placeholder')}
+          className="w-full h-12 ps-11 pe-10 rounded-2xl bg-card ring-1 ring-border text-base outline-none focus:ring-2 focus:ring-primary/40 transition-all"
         />
         {q && (
           <button
             onClick={() => setQ('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label="Очистить"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            aria-label="Clear"
           >
             <X size={18} />
           </button>
         )}
       </div>
 
-      {/* No query → shortcuts */}
+      {/* No query → visual category tiles */}
       {!hasQuery && (
         <div>
-          <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-2 px-0.5">
-            Разделы
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-2.5 px-0.5">
+            {t('browse')}
           </div>
-          <div className="rounded-2xl bg-card ring-1 ring-border/70 divide-y divide-border/60 overflow-hidden">
-            {SHORTCUTS.map((s) => (
-              <Link key={s.href} href={s.href} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/60 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-foreground/70">
-                  <s.Icon size={16} strokeWidth={1.9} />
+          <div className="grid grid-cols-2 gap-2.5">
+            {TILES.map((tile) => (
+              <Link
+                key={tile.key}
+                href={tile.href}
+                className={`group relative overflow-hidden rounded-2xl p-4 h-24 flex flex-col justify-between bg-gradient-to-br ${tile.grad} text-white shadow-[0_1px_3px_rgba(20,24,31,0.06)] hover:shadow-[0_8px_20px_-6px_rgba(20,24,31,0.18)] transition-shadow`}
+              >
+                <tile.Icon size={20} strokeWidth={2} className="opacity-95" />
+                <div>
+                  <div className="font-semibold text-sm leading-tight">{t(`tiles.${tile.key}`)}</div>
+                  <div className="text-[11px] text-white/85 leading-snug">{t(`tiles.${tile.key}Sub`)}</div>
                 </div>
-                <span className="flex-1 text-sm font-medium">{s.label}</span>
-                <ChevronRight size={15} className="text-muted-foreground/50" />
               </Link>
             ))}
           </div>
@@ -102,55 +114,53 @@ export function DiscoverSearch() {
       {hasQuery && (
         <div className="space-y-5">
           {loading && total === 0 && (
-            <div className="text-center text-sm text-muted-foreground py-8">Ищу…</div>
+            <div className="text-center text-sm text-muted-foreground py-8">{t('searching')}</div>
           )}
           {!loading && total === 0 && (
-            <div className="text-center text-sm text-muted-foreground py-8">
-              Ничего не найдено по «{q}»
-            </div>
+            <div className="text-center text-sm text-muted-foreground py-8">{t('nothing', { q })}</div>
           )}
 
           {results.communities.length > 0 && (
-            <Group title="Общины">
+            <Group title={t('groups.communities')}>
               {results.communities.map((c) => (
                 <Row key={c.slug} href={`/dashboard/community/c/${c.slug}`} Icon={Building2}
                   title={c.name}
-                  subtitle={[c.city, c.denomination, `${c.member_count_cached} участников`].filter(Boolean).join(' · ')} />
+                  subtitle={[c.city, c.denomination].filter(Boolean).join(' · ')} />
               ))}
             </Group>
           )}
           {results.people.length > 0 && (
-            <Group title="Люди">
+            <Group title={t('groups.people')}>
               {results.people.map((p) => (
-                <Row key={p.id} href={`/dashboard/people/${p.id}`} Icon={UserRound} title={p.name ?? 'Без имени'} />
+                <Row key={p.id} href={`/dashboard/people/${p.id}`} Icon={UserRound} title={p.name ?? '—'} />
               ))}
             </Group>
           )}
           {results.programs.length > 0 && (
-            <Group title="Программы">
+            <Group title={t('groups.programs')}>
               {results.programs.map((p) => (
-                <Row key={p.id} href={`/dashboard/community/programs/${p.id}`} Icon={BookOpen} title={p.name} subtitle={p.schedule_text ?? undefined} />
+                <Row key={p.id} href={`/dashboard/community/programs/${p.id}`} Icon={BookOpenText} title={p.name} subtitle={p.schedule_text ?? undefined} />
               ))}
             </Group>
           )}
           {results.events.length > 0 && (
-            <Group title="События">
+            <Group title={t('groups.events')}>
               {results.events.map((e) => (
                 <Row key={e.id} href={`/dashboard/events/${e.id}`} Icon={CalendarDays}
                   title={e.title}
-                  subtitle={[new Date(e.starts_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }), e.location_text].filter(Boolean).join(' · ')} />
+                  subtitle={[new Date(e.starts_at).toLocaleDateString(LOCALE_BCP47[locale], { day: 'numeric', month: 'short' }), e.location_text].filter(Boolean).join(' · ')} />
               ))}
             </Group>
           )}
           {results.interest_groups.length > 0 && (
-            <Group title="Группы">
+            <Group title={t('groups.interestGroups')}>
               {results.interest_groups.map((g) => (
-                <Row key={g.id} href={`/dashboard/connect/${g.id}`} Icon={Users2} title={g.name} subtitle={`${g.member_count_cached} участников`} />
+                <Row key={g.id} href={`/dashboard/connect/${g.id}`} Icon={MessageCircle} title={g.name} />
               ))}
             </Group>
           )}
           {results.requests.length > 0 && (
-            <Group title="Просьбы">
+            <Group title={t('groups.requests')}>
               {results.requests.map((r) => (
                 <Row key={r.id} href={`/dashboard/requests/${r.id}`} Icon={HandHeart} title={r.title} />
               ))}
@@ -173,7 +183,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function Row({ href, Icon, title, subtitle }: { href: string; Icon: typeof Building2; title: string; subtitle?: string }) {
+function Row({ href, Icon, title, subtitle }: { href: string; Icon: LucideIcon; title: string; subtitle?: string }) {
   return (
     <Link href={href} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/60 transition-colors">
       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-foreground/70 shrink-0">
@@ -183,7 +193,7 @@ function Row({ href, Icon, title, subtitle }: { href: string; Icon: typeof Build
         <div className="text-sm font-medium leading-tight truncate">{title}</div>
         {subtitle && <div className="text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</div>}
       </div>
-      <ChevronRight size={15} className="text-muted-foreground/50 shrink-0" />
+      <ChevronRight size={15} className="text-muted-foreground/50 shrink-0 rtl:-scale-x-100" />
     </Link>
   );
 }

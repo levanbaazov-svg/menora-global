@@ -75,7 +75,7 @@ export function AppHeader({ user, role, communityName, communities, activeCommun
               aria-label={t('search')}
               className="rounded-full h-9 w-9 text-foreground/70 hover:text-foreground"
             >
-              <Link href="/dashboard/community/discover">
+              <Link href="/dashboard/discover">
                 <Search size={18} strokeWidth={1.9} />
               </Link>
             </Button>

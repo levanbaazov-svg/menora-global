@@ -123,6 +123,42 @@
       "address": "Address"
     }
   },
+  "discover": {
+    "title": "Search",
+    "placeholder": "Communities, programs, places, events…",
+    "browse": "Categories",
+    "results": "Results",
+    "nothing": "Nothing found for “{q}”",
+    "searching": "Searching…",
+    "typeToSearch": "Start typing — search across the whole platform",
+    "groups": {
+      "communities": "Communities",
+      "places": "Places",
+      "programs": "Programs",
+      "events": "Events",
+      "interestGroups": "Groups",
+      "people": "People",
+      "requests": "Requests"
+    },
+    "tiles": {
+      "communities": "Communities",
+      "communitiesSub": "Find a community worldwide",
+      "guide": "City guide",
+      "guideSub": "Synagogues, kosher, stores",
+      "events": "Events",
+      "eventsSub": "Shabbats, talks, for kids",
+      "groups": "Interest groups",
+      "groupsSub": "Study, sports, families",
+      "requests": "Requests",
+      "requestsSub": "Mutual-help board",
+      "aiRabbi": "AI Rabbi",
+      "aiRabbiSub": "Ask anything",
+      "inspire": "Inspiration",
+      "inspireSub": "Parsha, holidays, wisdom",
+      "people": "Members",
+      "peopleSub": "People in communities"
+    }
+  },
   "notifications": {
     "title": "Notifications",
     "back": "← To dashboard",

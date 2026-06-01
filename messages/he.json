@@ -123,6 +123,42 @@
       "address": "כתובת"
     }
   },
+  "discover": {
+    "title": "חיפוש",
+    "placeholder": "קהילות, תוכניות, מקומות, אירועים…",
+    "browse": "קטגוריות",
+    "results": "תוצאות",
+    "nothing": "לא נמצא דבר עבור «{q}»",
+    "searching": "מחפש…",
+    "typeToSearch": "התחילו להקליד — חיפוש בכל הפלטפורמה",
+    "groups": {
+      "communities": "קהילות",
+      "places": "מקומות",
+      "programs": "תוכניות",
+      "events": "אירועים",
+      "interestGroups": "קבוצות",
+      "people": "אנשים",
+      "requests": "בקשות"
+    },
+    "tiles": {
+      "communities": "קהילות",
+      "communitiesSub": "למצוא קהילה בעולם",
+      "guide": "מדריך העיר",
+      "guideSub": "בתי כנסת, כשרות, חנויות",
+      "events": "אירועים",
+      "eventsSub": "שבתות, הרצאות, לילדים",
+      "groups": "קבוצות עניין",
+      "groupsSub": "לימוד, ספורט, משפחות",
+      "requests": "בקשות",
+      "requestsSub": "לוח עזרה הדדית",
+      "aiRabbi": "רב AI",
+      "aiRabbiSub": "לשאול כל דבר",
+      "inspire": "השראה",
+      "inspireSub": "פרשה, חגים, חוכמה",
+      "people": "חברים",
+      "peopleSub": "אנשים בקהילות"
+    }
+  },
   "notifications": {
     "title": "התראות",
     "back": "← לדשבורד",

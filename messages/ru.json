@@ -123,6 +123,42 @@
       "address": "Адрес"
     }
   },
+  "discover": {
+    "title": "Поиск",
+    "placeholder": "Общины, программы, заведения, события…",
+    "browse": "Категории",
+    "results": "Результаты",
+    "nothing": "Ничего не найдено по «{q}»",
+    "searching": "Ищу…",
+    "typeToSearch": "Начни вводить — поиск по всей платформе",
+    "groups": {
+      "communities": "Общины",
+      "places": "Заведения",
+      "programs": "Программы",
+      "events": "События",
+      "interestGroups": "Группы",
+      "people": "Люди",
+      "requests": "Просьбы"
+    },
+    "tiles": {
+      "communities": "Общины",
+      "communitiesSub": "Найти общину по миру",
+      "guide": "Город-гид",
+      "guideSub": "Синагоги, кошер, магазины",
+      "events": "События",
+      "eventsSub": "Шаббаты, лекции, для детей",
+      "groups": "Группы по интересам",
+      "groupsSub": "Учёба, спорт, семьи",
+      "requests": "Просьбы",
+      "requestsSub": "Доска взаимопомощи",
+      "aiRabbi": "AI Раввин",
+      "aiRabbiSub": "Спросить о чём угодно",
+      "inspire": "Вдохновение",
+      "inspireSub": "Парша, праздники, мудрость",
+      "people": "Участники",
+      "peopleSub": "Люди в общинах"
+    }
+  },
   "notifications": {
     "title": "Уведомления",
     "back": "← К дашборду",
