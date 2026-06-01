@@ -21,6 +21,12 @@ const SEARCH = /* GraphQL */ `
     ) {
       id name schedule_text photo_url
     }
+    places(
+      where: { submission_status: { _eq: approved }, archived_at: { _is_null: true }, _or: [{ name: { _ilike: $q } }, { description: { _ilike: $q } }, { address: { _ilike: $q } }] }
+      limit: 6
+    ) {
+      id name type address
+    }
     events(
       where: { status: { _eq: published }, community_id: { _eq: $community_id }, starts_at: { _gte: "now()" }, _or: [{ title: { _ilike: $q } }, { description: { _ilike: $q } }] }
       order_by: { starts_at: asc } limit: 6
@@ -57,7 +63,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = (url.searchParams.get('q') ?? '').trim();
   if (q.length < 2) {
-    return Response.json({ communities: [], programs: [], events: [], interest_groups: [], requests: [], people: [] });
+    return Response.json({ communities: [], programs: [], places: [], events: [], interest_groups: [], requests: [], people: [] });
   }
 
   const like = `%${q}%`;
@@ -69,6 +75,7 @@ export async function GET(req: Request) {
   return Response.json({
     communities: data.communities ?? [],
     programs: data.programs ?? [],
+    places: data.places ?? [],
     events: data.events ?? [],
     interest_groups: data.interest_groups ?? [],
     requests: data.requests ?? [],

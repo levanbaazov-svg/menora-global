@@ -12,17 +12,19 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { LOCALE_BCP47, type Locale } from '@/i18n/config';
+import { PLACE_TYPE_LABELS, type PlaceType } from '@/lib/places/schema';
 
 interface Results {
   communities: Array<{ slug: string; name: string; city: string | null; country_code: string | null; denomination: string | null; member_count_cached: number }>;
   programs: Array<{ id: string; name: string; schedule_text: string | null }>;
+  places: Array<{ id: string; name: string; type: PlaceType; address: string | null }>;
   events: Array<{ id: string; title: string; starts_at: string; location_text: string | null }>;
   interest_groups: Array<{ id: string; name: string; member_count_cached: number }>;
   requests: Array<{ id: string; title: string; category: string }>;
   people: Array<{ id: string; name: string | null; image_url: string | null }>;
 }
 
-const EMPTY: Results = { communities: [], programs: [], events: [], interest_groups: [], requests: [], people: [] };
+const EMPTY: Results = { communities: [], programs: [], places: [], events: [], interest_groups: [], requests: [], people: [] };
 
 const TILES: Array<{ key: string; href: string; Icon: LucideIcon; grad: string }> = [
   { key: 'communities', href: '/dashboard/community/discover', Icon: Building2,     grad: 'from-amber-300 to-orange-500' },
@@ -59,7 +61,7 @@ export function DiscoverSearch() {
   }, [q]);
 
   const total =
-    results.communities.length + results.programs.length + results.events.length +
+    results.communities.length + results.programs.length + results.places.length + results.events.length +
     results.interest_groups.length + results.requests.length + results.people.length;
   const hasQuery = q.trim().length >= 2;
 
@@ -133,6 +135,14 @@ export function DiscoverSearch() {
             <Group title={t('groups.people')}>
               {results.people.map((p) => (
                 <Row key={p.id} href={`/dashboard/people/${p.id}`} Icon={UserRound} title={p.name ?? '—'} />
+              ))}
+            </Group>
+          )}
+          {results.places.length > 0 && (
+            <Group title={t('groups.places')}>
+              {results.places.map((p) => (
+                <Row key={p.id} href={`/dashboard/community/places/${p.id}`} Icon={MapPin} title={p.name}
+                  subtitle={[PLACE_TYPE_LABELS[p.type]?.[locale], p.address].filter(Boolean).join(' · ')} />
               ))}
             </Group>
           )}
