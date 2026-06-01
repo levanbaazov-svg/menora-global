@@ -12,6 +12,16 @@
     "all": "הכול",
     "noName": "ללא שם"
   },
+  "header": {
+    "greeting": {
+      "night": "לילה טוב",
+      "morning": "בוקר טוב",
+      "day": "צהריים טובים",
+      "evening": "ערב טוב"
+    },
+    "search": "חיפוש",
+    "menu": "פתיחת תפריט"
+  },
   "nav": {
     "home": "בית",
     "community": "קהילה",
@@ -56,7 +66,32 @@
       "strugglingTitle": "קשה לי",
       "strugglingSubtitle": "מרחב בטוח"
     },
-    "aiCardEyebrow": "רב AI · היום בשבילך"
+    "aiCardEyebrow": "רב AI · היום בשבילך",
+    "routine": {
+      "title": "השגרה שלי",
+      "emptyHint": "הגדירו שגרת תפילה — צברו רצף בכל יום",
+      "streak": "רצף של {count} ימים",
+      "startStreak": "להתחיל רצף",
+      "todayCount": "{done} מתוך {total} היום",
+      "types": {
+        "shacharit": "שחרית",
+        "mincha": "מנחה",
+        "maariv": "מעריב",
+        "modeh_ani": "מודה אני",
+        "shema": "שמע",
+        "bedtime_shema": "קריאת שמע שעל המיטה",
+        "birkat_hamazon": "ברכת המזון",
+        "tehillim": "תהילים",
+        "custom": "מותאם אישית"
+      }
+    },
+    "fallbacks": [
+      { "emoji": "📅", "title": "אירועי הקהילה", "body": "ארוחות שבת, הרצאות ופעילויות לילדים — הציצו מה מתוכנן.", "cta_label": "לאירועים", "cta_href": "/dashboard/events" },
+      { "emoji": "🤝", "title": "רוצים למצוא את הקהילה שלכם?", "body": "קבוצות עניין — לימוד, ספורט, הורים, בישול. אולי אחת מהן שלכם.", "cta_label": "למסך הקשר", "cta_href": "/dashboard/connect" },
+      { "emoji": "🕯", "title": "שבת מתקרבת", "body": "בדקו זמני הדלקת נרות בקהילה — ולאן ללכת לארוחה.", "cta_label": "לתכנן שבת", "cta_href": "/dashboard/ai-rabbi/shabbat" },
+      { "emoji": "🪪", "title": "תעודת הזהות היהודית שלכם", "body": "כרטיס דיגיטלי עם QR — בכל קהילת Menorah יזהו אתכם.", "cta_label": "לכרטיס", "cta_href": "/dashboard/me/jewish-id" },
+      { "emoji": "💬", "title": "רב ה-AI כאן", "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.", "cta_label": "לרב ה-AI", "cta_href": "/dashboard/ai-rabbi" }
+    ]
   },
   "profile": {
     "backToDashboard": "← לדשבורד",

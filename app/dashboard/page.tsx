@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     ?? 'друг';
 
   return (
-    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-3 pb-36 space-y-4">
+    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-2 pb-32 space-y-2.5">
       {/* 1. Greeting + question (compact) */}
       <Reveal>
         <header className="px-0.5">
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       </Reveal>
 
       {/* 2. Scenario tiles — compact 2-col grid */}
-      <section className="grid grid-cols-2 gap-2.5">
+      <section className="grid grid-cols-2 gap-2">
         {SCENARIOS.map((s, i) => (
           <ScenarioTile
             key={s.href}

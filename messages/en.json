@@ -12,6 +12,16 @@
     "all": "All",
     "noName": "No name"
   },
+  "header": {
+    "greeting": {
+      "night": "Good night",
+      "morning": "Good morning",
+      "day": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "search": "Search",
+    "menu": "Open menu"
+  },
   "nav": {
     "home": "Home",
     "community": "Community",
@@ -56,7 +66,32 @@
       "strugglingTitle": "I'm struggling",
       "strugglingSubtitle": "A safe space"
     },
-    "aiCardEyebrow": "AI Rabbi · today for you"
+    "aiCardEyebrow": "AI Rabbi · today for you",
+    "routine": {
+      "title": "My routine",
+      "emptyHint": "Set up a prayer routine — earn a streak every day",
+      "streak": "{count}-day streak",
+      "startStreak": "Start a streak",
+      "todayCount": "{done} of {total} today",
+      "types": {
+        "shacharit": "Shacharit",
+        "mincha": "Mincha",
+        "maariv": "Maariv",
+        "modeh_ani": "Modeh Ani",
+        "shema": "Shema",
+        "bedtime_shema": "Bedtime Shema",
+        "birkat_hamazon": "Birkat Hamazon",
+        "tehillim": "Tehillim",
+        "custom": "Custom"
+      }
+    },
+    "fallbacks": [
+      { "emoji": "📅", "title": "Community events", "body": "Shabbat dinners, talks, kids' activities — see what's coming up.", "cta_label": "Open events", "cta_href": "/dashboard/events" },
+      { "emoji": "🤝", "title": "Want to meet your people?", "body": "Interest groups — study, sports, parents, cooking. Maybe one's yours.", "cta_label": "Open Connect", "cta_href": "/dashboard/connect" },
+      { "emoji": "🕯", "title": "Shabbat is near", "body": "Check candle-lighting in your community — and where to go for dinner.", "cta_label": "Plan Shabbat", "cta_href": "/dashboard/ai-rabbi/shabbat" },
+      { "emoji": "🪪", "title": "Your Jewish ID", "body": "A digital pass with QR — any Menorah community can verify you.", "cta_label": "Open card", "cta_href": "/dashboard/me/jewish-id" },
+      { "emoji": "💬", "title": "The AI Rabbi is here", "body": "A deep talk or a quick question — just ask right now.", "cta_label": "Open AI Rabbi", "cta_href": "/dashboard/ai-rabbi" }
+    ]
   },
   "profile": {
     "backToDashboard": "← To dashboard",

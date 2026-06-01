@@ -2,6 +2,7 @@
 // Shows: today's streak + count "N of M today" + 3 next prayer pills with status.
 
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { hasuraAdmin } from '@/lib/hasura';
 import { Flame, ChevronRight, Check } from 'lucide-react';
 
@@ -28,17 +29,10 @@ interface RoutineRow {
   checkins: Array<{ gregorian_date: string }>;
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  shacharit:    'Шахарит',
-  mincha:       'Минха',
-  maariv:       'Маарив',
-  modeh_ani:    'Моде Ани',
-  shema:        'Шма',
-  bedtime_shema:'Шма перед сном',
-  birkat_hamazon: 'Биркат хамазон',
-  tehillim:     'Теилим',
-  custom:       'Своё',
-};
+const KNOWN_TYPES = new Set([
+  'shacharit', 'mincha', 'maariv', 'modeh_ani', 'shema',
+  'bedtime_shema', 'birkat_hamazon', 'tehillim', 'custom',
+]);
 
 function isoDateLocal(d: Date): string {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
@@ -61,6 +55,7 @@ function calcStreak(allCheckinDates: Set<string>, today: Date): number {
 export async function RoutineHomeCard({ userId }: { userId: string }) {
   const today = new Date();
   const since = new Date(today.getTime() - 90 * 86_400_000);
+  const t = await getTranslations('home.routine');
 
   const data = await hasuraAdmin.request<{ routines: RoutineRow[] }>(FETCH, {
     user_id: userId,
@@ -84,9 +79,9 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
             <Flame size={16} strokeWidth={2} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-serif text-base font-semibold leading-tight">Моя рутина</div>
+            <div className="font-serif text-base font-semibold leading-tight">{t('title')}</div>
             <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
-              Создай молитвенный режим — будет стрик за каждый день
+              {t('emptyHint')}
             </p>
           </div>
           <ChevronRight size={16} className="text-muted-foreground/60 mt-1" />
@@ -119,9 +114,9 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
           <Flame size={15} strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-serif text-[15px] font-semibold leading-tight">Моя рутина</div>
+          <div className="font-serif text-[15px] font-semibold leading-tight">{t('title')}</div>
           <div className="text-[11px] text-muted-foreground mt-0.5">
-            {streak > 0 ? `${streak}-day streak` : 'Начни streak'} · {doneToday} of {totalToday} today
+            {streak > 0 ? t('streak', { count: streak }) : t('startStreak')} · {t('todayCount', { done: doneToday, total: totalToday })}
           </div>
         </div>
         <ChevronRight size={15} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
@@ -130,7 +125,7 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
       {/* Routine pills row */}
       <div className="px-3.5 pb-3 pt-0.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
         {next3.map((r) => {
-          const label = r.custom_label ?? TYPE_LABELS[r.type] ?? r.type;
+          const label = r.custom_label ?? (KNOWN_TYPES.has(r.type) ? t(`types.${r.type}`) : r.type);
           const done = r.checkins.some((c) => c.gregorian_date === todayIso);
           const time = r.target_time?.slice(0, 5) ?? '';
           return (

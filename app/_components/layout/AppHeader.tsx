@@ -6,6 +6,7 @@
 // Translucent glass surface.
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Menu, Search } from 'lucide-react';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { NotificationBell } from '@/app/dashboard/_NotificationBell';
@@ -25,17 +26,18 @@ interface Props {
   signOutAction: () => Promise<void>;
 }
 
-function getGreeting(): string {
+function greetingKey(): 'night' | 'morning' | 'day' | 'evening' {
   const h = new Date().getHours();
-  if (h < 5)  return 'Доброй ночи';
-  if (h < 12) return 'Доброе утро';
-  if (h < 17) return 'Добрый день';
-  if (h < 21) return 'Добрый вечер';
-  return 'Доброй ночи';
+  if (h < 5)  return 'night';
+  if (h < 12) return 'morning';
+  if (h < 17) return 'day';
+  if (h < 21) return 'evening';
+  return 'night';
 }
 
 export function AppHeader({ user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const t = useTranslations('header');
   const firstName = user.name?.split(' ')[0] ?? 'друг';
 
   return (
@@ -56,7 +58,7 @@ export function AppHeader({ user, role, communityName, communities, activeCommun
             <Avatar user={user} size="sm" />
             <div className="min-w-0 leading-tight">
               <div className="text-[10px] text-muted-foreground font-medium">
-                {getGreeting()}
+                {t(`greeting.${greetingKey()}`)}
               </div>
               <div className="font-serif font-semibold text-sm truncate max-w-[160px]">
                 {firstName}
@@ -65,12 +67,12 @@ export function AppHeader({ user, role, communityName, communities, activeCommun
           </Link>
 
           {/* Right cluster */}
-          <div className="ml-auto flex items-center gap-0.5">
+          <div className="ms-auto flex items-center gap-0.5">
             <Button
               asChild
               variant="ghost"
               size="icon"
-              aria-label="Поиск"
+              aria-label={t('search')}
               className="rounded-full h-9 w-9 text-foreground/70 hover:text-foreground"
             >
               <Link href="/dashboard/community/discover">
@@ -81,7 +83,7 @@ export function AppHeader({ user, role, communityName, communities, activeCommun
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Открыть меню"
+              aria-label={t('menu')}
               onClick={() => setDrawerOpen(true)}
               className="rounded-full h-9 w-9 text-foreground/70 hover:text-foreground"
             >

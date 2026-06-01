@@ -12,6 +12,16 @@
     "all": "Все",
     "noName": "Без имени"
   },
+  "header": {
+    "greeting": {
+      "night": "Доброй ночи",
+      "morning": "Доброе утро",
+      "day": "Добрый день",
+      "evening": "Добрый вечер"
+    },
+    "search": "Поиск",
+    "menu": "Открыть меню"
+  },
   "nav": {
     "home": "Главная",
     "community": "Община",
@@ -56,7 +66,32 @@
       "strugglingTitle": "Мне тяжело",
       "strugglingSubtitle": "Безопасно"
     },
-    "aiCardEyebrow": "AI Раввин · сегодня для тебя"
+    "aiCardEyebrow": "AI Раввин · сегодня для тебя",
+    "routine": {
+      "title": "Моя рутина",
+      "emptyHint": "Создай молитвенный режим — будет стрик за каждый день",
+      "streak": "{count}-дневный стрик",
+      "startStreak": "Начни стрик",
+      "todayCount": "{done} из {total} сегодня",
+      "types": {
+        "shacharit": "Шахарит",
+        "mincha": "Минха",
+        "maariv": "Маарив",
+        "modeh_ani": "Моде Ани",
+        "shema": "Шма",
+        "bedtime_shema": "Шма перед сном",
+        "birkat_hamazon": "Биркат хамазон",
+        "tehillim": "Теилим",
+        "custom": "Своё"
+      }
+    },
+    "fallbacks": [
+      { "emoji": "📅", "title": "События общины", "body": "Шаббатние ужины, лекции, мероприятия для детей — глянь что предстоит.", "cta_label": "Открыть события", "cta_href": "/dashboard/events" },
+      { "emoji": "🤝", "title": "Хочешь найти своих?", "body": "Группы по интересам — учёба, спорт, мамы, кулинария. Может, есть твоя.", "cta_label": "Открыть Связь", "cta_href": "/dashboard/connect" },
+      { "emoji": "🕯", "title": "Шаббат уже близко", "body": "Проверь время свечей в своей общине — а заодно есть ли куда пойти на ужин.", "cta_label": "Спланировать Шаббат", "cta_href": "/dashboard/ai-rabbi/shabbat" },
+      { "emoji": "🪪", "title": "Твой Jewish ID", "body": "Цифровой паспорт с QR — в любой общине Menorah тебя подтвердят.", "cta_label": "Открыть карту", "cta_href": "/dashboard/me/jewish-id" },
+      { "emoji": "💬", "title": "AI Раввин рядом", "body": "Глубокий разговор или просто вопрос — спроси прямо сейчас.", "cta_label": "Открыть AI Раввина", "cta_href": "/dashboard/ai-rabbi" }
+    ]
   },
   "profile": {
     "backToDashboard": "← К дашборду",

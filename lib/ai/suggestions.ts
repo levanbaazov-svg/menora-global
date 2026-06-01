@@ -11,9 +11,17 @@
 import 'server-only';
 import { hasuraAdmin } from '@/lib/hasura';
 import { generateText } from 'ai';
+import { getTranslations } from 'next-intl/server';
 import { openai, AI_MODEL, isAIConfigured } from './openai';
 import { buildUserContext } from './context';
+import { DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { z } from 'zod';
+
+const LANGUAGE_NAME: Record<Locale, string> = {
+  ru: 'русском языке',
+  en: 'English',
+  he: 'בעברית (Hebrew)',
+};
 
 // ── Output shape ─────────────────────────────────────────────────────────
 export const homeSuggestionSchema = z.object({
@@ -104,7 +112,7 @@ function isoToday(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function readCache(userId: string): Promise<HomeSuggestion | null> {
+async function readCache(userId: string, locale: Locale): Promise<HomeSuggestion | null> {
   const r = await hasuraAdmin.request<{
     users_by_pk: {
       ai_home_suggestion: unknown;
@@ -114,34 +122,44 @@ async function readCache(userId: string): Promise<HomeSuggestion | null> {
 
   const row = r.users_by_pk;
   if (!row || row.ai_home_suggestion_date !== isoToday()) return null;
+  // Bust the cache when the stored suggestion is in a different language.
+  const stored = row.ai_home_suggestion as { _locale?: string } | null;
+  if (stored && stored._locale && stored._locale !== locale) return null;
   const parsed = homeSuggestionSchema.safeParse(row.ai_home_suggestion);
   return parsed.success ? parsed.data : null;
 }
 
-async function writeCache(userId: string, payload: HomeSuggestion): Promise<void> {
+async function writeCache(userId: string, payload: HomeSuggestion, locale: Locale): Promise<void> {
   await hasuraAdmin.request(STORE_CACHE, {
     user_id: userId,
-    payload,
+    payload: { ...payload, _locale: locale },
     today: isoToday(),
   });
 }
 
 // ── AI generation ────────────────────────────────────────────────────────
-function buildPrompt(userName: string | null, communityName: string | null, parsha: string | null, role: string | null) {
-  return `Ты — AI помощник в приложении Menorah Global (сеть еврейских общин). Сгенерируй ОДНУ короткую персональную подсказку для главной страницы пользователя на сегодня.
+function buildPrompt(
+  userName: string | null,
+  communityName: string | null,
+  parsha: string | null,
+  role: string | null,
+  languageName: string,
+) {
+  return `Ты — проактивный AI помощник в приложении Menorah Global (сеть еврейских общин). Сгенерируй ОДНУ короткую персональную подсказку для главной страницы пользователя на сегодня.
+
+ВАЖНО: весь текст (title, body, cta_label) должен быть на ${languageName}.
 
 Контекст:
 - Имя: ${userName ?? 'неизвестно'}
 - Община: ${communityName ?? 'без активной общины'}
 - Роль: ${role ?? 'без членства'}
-- Парша недели: ${parsha ?? 'неизвестна'}
-- Сегодняшняя дата: ${new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: '2-digit', month: 'long' })}
+${parsha ? `- Парша недели (используй только если это уместно, не делай это темой по умолчанию): ${parsha}` : ''}
 
-Требования к подсказке:
-- Тёплая, личная, без шаблонности
-- 1-2 предложения максимум для body
-- Эмоциональный заголовок (НЕ "Ваша подсказка дня")
-- Одно конкретное действие (CTA)
+Что делает хорошую подсказку:
+- Проактивность: исходи из ситуации пользователя и подталкивай к КОНКРЕТНОМУ следующему шагу в приложении — записаться на ближайшее событие, вступить в группу по интересам, спланировать шаббат, открыть Jewish ID, начать молитвенную рутину.
+- НЕ делай подсказку про парашу/недельную главу по умолчанию — это лишь один из вариантов и только если действительно к месту.
+- Тёплая, личная, без шаблонных фраз. 1-2 предложения максимум для body. Эмоциональный заголовок.
+- Ровно одно действие (CTA).
 
 CTA должен быть на одну из этих страниц:
 - /dashboard/community — город-гид общины (места, программы, события)
@@ -159,11 +177,11 @@ CTA должен быть на одну из этих страниц:
 НЕ оборачивай в \`\`\`json\`\`\`. Просто JSON.`;
 }
 
-async function callAI(userId: string): Promise<HomeSuggestion | null> {
+async function callAI(userId: string, locale: Locale): Promise<HomeSuggestion | null> {
   if (!isAIConfigured()) return null;
   try {
     const ctx = await buildUserContext(userId, null);
-    const prompt = buildPrompt(ctx.userName, ctx.communityName, ctx.parsha, ctx.role);
+    const prompt = buildPrompt(ctx.userName, ctx.communityName, ctx.parsha, ctx.role, LANGUAGE_NAME[locale]);
 
     const result = await generateText({
       model: openai(AI_MODEL),
@@ -191,18 +209,35 @@ async function callAI(userId: string): Promise<HomeSuggestion | null> {
  *
  * Safe to call on every dashboard render — limited to 1 AI call/day/user.
  */
-export async function getDailyHomeSuggestion(userId: string): Promise<HomeSuggestion> {
-  // 1. Cache hit?
-  const cached = await readCache(userId);
+export async function getDailyHomeSuggestion(
+  userId: string,
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<HomeSuggestion> {
+  // 1. Cache hit (same day + same language)?
+  const cached = await readCache(userId, locale);
   if (cached) return cached;
 
   // 2. Try AI
-  const generated = await callAI(userId);
+  const generated = await callAI(userId, locale);
   if (generated) {
-    await writeCache(userId, generated).catch(() => {/* non-fatal */});
+    await writeCache(userId, generated, locale).catch(() => {/* non-fatal */});
     return generated;
   }
 
-  // 3. Static fallback (don't cache — try again tomorrow)
+  // 3. Localized static fallback (don't cache — try again tomorrow)
+  return localizedFallback(locale);
+}
+
+/** Pick a localized fallback suggestion, rotating by day-of-year. */
+async function localizedFallback(locale: Locale): Promise<HomeSuggestion> {
+  try {
+    const t = await getTranslations({ locale, namespace: 'home' });
+    const pool = t.raw('fallbacks') as HomeSuggestion[];
+    if (Array.isArray(pool) && pool.length > 0) {
+      return pool[dayOfYear() % pool.length];
+    }
+  } catch {
+    // fall through to the static RU pool
+  }
   return pickFallback();
 }
