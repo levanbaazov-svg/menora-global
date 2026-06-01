@@ -16,6 +16,7 @@ import { streamText, convertToModelMessages, type UIMessage } from 'ai';
 import { openai, AI_MODEL, isAIConfigured } from '@/lib/ai/openai';
 import { buildSystemPrompt, type AIScenario } from '@/lib/ai/scenarios';
 import { buildUserContext } from '@/lib/ai/context';
+import { retrieveSources, formatSourcesForPrompt } from '@/lib/ai/rag';
 
 export const runtime = 'nodejs'; // need next-auth Node crypto split
 export const maxDuration = 60;   // allow long streams
@@ -126,7 +127,18 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const userTz = cookieStore.get(TZ_COOKIE)?.value ?? null;
   const ctx = await buildUserContext(session.user.id, userTz);
-  const systemPrompt = buildSystemPrompt(conv.scenario, ctx);
+  let systemPrompt = buildSystemPrompt(conv.scenario, ctx);
+
+  // RAG: retrieve relevant Jewish sources for the user's question and inject
+  // them into the system prompt so the rabbi answers from real texts + cites.
+  try {
+    const sources = await retrieveSources(lastUserText, { k: 8 });
+    if (sources.length > 0) {
+      systemPrompt += `\n\n${formatSourcesForPrompt(sources)}\n\nКогда уместно — опирайся на эти источники и ссылайся на них номерами [1], [2]. Если источники не отвечают на вопрос, отвечай из общего знания традиции и не выдумывай цитаты.`;
+    }
+  } catch {
+    // RAG failure is non-fatal — answer without sources.
+  }
 
   // Build the message array we'll feed to the model:
   //  [system, ...persisted history, current user msg]
