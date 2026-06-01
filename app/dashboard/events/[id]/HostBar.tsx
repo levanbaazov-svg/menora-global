@@ -1,12 +1,17 @@
-'use client';
+// Host action bar — links to the edit page where the host can change
+// details or cancel the event.
 
-// Host action bar — informational. (Cancel/edit flows live in the events list
-// host tools for now; a dedicated edit route is a future stage.)
+import Link from 'next/link';
+import { Settings2 } from 'lucide-react';
 
-export function HostBar({ eventId: _eventId }: { eventId: string }) {
+export function HostBar({ eventId }: { eventId: string }) {
   return (
-    <div className="rounded-2xl bg-primary/10 text-primary px-4 py-3.5 text-sm font-medium text-center shadow-[0_6px_20px_-6px_rgba(20,24,31,0.12)]">
-      Вы — хост этого события
-    </div>
+    <Link
+      href={`/dashboard/events/${eventId}/edit`}
+      className="flex items-center justify-center gap-2 rounded-full h-13 bg-foreground text-background font-semibold shadow-[var(--shadow-md)] hover:opacity-95 active:scale-[0.98] transition-all"
+    >
+      <Settings2 size={17} strokeWidth={2} />
+      Управлять событием
+    </Link>
   );
 }
