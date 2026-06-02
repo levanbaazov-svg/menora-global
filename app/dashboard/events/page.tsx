@@ -1,6 +1,7 @@
 // Events list — poster-style cards (cover image hero + title overlay + meta).
 
 import { auth } from '@/lib/auth';
+import { MotifFallback } from '@/app/_components/ui/MotifFallback';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
 import { getTranslations, getLocale } from 'next-intl/server';
@@ -129,9 +130,7 @@ function EventCard({ e, userId, t, locale }: { e: EventRow; userId: string; t: T
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-br from-primary/30 to-foreground/40 flex items-center justify-center">
-            <CalendarDays size={40} className="text-white/70" strokeWidth={1.4} />
-          </div>
+          <MotifFallback variant="event" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 

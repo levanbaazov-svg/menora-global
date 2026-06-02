@@ -2,6 +2,7 @@
 // + sticky join CTA. Uses admin secret (public-safe data only).
 
 import { auth } from '@/lib/auth';
+import { MotifFallback } from '@/app/_components/ui/MotifFallback';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -112,7 +113,7 @@ export default async function VisitorCommunityPage({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={c.hero_image_url} alt={c.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-primary/40 to-foreground/50" />
+              <MotifFallback variant="community" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10" />
             <Link
@@ -186,7 +187,7 @@ export default async function VisitorCommunityPage({
                               // eslint-disable-next-line @next/next/no-img-element
                               <img src={e.cover_image_url} alt={e.title} className="h-full w-full object-cover" />
                             ) : (
-                              <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                              <MotifFallback variant="place" />
                             )}
                           </div>
                           <div className="p-3">
@@ -213,7 +214,7 @@ export default async function VisitorCommunityPage({
                               // eslint-disable-next-line @next/next/no-img-element
                               <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover" />
                             ) : (
-                              <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                              <MotifFallback variant="place" />
                             )}
                           </div>
                           <div className="p-3">
@@ -305,7 +306,7 @@ function GuideTab({ places, t, locale }: {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-primary/20 to-foreground/25" />
+                      <MotifFallback variant="place" />
                     )}
                   </div>
                   <div className="p-3">

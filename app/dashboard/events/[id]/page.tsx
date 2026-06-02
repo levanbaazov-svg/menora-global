@@ -1,6 +1,7 @@
 // Event detail — hero, quick facts, host, description, attendees, sticky RSVP.
 
 import { auth } from '@/lib/auth';
+import { MotifFallback } from '@/app/_components/ui/MotifFallback';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -96,7 +97,7 @@ export default async function EventDetailPage({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={e.cover_image_url} alt={e.title} className="h-full w-full object-cover" />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-primary/35 to-foreground/45" />
+              <MotifFallback variant="event" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/5" />
             <Link

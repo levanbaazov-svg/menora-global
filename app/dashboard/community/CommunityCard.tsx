@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { MapPin, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
+import { MotifFallback } from '@/app/_components/ui/MotifFallback';
 
 export interface CommunityCardData {
   slug: string;
@@ -55,7 +56,7 @@ export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: 
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="h-full w-full bg-gradient-to-br from-primary/30 to-foreground/40" />
+            <MotifFallback variant="community" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
 
