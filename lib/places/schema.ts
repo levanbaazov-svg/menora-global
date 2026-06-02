@@ -4,6 +4,10 @@ import { z } from 'zod';
 
 const trimmed = z.string().transform((s) => s.trim()).pipe(z.string());
 
+// Empty form fields submit as '' — map to undefined so optional numeric/format
+// validators (min/length/enum) don't reject a blank optional field.
+const emptyToUndef = (v: unknown) => (v === '' || v == null ? undefined : v);
+
 // ── Place types ──────────────────────────────────────────────────────────────
 export const PLACE_TYPES = [
   'synagogue', 'restaurant', 'cafe', 'store',
@@ -143,12 +147,12 @@ export const createProgramSchema = z.object({
   description:     z.string().max(5000).optional().transform((v) => v?.trim() || undefined),
   photo_url:       z.string().url().optional().or(z.literal('').transform(() => undefined)),
   schedule_text:   trimmed.pipe(z.string().min(2, 'Укажи расписание').max(300)),
-  age_min:         z.coerce.number().int().min(0).max(120).optional(),
-  age_max:         z.coerce.number().int().min(0).max(120).optional(),
-  price_amount:    z.coerce.number().min(0).optional(),
-  price_currency:  z.string().length(3).optional(),
-  price_period:    z.enum(['one_time','monthly','yearly','per_session']).optional(),
-  max_capacity:    z.coerce.number().int().min(1).max(10000).optional(),
+  age_min:         z.preprocess(emptyToUndef, z.coerce.number().int().min(0).max(120).optional()),
+  age_max:         z.preprocess(emptyToUndef, z.coerce.number().int().min(0).max(120).optional()),
+  price_amount:    z.preprocess(emptyToUndef, z.coerce.number().min(0).optional()),
+  price_currency:  z.preprocess(emptyToUndef, z.string().length(3).optional()),
+  price_period:    z.preprocess(emptyToUndef, z.enum(['one_time','monthly','yearly','per_session']).optional()),
+  max_capacity:    z.preprocess(emptyToUndef, z.coerce.number().int().min(1).max(10000).optional()),
   registration_url: z.string().url().optional().or(z.literal('').transform(() => undefined)),
   registration_open: z.coerce.boolean().optional().default(true),
   requires_approval: z.coerce.boolean().optional().default(false),

@@ -19,9 +19,12 @@
     "metadata:apply": "node scripts/apply-metadata.js",
     "keys:generate": "node scripts/gen-jwt-keys.js",
     "seed": "node scripts/seed.js",
-    "invite": "node scripts/invite.js"
+    "invite": "node scripts/invite.js",
+    "test:e2e": "playwright test",
+    "test:perms": "node scripts/test-permissions.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.6",

@@ -182,9 +182,9 @@ const REL = {
   },
   programs: {
     obj: [
-      ['community',  'community_id'],
-      ['location',   'location_place_id'],
-      ['contact',    'contact_user_id'],
+      ['community',      'community_id'],
+      ['location_place', 'location_place_id'],
+      ['contact_user',   'contact_user_id'],
     ],
     arr: [
       ['enrollments', 'program_enrollments', 'program_id'],

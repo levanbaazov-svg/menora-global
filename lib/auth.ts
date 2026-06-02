@@ -160,7 +160,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   callbacks: {
     ...authConfig.callbacks,
-    async jwt({ token, account, profile, trigger }) {
+    async jwt({ token, account, profile, user, trigger }) {
+      // E2E test sign-in (credentials provider 'e2e', only when E2E_TEST_SECRET
+      // is set): resolve the real Hasura user id by email. No OAuth involved.
+      if (account?.provider === 'e2e' && !token.userId) {
+        const email = (user?.email ?? token.email) as string | undefined;
+        if (email) {
+          const r = await hasuraAdmin.request<{ users: Array<{ id: string }> }>(
+            `query($e: citext!){ users(where: { email: { _eq: $e } }, limit: 1) { id } }`,
+            { e: email },
+          );
+          if (r.users[0]) token.userId = r.users[0].id;
+        }
+      }
+
       // First-time sign-in: upsert user, link account
       if (account && profile) {
         const email = profile.email ?? token.email;

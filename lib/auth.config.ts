@@ -7,6 +7,22 @@
 
 import type { NextAuthConfig } from 'next-auth';
 import Google from 'next-auth/providers/google';
+import Credentials from 'next-auth/providers/credentials';
+
+// E2E test login — ONLY exists when E2E_TEST_SECRET is set (never in prod).
+// Edge-safe: authorize() does no DB work; the real user id is resolved by email
+// in the Node jwt callback (auth.ts). Lets Playwright sign in without Google.
+const e2eProvider = process.env.E2E_TEST_SECRET
+  ? [Credentials({
+      id: 'e2e',
+      name: 'E2E',
+      credentials: { email: {}, secret: {} },
+      authorize: (c) =>
+        c && c.secret === process.env.E2E_TEST_SECRET && typeof c.email === 'string'
+          ? { id: c.email, email: c.email, name: 'E2E' }
+          : null,
+    })]
+  : [];
 
 export const authConfig = {
   providers: [
@@ -15,6 +31,7 @@ export const authConfig = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: { params: { prompt: 'select_account' } },
     }),
+    ...e2eProvider,
   ],
   session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 30 },
   pages: { signIn: '/' },

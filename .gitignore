@@ -22,3 +22,8 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 
 hasura/metadata/.backup/
+e2e/.auth
+test-results
+playwright-report
+/playwright/.cache
+.next-e2e
