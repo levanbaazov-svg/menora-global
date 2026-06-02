@@ -35,7 +35,9 @@ const UPSERT = gql`
 `;
 
 // Stable deterministic photos via picsum seed (rabbi can replace later).
-const photo = (seed) => `https://picsum.photos/seed/${seed}/1200/800`;
+// Photos intentionally null — UI shows branded MotifFallback until real
+// images are uploaded via the community/place/event edit forms.
+const photo = () => null;
 
 const COMMUNITIES = [
   {

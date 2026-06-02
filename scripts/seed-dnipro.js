@@ -18,7 +18,9 @@ const adminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 if (!endpoint || !adminSecret) { console.error('HASURA env required'); process.exit(1); }
 const c = new GraphQLClient(endpoint, { headers: { 'X-Hasura-Admin-Secret': adminSecret } });
 
-const photo = (seed) => `https://picsum.photos/seed/${seed}/1200/800`;
+// Photos intentionally null — UI shows branded MotifFallback until real
+// images are uploaded via the community/place/event edit forms.
+const photo = () => null;
 const SLUG = 'dnipro-menorah';
 
 // ── Mutations ──────────────────────────────────────────────────────────────
