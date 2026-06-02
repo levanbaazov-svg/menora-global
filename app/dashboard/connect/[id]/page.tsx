@@ -104,6 +104,7 @@ export default async function GroupDetailPage({
   const isGroupAdmin = myMembership?.role === 'admin' || isMyGroup;
   const isStaff = role === 'rabbi' || role === 'admin';
   const canArchive = isGroupAdmin || isStaff;
+  const canEdit = isMyGroup || isStaff;
 
   return (
     <div className="max-w-3xl mx-auto px-5 md:px-6 pt-2 pb-12">
@@ -155,6 +156,14 @@ export default async function GroupDetailPage({
       {/* Action row */}
       <div className="mb-7 flex flex-wrap items-center gap-3">
         <JoinLeaveButton groupId={g.id} isMember={isMember} />
+        {canEdit && (
+          <Link
+            href={`/dashboard/connect/${g.id}/edit`}
+            className="text-sm px-4 py-2 rounded-full border border-(--color-border) text-(--color-fg) hover:border-(--color-gold) transition-colors"
+          >
+            ✎ {t('edit.button')}
+          </Link>
+        )}
         {isGroupAdmin && (
           <span className="text-xs px-2.5 py-1 rounded-full bg-(--color-gold-soft) text-(--color-gold-dark) font-medium">
             ⭐ {t('admin')}

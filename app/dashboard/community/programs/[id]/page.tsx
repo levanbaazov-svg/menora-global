@@ -13,6 +13,7 @@ import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { type ProgramCategory } from '@/lib/places/schema';
 import { EnrollButton } from './EnrollButton';
+import { ProgramAdminBar } from './ProgramAdminBar';
 
 const FETCH = /* GraphQL */ `
   query ProgramDetail($id: uuid!, $user_id: uuid!) {
@@ -65,6 +66,7 @@ export default async function ProgramDetailPage({
 
   const t = await getTranslations('communityPages');
   const locale = (await getLocale()) as Locale;
+  const isStaff = session.hasura.default_role === 'rabbi' || session.hasura.default_role === 'admin';
 
   const enrollment = data.my_enrollment[0] ?? null;
   const isFull = p.max_capacity != null && p.enrolled_count_cached >= p.max_capacity;
@@ -87,6 +89,11 @@ export default async function ProgramDetailPage({
 
   return (
     <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-32">
+      {isStaff && (
+        <div className="px-5 md:px-0 pt-3">
+          <ProgramAdminBar programId={p.id} />
+        </div>
+      )}
       {/* Hero */}
       <Reveal>
         <section className="relative">

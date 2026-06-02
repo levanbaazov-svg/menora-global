@@ -10,6 +10,12 @@
     "access": "גישה",
     "creator": "יוצר",
     "noName": "ללא שם",
+    "backToGroup": "לקבוצה",
+    "edit": {
+      "title": "עריכת קבוצה",
+      "submit": "שמירת שינויים",
+      "button": "עריכה"
+    },
     "aboutGroup": "על הקבוצה",
     "membersHeading": "משתתפים",
     "noMembers": "עדיין אין אף אחד. היה הראשון!",

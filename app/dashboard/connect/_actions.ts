@@ -6,13 +6,25 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser } from '@/lib/hasura';
-import { createGroupSchema, groupIdSchema } from '@/lib/groups/schema';
+import { createGroupSchema, updateGroupSchema, groupIdSchema } from '@/lib/groups/schema';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 // ── GraphQL ──────────────────────────────────────────────────────────────────
 const INSERT_GROUP = /* GraphQL */ `
   mutation InsertGroup($obj: interest_groups_insert_input!) {
     insert_interest_groups_one(object: $obj) { id }
+  }
+`;
+
+const UPDATE_GROUP = /* GraphQL */ `
+  mutation UpdateGroup($id: uuid!, $set: interest_groups_set_input!) {
+    update_interest_groups_by_pk(pk_columns: { id: $id }, _set: $set) { id }
+  }
+`;
+
+const GROUP_OWNER = /* GraphQL */ `
+  query GroupOwner($id: uuid!) {
+    interest_groups_by_pk(id: $id) { id created_by_user_id }
   }
 `;
 
@@ -122,6 +134,54 @@ export async function createGroup(_prev: ActionState, formData: FormData): Promi
 
     revalidatePath('/dashboard/connect');
     redirect(`/dashboard/connect/${id}`);
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+// ── Update group (creator or rabbi/admin) ─────────────────────────────────────
+export async function updateGroup(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { userId, role, isStaff } = await requireAuth();
+
+  const parsed = updateGroupSchema.safeParse(formObject(formData));
+  if (!parsed.success) {
+    return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
+  }
+
+  const client = await hasuraAsCurrentUser({ role });
+  try {
+    // Guard: only the group creator OR rabbi/admin may edit.
+    const owner = await client.request<{
+      interest_groups_by_pk: { id: string; created_by_user_id: string | null } | null;
+    }>(GROUP_OWNER, { id: parsed.data.group_id });
+    const g = owner.interest_groups_by_pk;
+    if (!g) return { formError: 'Группа не найдена', values: formValues(formData) };
+    if (!isStaff && g.created_by_user_id !== userId) {
+      return { formError: 'Нет прав на редактирование', values: formValues(formData) };
+    }
+
+    // tags: convert to PG literal `{tag1,tag2}` so Hasura accepts as text[]
+    const tagsLiteral = `{${(parsed.data.tags ?? [])
+      .map((t) => `"${t.replace(/"/g, '\\"')}"`)
+      .join(',')}}`;
+
+    const set: Record<string, unknown> = {
+      category: parsed.data.category,
+      name: parsed.data.name,
+      description: parsed.data.description ?? null,
+      photo_url: parsed.data.photo_url ?? null,
+      visibility: parsed.data.visibility ?? 'community',
+      frequency: parsed.data.frequency ?? null,
+      meeting_location: parsed.data.meeting_location ?? null,
+      tags: tagsLiteral,
+    };
+
+    await client.request(UPDATE_GROUP, { id: parsed.data.group_id, set });
+
+    revalidatePath('/dashboard/connect');
+    revalidatePath(`/dashboard/connect/${parsed.data.group_id}`);
+    redirect(`/dashboard/connect/${parsed.data.group_id}`);
   } catch (e) {
     if (e && typeof e === 'object' && 'digest' in e) throw e;
     return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };

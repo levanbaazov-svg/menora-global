@@ -64,5 +64,10 @@ export const createGroupSchema = z.object({
 });
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
 
+export const updateGroupSchema = createGroupSchema.extend({
+  group_id: z.string().uuid(),
+});
+export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;
+
 export const groupIdSchema = z.object({ group_id: z.string().uuid() });
 export type GroupIdInput = z.infer<typeof groupIdSchema>;

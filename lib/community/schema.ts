@@ -19,3 +19,14 @@ export const updateCommunitySchema = z.object({
 });
 
 export type UpdateCommunityInput = z.infer<typeof updateCommunitySchema>;
+
+// Creating a new community (a rabbi starting their Beit Chabad on the platform).
+// Slug is derived server-side from the name; city/country/timezone are required
+// so the community is locatable and Shabbat times resolve.
+export const createCommunitySchema = updateCommunitySchema.extend({
+  city:         trimmed.pipe(z.string().min(2, 'Укажи город').max(120)),
+  country_code: trimmed.pipe(z.string().min(2, 'Укажи страну (код)').max(2)),
+  timezone:     trimmed.pipe(z.string().min(2, 'Укажи часовой пояс').max(64)),
+});
+
+export type CreateCommunityInput = z.infer<typeof createCommunitySchema>;

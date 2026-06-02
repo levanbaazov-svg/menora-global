@@ -106,6 +106,9 @@ export const createPlaceSchema = z.object({
 });
 export type CreatePlaceInput = z.infer<typeof createPlaceSchema>;
 
+export const updatePlaceSchema = createPlaceSchema.extend({ place_id: z.string().uuid() });
+export type UpdatePlaceInput = z.infer<typeof updatePlaceSchema>;
+
 export const placeIdSchema = z.object({ place_id: z.string().uuid() });
 
 export const approvePlaceSchema = z.object({ place_id: z.string().uuid() });
@@ -153,6 +156,10 @@ export const createProgramSchema = z.object({
   location_text:   z.string().max(200).optional().transform((v) => v?.trim() || undefined),
 });
 export type CreateProgramInput = z.infer<typeof createProgramSchema>;
+
+export const updateProgramSchema = createProgramSchema.extend({ program_id: z.string().uuid() });
+export type UpdateProgramInput = z.infer<typeof updateProgramSchema>;
+export const programIdSchema = z.object({ program_id: z.string().uuid() });
 
 export const enrollProgramSchema = z.object({
   program_id:      z.string().uuid(),

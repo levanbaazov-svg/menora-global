@@ -91,7 +91,9 @@
       "familyFriendly": "מתאים למשפחות",
       "publish": "פרסם",
       "submitForReview": "שלח לאישור",
-      "reviewHint": "הרב יקבל התראה ויאשר את המקום — בדרך כלל תוך יום."
+      "reviewHint": "הרב יקבל התראה ויאשר את המקום — בדרך כלל תוך יום.",
+      "editTitle": "עריכת מקום",
+      "save": "שמירה"
     },
     "placeDetail": {
       "pending": "⏳ ממתין לאישור",
@@ -234,7 +236,28 @@
         "monthly": "חודשי",
         "yearly": "שנתי",
         "per_session": "לכל מפגש"
-      }
+      },
+      "save": "שמירה",
+      "editTitle": "עריכת תוכנית",
+      "deleteProgram": "מחיקת תוכנית",
+      "deleteConfirm": "למחוק את התוכנית? הפעולה בלתי הפיכה.",
+      "delete": "מחיקה"
+    },
+    "newCommunity": {
+      "title": "יצירת קהילה",
+      "subtitle": "הקימו את בית חב\"ד שלכם בפלטפורמה. תהיו הרב שלה ותוכלו להוסיף תוכניות, מקומות ואירועים.",
+      "cta": "יצירת קהילה",
+      "nameLabel": "שם הקהילה",
+      "namePlaceholder": "לדוגמה: הקהילה היהודית של דובאי",
+      "cityLabel": "עיר",
+      "countryLabel": "קוד מדינה (2 אותיות)",
+      "countryPlaceholder": "AE",
+      "timezoneLabel": "אזור זמן",
+      "timezonePlaceholder": "Asia/Dubai",
+      "denominationLabel": "זרם",
+      "descriptionLabel": "תיאור",
+      "submit": "יצירת קהילה",
+      "submitHint": "לאחר היצירה אתם הרב של הקהילה — הזמינו אנשים ומלאו אותה בתוכן."
     }
   }
 }

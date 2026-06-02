@@ -91,7 +91,9 @@
       "familyFriendly": "Family friendly",
       "publish": "Publish",
       "submitForReview": "Submit for review",
-      "reviewHint": "The rabbi will be notified and approve the place — usually within a day."
+      "reviewHint": "The rabbi will be notified and approve the place — usually within a day.",
+      "editTitle": "Edit place",
+      "save": "Save"
     },
     "placeDetail": {
       "pending": "⏳ Awaiting moderation",
@@ -234,7 +236,28 @@
         "monthly": "Monthly",
         "yearly": "Yearly",
         "per_session": "Per session"
-      }
+      },
+      "save": "Save",
+      "editTitle": "Edit program",
+      "deleteProgram": "Delete program",
+      "deleteConfirm": "Delete this program? This cannot be undone.",
+      "delete": "Delete"
+    },
+    "newCommunity": {
+      "title": "Create a community",
+      "subtitle": "Start your Beit Chabad on the platform. You become its rabbi and can add programs, places and events.",
+      "cta": "Create community",
+      "nameLabel": "Community name",
+      "namePlaceholder": "e.g. Jewish Community of Dubai",
+      "cityLabel": "City",
+      "countryLabel": "Country code (2 letters)",
+      "countryPlaceholder": "AE",
+      "timezoneLabel": "Time zone",
+      "timezonePlaceholder": "Asia/Dubai",
+      "denominationLabel": "Denomination",
+      "descriptionLabel": "Description",
+      "submit": "Create community",
+      "submitHint": "Once created you are the rabbi of this community — invite people and fill it with content."
     }
   }
 }

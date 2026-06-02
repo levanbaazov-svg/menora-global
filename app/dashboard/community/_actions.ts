@@ -7,9 +7,10 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { hasuraAsCurrentUser, hasuraAdmin } from '@/lib/hasura';
 import {
-  createPlaceSchema, placeIdSchema, approvePlaceSchema, rejectPlaceSchema,
-  createProgramSchema, enrollProgramSchema,
+  createPlaceSchema, updatePlaceSchema, placeIdSchema, approvePlaceSchema, rejectPlaceSchema,
+  createProgramSchema, updateProgramSchema, programIdSchema, enrollProgramSchema,
 } from '@/lib/places/schema';
+import { createCommunitySchema } from '@/lib/community/schema';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 const INSERT_PLACE = /* GraphQL */ `
@@ -45,9 +46,27 @@ const ARCHIVE_PLACE = /* GraphQL */ `
   }
 `;
 
+const UPDATE_PLACE = /* GraphQL */ `
+  mutation UpdatePlace($id: uuid!, $set: places_set_input!) {
+    update_places_by_pk(pk_columns: { id: $id }, _set: $set) { id }
+  }
+`;
+
 const INSERT_PROGRAM = /* GraphQL */ `
   mutation InsertProgram($obj: programs_insert_input!) {
     insert_programs_one(object: $obj) { id }
+  }
+`;
+
+const UPDATE_PROGRAM = /* GraphQL */ `
+  mutation UpdateProgram($id: uuid!, $set: programs_set_input!) {
+    update_programs_by_pk(pk_columns: { id: $id }, _set: $set) { id }
+  }
+`;
+
+const ARCHIVE_PROGRAM = /* GraphQL */ `
+  mutation ArchiveProgram($id: uuid!) {
+    update_programs_by_pk(pk_columns: { id: $id }, _set: { status: archived }) { id }
   }
 `;
 
@@ -306,4 +325,149 @@ export async function requestJoinCommunity(
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Ошибка' };
   }
+}
+
+// ── Edit place ─────────────────────────────────────────────────────────────
+export async function updatePlace(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { role, isStaff } = await requireAuth();
+  if (!isStaff) return { formError: 'Только rabbi/admin может редактировать места' };
+  const parsed = updatePlaceSchema.safeParse(formObject(formData));
+  if (!parsed.success) {
+    return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
+  }
+  const { place_id, ...set } = parsed.data;
+  const client = await hasuraAsCurrentUser({ role });
+  try {
+    await client.request(UPDATE_PLACE, { id: place_id, set });
+    revalidatePath('/dashboard/community');
+    redirect(`/dashboard/community/places/${place_id}`);
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+// ── Edit / archive program ─────────────────────────────────────────────────
+export async function updateProgram(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { role, isStaff } = await requireAuth();
+  if (!isStaff) return { formError: 'Только rabbi/admin может редактировать программы' };
+  const parsed = updateProgramSchema.safeParse(formObject(formData));
+  if (!parsed.success) {
+    return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
+  }
+  const { program_id, ...set } = parsed.data;
+  const client = await hasuraAsCurrentUser({ role });
+  try {
+    await client.request(UPDATE_PROGRAM, { id: program_id, set });
+    revalidatePath('/dashboard/community');
+    redirect(`/dashboard/community/programs/${program_id}`);
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+export async function archiveProgram(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const { role, isStaff } = await requireAuth();
+  if (!isStaff) return { formError: 'Только rabbi/admin' };
+  const parsed = programIdSchema.safeParse(formObject(formData));
+  if (!parsed.success) return { formError: 'Неверный id' };
+  const client = await hasuraAsCurrentUser({ role });
+  try {
+    await client.request(ARCHIVE_PROGRAM, { id: parsed.data.program_id });
+    revalidatePath('/dashboard/community');
+    redirect('/dashboard/community');
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка' };
+  }
+}
+
+// ── Create a new community (rabbi starts their Beit Chabad) ─────────────────
+const INSERT_COMMUNITY = /* GraphQL */ `
+  mutation InsertCommunity($obj: communities_insert_input!) {
+    insert_communities_one(object: $obj) { id slug }
+  }
+`;
+const INSERT_RABBI_MEMBERSHIP = /* GraphQL */ `
+  mutation InsertRabbiMembership($obj: memberships_insert_input!) {
+    insert_memberships_one(object: $obj) { id }
+  }
+`;
+
+function slugify(name: string): string {
+  const base = name.toLowerCase()
+    .replace(/[^a-z0-9Ѐ-ӿ\s-]/g, '')
+    .trim().replace(/\s+/g, '-').slice(0, 50) || 'community';
+  // de-cyrillic-ify minimally so slugs stay URL-clean; fall back to a suffix
+  return base.replace(/[Ѐ-ӿ]+/g, 'c');
+}
+
+/**
+ * Creates a community and makes the creator its rabbi (active). Any authenticated
+ * user can start one — the platform can later vet/feature it. Returns to the new
+ * community so the rabbi can immediately add programs/places/events.
+ */
+export async function createCommunity(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) return { formError: 'Не авторизован' };
+
+  const parsed = createCommunitySchema.safeParse(formObject(formData));
+  if (!parsed.success) {
+    return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
+  }
+
+  const slug = `${slugify(parsed.data.name)}-${Math.abs(hashCode(session.user.id + parsed.data.name)).toString(36).slice(0, 4)}`;
+  try {
+    // Use admin client: the creator has no membership in this community yet, so
+    // RLS would block a scoped insert. Server-validated, safe.
+    const r = await hasuraAdmin.request<{ insert_communities_one: { id: string; slug: string } | null }>(
+      INSERT_COMMUNITY,
+      {
+        obj: {
+          slug,
+          name: parsed.data.name,
+          city: parsed.data.city,
+          country_code: parsed.data.country_code.toUpperCase(),
+          timezone: parsed.data.timezone,
+          denomination: parsed.data.denomination ?? 'Chabad',
+          description: parsed.data.description ?? null,
+          address: parsed.data.address ?? null,
+          hero_image_url: parsed.data.hero_image_url ?? null,
+          contact_phone: parsed.data.contact_phone ?? null,
+          contact_email: parsed.data.contact_email ?? null,
+          website_url: parsed.data.website_url ?? null,
+          whatsapp_url: parsed.data.whatsapp_url ?? null,
+          instagram_url: parsed.data.instagram_url ?? null,
+          founded_year: parsed.data.founded_year ?? null,
+          is_public: true,
+        },
+      },
+    );
+    const community = r.insert_communities_one;
+    if (!community) return { formError: 'Не удалось создать общину', values: formValues(formData) };
+
+    await hasuraAdmin.request(INSERT_RABBI_MEMBERSHIP, {
+      obj: {
+        user_id: session.user.id,
+        community_id: community.id,
+        role: 'rabbi',
+        status: 'active',
+        entry_method: 'rabbi_added',
+        joined_at: 'now()',
+      },
+    });
+
+    revalidatePath('/dashboard/community', 'layout');
+    redirect('/dashboard/community/manage');
+  } catch (e) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+    return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+function hashCode(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+  return h;
 }

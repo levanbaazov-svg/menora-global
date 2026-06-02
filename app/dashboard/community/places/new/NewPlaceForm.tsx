@@ -3,7 +3,7 @@
 import { useActionState, useState, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { type Locale } from '@/i18n/config';
-import { submitPlace } from '../../_actions';
+import { submitPlace, updatePlace } from '../../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
 import { AITextHelper } from '@/app/_components/ai/AITextHelper';
@@ -13,14 +13,23 @@ import {
   type PlaceType,
 } from '@/lib/places/schema';
 
-export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType; isStaff: boolean }) {
+export function NewPlaceForm({
+  defaultType, isStaff, editId, initial,
+}: {
+  defaultType?: PlaceType; isStaff: boolean; editId?: string; initial?: Record<string, unknown>;
+}) {
   const t = useTranslations('communityPages.newPlace');
   const locale = useLocale() as Locale;
-  const [state, action] = useActionState(submitPlace, INITIAL_STATE);
+  const [state, action] = useActionState(editId ? updatePlace : submitPlace, INITIAL_STATE);
   const [type, setType] = useState<PlaceType>(
-    (defaultType ?? (state.values?.type as PlaceType | undefined) ?? 'restaurant'),
+    (defaultType ?? (state.values?.type as PlaceType | undefined) ?? (initial?.type as PlaceType | undefined) ?? 'restaurant'),
   );
-  const v = (k: string, d = '') => (state.values?.[k] as string | undefined) ?? d;
+  const v = (k: string, d = '') =>
+    (state.values?.[k] as string | undefined) ?? (initial?.[k] != null ? String(initial[k]) : d);
+  const arr = (k: string): string[] =>
+    (state.values?.[k] as string[]) ?? (Array.isArray(initial?.[k]) ? (initial![k] as string[]) : []);
+  const bool = (k: string): boolean =>
+    state.values?.[k] != null ? state.values[k] === 'true' : Boolean(initial?.[k]);
   const nameRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,6 +46,7 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
   return (
     <form action={action} className="space-y-5">
       <FormError message={state.formError} />
+      {editId && <input type="hidden" name="place_id" value={editId} />}
 
       {/* Type picker */}
       <fieldset>
@@ -110,12 +120,12 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
           <Chips
             label={t('cuisine')} name="cuisine_tags"
             options={[...CUISINE_TAGS]} labels={CUISINE_LABELS}
-            defaults={(state.values?.cuisine_tags as string[]) ?? []}
+            defaults={arr('cuisine_tags')}
           />
           <Chips
             label={t('dietary')} name="dietary_tags"
             options={[...DIETARY_TAGS]} labels={DIETARY_LABELS}
-            defaults={(state.values?.dietary_tags as string[]) ?? []}
+            defaults={arr('dietary_tags')}
           />
         </fieldset>
       )}
@@ -124,8 +134,8 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
       {isSynagogue && (
         <fieldset className="border rounded-xl p-4 space-y-3">
           <legend className="text-sm font-medium px-2">{t('synagogueLegend')}</legend>
-          <Check name="has_women_section" label={t('womenSection')} defaultChecked={v('has_women_section') === 'true'} />
-          <Check name="has_parking_shabbat" label={t('parkingShabbat')} defaultChecked={v('has_parking_shabbat') === 'true'} />
+          <Check name="has_women_section" label={t('womenSection')} defaultChecked={bool('has_women_section')} />
+          <Check name="has_parking_shabbat" label={t('parkingShabbat')} defaultChecked={bool('has_parking_shabbat')} />
           <Field label={t('prayerTimesUrl')} name="prayer_times_url" type="url" defaultValue={v('prayer_times_url')} />
         </fieldset>
       )}
@@ -145,16 +155,16 @@ export function NewPlaceForm({ defaultType, isStaff }: { defaultType?: PlaceType
       />
 
       <div className="space-y-2">
-        <Check name="accepts_reservations" label={t('acceptsReservations')} defaultChecked={v('accepts_reservations') === 'true'} />
-        <Check name="wheelchair_accessible" label={t('wheelchair')} defaultChecked={v('wheelchair_accessible') === 'true'} />
-        <Check name="family_friendly" label={t('familyFriendly')} defaultChecked={v('family_friendly') === 'true'} />
+        <Check name="accepts_reservations" label={t('acceptsReservations')} defaultChecked={bool('accepts_reservations')} />
+        <Check name="wheelchair_accessible" label={t('wheelchair')} defaultChecked={bool('wheelchair_accessible')} />
+        <Check name="family_friendly" label={t('familyFriendly')} defaultChecked={bool('family_friendly')} />
       </div>
 
       <div className="pt-4">
         <SubmitButton variant="gold">
-          {isStaff ? t('publish') : t('submitForReview')}
+          {editId ? t('save') : isStaff ? t('publish') : t('submitForReview')}
         </SubmitButton>
-        {!isStaff && (
+        {!isStaff && !editId && (
           <p className="text-xs text-(--color-fg-muted) mt-2">
             {t('reviewHint')}
           </p>

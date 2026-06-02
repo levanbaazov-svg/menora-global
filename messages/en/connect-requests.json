@@ -10,6 +10,12 @@
     "access": "Access",
     "creator": "Creator",
     "noName": "No name",
+    "backToGroup": "To the group",
+    "edit": {
+      "title": "Edit group",
+      "submit": "Save changes",
+      "button": "Edit"
+    },
     "aboutGroup": "About the group",
     "membersHeading": "Members",
     "noMembers": "No one yet. Be the first!",

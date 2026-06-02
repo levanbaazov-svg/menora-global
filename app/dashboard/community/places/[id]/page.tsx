@@ -65,6 +65,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
 
   const t = await getTranslations('communityPages');
   const locale = (await getLocale()) as Locale;
+  const isStaff = session.hasura.default_role === 'rabbi' || session.hasura.default_role === 'admin';
   const meta = PLACE_TYPE_LABELS[place.type];
   const kashrut = place.kashrut_level && place.kashrut_level !== 'none' ? KASHRUT_LABELS[place.kashrut_level] : null;
   const mapsUrl = place.address
@@ -79,6 +80,15 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ id
       >
         ← {meta.emoji} {meta[locale]}
       </Link>
+
+      {isStaff && (
+        <Link
+          href={`/dashboard/community/places/${place.id}/edit`}
+          className="float-right text-sm px-4 py-1.5 rounded-full border border-(--color-border) hover:border-(--color-gold) transition-colors"
+        >
+          ✎ {t('newPlace.editTitle')}
+        </Link>
+      )}
 
       {/* Hero photo */}
       <div

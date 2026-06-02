@@ -2,7 +2,7 @@
 
 import { useActionState, useState, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { createGroup } from '../_actions';
+import { createGroup, updateGroup } from '../_actions';
 import { INITIAL_STATE } from '@/lib/onboarding/action-state';
 import { Field, Select, Textarea, FormError, SubmitButton } from '@/app/onboarding/_FormPrimitives';
 import { AITextHelper } from '@/app/_components/ai/AITextHelper';
@@ -13,18 +13,35 @@ import {
   type GroupCategory,
 } from '@/lib/groups/schema';
 
-export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategory }) {
+export function NewGroupForm({
+  presetCategory,
+  editId,
+  initial,
+}: {
+  presetCategory?: GroupCategory;
+  editId?: string;
+  initial?: Record<string, unknown>;
+}) {
   const t = useTranslations('connectPage');
   const locale = useLocale() as Locale;
-  const [state, action] = useActionState(createGroup, INITIAL_STATE);
+  const isEdit = Boolean(editId);
+  const [state, action] = useActionState(
+    isEdit ? updateGroup : createGroup,
+    INITIAL_STATE,
+  );
+  // Prefill priority: server-returned values (after a failed submit) → initial → ''.
   const v = (k: string, fallback = '') =>
-    (state.values?.[k] as string | undefined) ?? fallback;
+    (state.values?.[k] as string | undefined)
+    ?? (initial?.[k] != null ? String(initial[k]) : undefined)
+    ?? fallback;
 
   const nameRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
 
+  const initialTags = (val: unknown): string =>
+    Array.isArray(val) ? (val as string[]).join(', ') : (val != null ? String(val) : '');
   const [tagsRaw, setTagsRaw] = useState(
-    Array.isArray(state.values?.tags) ? (state.values.tags as string[]).join(', ') : v('tags'),
+    state.values?.tags != null ? initialTags(state.values.tags) : initialTags(initial?.tags),
   );
 
   const tagList = tagsRaw
@@ -36,6 +53,8 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
   return (
     <form action={action} className="space-y-5">
       <FormError message={state.formError} />
+
+      {editId && <input type="hidden" name="group_id" value={editId} />}
 
       <Select
         label={t('new.categoryLabel')}
@@ -134,10 +153,14 @@ export function NewGroupForm({ presetCategory }: { presetCategory?: GroupCategor
       </div>
 
       <div className="pt-4">
-        <SubmitButton variant="gold">{t('new.submit')}</SubmitButton>
-        <p className="text-xs text-(--color-fg-muted) mt-3">
-          {t('new.submitHint')}
-        </p>
+        <SubmitButton variant="gold">
+          {isEdit ? t('edit.submit') : t('new.submit')}
+        </SubmitButton>
+        {!isEdit && (
+          <p className="text-xs text-(--color-fg-muted) mt-3">
+            {t('new.submitHint')}
+          </p>
+        )}
       </div>
     </form>
   );

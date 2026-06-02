@@ -65,13 +65,21 @@ export default async function DiscoverCommunitiesPage({
         ← {t('back.back')}
       </Link>
 
-      <header className="mb-4 px-0.5">
-        <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
-          {t('discover.title')}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t('discover.subtitle')}
-        </p>
+      <header className="mb-4 px-0.5 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-tight tracking-tight">
+            {t('discover.title')}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('discover.subtitle')}
+          </p>
+        </div>
+        <Link
+          href="/dashboard/community/new"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-4 h-9 text-sm font-semibold shadow-[var(--shadow-gold)] hover:opacity-95 active:scale-95 transition-all whitespace-nowrap"
+        >
+          + {t('newCommunity.cta')}
+        </Link>
       </header>
 
       {/* City filter chips */}
