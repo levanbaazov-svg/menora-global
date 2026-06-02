@@ -41,7 +41,6 @@
     "myProfile": "Мой профиль",
     "notifications": "Уведомления",
     "rabbiConsole": "Пульт раввина",
-    "rabbiConsole": "Пульт раввина",
     "aiAssistant": "AI Ассистент",
     "moderatePlaces": "Модерация мест",
     "accessRequests": "Заявки и доступ",
@@ -90,15 +89,49 @@
       }
     },
     "fallbacks": [
-      { "emoji": "📅", "title": "События общины", "body": "Шаббатние ужины, лекции, мероприятия для детей — глянь что предстоит.", "cta_label": "Открыть события", "cta_href": "/dashboard/events" },
-      { "emoji": "🤝", "title": "Хочешь найти своих?", "body": "Группы по интересам — учёба, спорт, мамы, кулинария. Может, есть твоя.", "cta_label": "Открыть Связь", "cta_href": "/dashboard/connect" },
-      { "emoji": "🕯", "title": "Шаббат уже близко", "body": "Проверь время свечей в своей общине — а заодно есть ли куда пойти на ужин.", "cta_label": "Спланировать Шаббат", "cta_href": "/dashboard/ai-rabbi/shabbat" },
-      { "emoji": "🪪", "title": "Твой Jewish ID", "body": "Цифровой паспорт с QR — в любой общине Menorah тебя подтвердят.", "cta_label": "Открыть карту", "cta_href": "/dashboard/me/jewish-id" },
-      { "emoji": "💬", "title": "AI Раввин рядом", "body": "Глубокий разговор или просто вопрос — спроси прямо сейчас.", "cta_label": "Открыть AI Раввина", "cta_href": "/dashboard/ai-rabbi" }
+      {
+        "emoji": "📅",
+        "title": "События общины",
+        "body": "Шаббатние ужины, лекции, мероприятия для детей — глянь что предстоит.",
+        "cta_label": "Открыть события",
+        "cta_href": "/dashboard/events"
+      },
+      {
+        "emoji": "🤝",
+        "title": "Хочешь найти своих?",
+        "body": "Группы по интересам — учёба, спорт, мамы, кулинария. Может, есть твоя.",
+        "cta_label": "Открыть Связь",
+        "cta_href": "/dashboard/connect"
+      },
+      {
+        "emoji": "🕯",
+        "title": "Шаббат уже близко",
+        "body": "Проверь время свечей в своей общине — а заодно есть ли куда пойти на ужин.",
+        "cta_label": "Спланировать Шаббат",
+        "cta_href": "/dashboard/ai-rabbi/shabbat"
+      },
+      {
+        "emoji": "🪪",
+        "title": "Твой Jewish ID",
+        "body": "Цифровой паспорт с QR — в любой общине Menorah тебя подтвердят.",
+        "cta_label": "Открыть карту",
+        "cta_href": "/dashboard/me/jewish-id"
+      },
+      {
+        "emoji": "💬",
+        "title": "AI Раввин рядом",
+        "body": "Глубокий разговор или просто вопрос — спроси прямо сейчас.",
+        "cta_label": "Открыть AI Раввина",
+        "cta_href": "/dashboard/ai-rabbi"
+      }
     ]
   },
   "community": {
-    "tabs": { "info": "Инфо", "guide": "Гид", "contacts": "Контакты" },
+    "tabs": {
+      "info": "Инфо",
+      "guide": "Гид",
+      "contacts": "Контакты"
+    },
     "otherCommunity": "Другая община",
     "myCommunity": "Моя община",
     "members": "{count} участников",
@@ -114,7 +147,10 @@
     "seeAll": "Все",
     "guideEmpty": "Места ещё не добавлены в город-гид",
     "contactsEmpty": "Контакты пока не указаны",
-    "roles": { "rabbi": "Раввин", "admin": "Администратор" },
+    "roles": {
+      "rabbi": "Раввин",
+      "admin": "Администратор"
+    },
     "contact": {
       "phone": "Телефон",
       "whatsapp": "WhatsApp",
@@ -155,7 +191,9 @@
     "assistant": {
       "title": "AI-ассистент раввина",
       "desc": "Спроси про общину: дни рождения, активность, задачи, кто давно не заходил."
-    }
+    },
+    "approve": "Одобрить",
+    "approved": "Одобрено"
   },
   "discover": {
     "title": "Поиск",
@@ -220,7 +258,11 @@
     "justNow": "только что",
     "hoursAgo": "{h} ч назад",
     "daysAgo": "{d} дн назад",
-    "urgency": { "low": "Не срочно", "normal": "Обычное", "high": "Срочно" },
+    "urgency": {
+      "low": "Не срочно",
+      "normal": "Обычное",
+      "high": "Срочно"
+    },
     "categories": {
       "childcare": "👶 Дети / няня",
       "services": "🔧 Услуги",

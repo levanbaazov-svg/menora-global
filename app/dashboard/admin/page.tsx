@@ -13,6 +13,7 @@ import {
   BookPlus, MailPlus, Settings2, Bot, ChevronRight, type LucideIcon,
 } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
+import { QuickApprove } from './QuickApprove';
 
 const FETCH = /* GraphQL */ `
   query AdminOverview($cid: uuid!) {
@@ -28,6 +29,14 @@ const FETCH = /* GraphQL */ `
     upcoming_events: events_aggregate(
       where: { community_id: { _eq: $cid }, starts_at: { _gte: "now()" } }
     ) { aggregate { count } }
+    pending_member_list: memberships(
+      where: { community_id: { _eq: $cid }, status: { _eq: pending } }
+      order_by: { created_at: asc } limit: 3
+    ) { id user { name } }
+    pending_place_list: places(
+      where: { community_id: { _eq: $cid }, submission_status: { _eq: pending }, archived_at: { _is_null: true } }
+      order_by: { created_at: asc } limit: 3
+    ) { id name }
     communities_by_pk(id: $cid) { id name }
   }
 `;
@@ -37,6 +46,8 @@ interface Resp {
   active_members: { aggregate: { count: number } | null };
   pending_places: { aggregate: { count: number } | null };
   upcoming_events: { aggregate: { count: number } | null };
+  pending_member_list: Array<{ id: string; user: { name: string | null } | null }>;
+  pending_place_list: Array<{ id: string; name: string }>;
   communities_by_pk: { id: string; name: string } | null;
 }
 
@@ -81,11 +92,20 @@ export default async function RabbiConsolePage() {
             sub={pendingMembers > 0 ? t('attention.membersWaiting') : t('attention.membersClear')}
             count={pendingMembers} href="/dashboard/members"
           />
+          {/* Inline one-click approvals for the first few pending members */}
+          {d.pending_member_list.map((m) => (
+            <QuickApprove key={m.id} kind="member" id={m.id} label={m.user?.name ?? '—'} />
+          ))}
+
           <AttentionRow
             Icon={ShieldCheck} label={t('attention.places')}
             sub={pendingPlaces > 0 ? t('attention.placesWaiting') : t('attention.placesClear')}
             count={pendingPlaces} href="/dashboard/community/pending"
           />
+          {d.pending_place_list.map((p) => (
+            <QuickApprove key={p.id} kind="place" id={p.id} label={p.name} />
+          ))}
+
           {needsAttention === 0 && (
             <p className="text-xs text-muted-foreground px-1 pt-1">{t('allDone')}</p>
           )}
@@ -109,7 +129,7 @@ export default async function RabbiConsolePage() {
           <div className="grid grid-cols-2 gap-2.5">
             <Action Icon={CalendarPlus} label={t('actions.createEvent')} href="/dashboard/events/new" />
             <Action Icon={MapPinPlus} label={t('actions.addPlace')} href="/dashboard/community/places/new" />
-            <Action Icon={BookPlus} label={t('actions.addProgram')} href="/dashboard/community/manage" />
+            <Action Icon={BookPlus} label={t('actions.addProgram')} href="/dashboard/community/programs/new" />
             <Action Icon={MailPlus} label={t('actions.invite')} href="/dashboard/invitations/new" />
             <Action Icon={Settings2} label={t('actions.communityProfile')} href="/dashboard/community/manage/edit" />
             <Action Icon={Users} label={t('actions.allMembers')} href="/dashboard/members" />

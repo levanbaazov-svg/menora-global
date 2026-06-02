@@ -40,7 +40,6 @@
     "jewishId": "תעודת זהות יהודית",
     "myProfile": "הפרופיל שלי",
     "notifications": "התראות",
-    "rabbiConsole": "לוח הבקרה של הרב",
     "rabbiConsole": "פאנל הרב",
     "aiAssistant": "עוזר AI",
     "moderatePlaces": "אישור מקומות",
@@ -90,15 +89,49 @@
       }
     },
     "fallbacks": [
-      { "emoji": "📅", "title": "אירועי הקהילה", "body": "ארוחות שבת, הרצאות ופעילויות לילדים — הציצו מה מתוכנן.", "cta_label": "לאירועים", "cta_href": "/dashboard/events" },
-      { "emoji": "🤝", "title": "רוצים למצוא את הקהילה שלכם?", "body": "קבוצות עניין — לימוד, ספורט, הורים, בישול. אולי אחת מהן שלכם.", "cta_label": "למסך הקשר", "cta_href": "/dashboard/connect" },
-      { "emoji": "🕯", "title": "שבת מתקרבת", "body": "בדקו זמני הדלקת נרות בקהילה — ולאן ללכת לארוחה.", "cta_label": "לתכנן שבת", "cta_href": "/dashboard/ai-rabbi/shabbat" },
-      { "emoji": "🪪", "title": "תעודת הזהות היהודית שלכם", "body": "כרטיס דיגיטלי עם QR — בכל קהילת Menorah יזהו אתכם.", "cta_label": "לכרטיס", "cta_href": "/dashboard/me/jewish-id" },
-      { "emoji": "💬", "title": "רב ה-AI כאן", "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.", "cta_label": "לרב ה-AI", "cta_href": "/dashboard/ai-rabbi" }
+      {
+        "emoji": "📅",
+        "title": "אירועי הקהילה",
+        "body": "ארוחות שבת, הרצאות ופעילויות לילדים — הציצו מה מתוכנן.",
+        "cta_label": "לאירועים",
+        "cta_href": "/dashboard/events"
+      },
+      {
+        "emoji": "🤝",
+        "title": "רוצים למצוא את הקהילה שלכם?",
+        "body": "קבוצות עניין — לימוד, ספורט, הורים, בישול. אולי אחת מהן שלכם.",
+        "cta_label": "למסך הקשר",
+        "cta_href": "/dashboard/connect"
+      },
+      {
+        "emoji": "🕯",
+        "title": "שבת מתקרבת",
+        "body": "בדקו זמני הדלקת נרות בקהילה — ולאן ללכת לארוחה.",
+        "cta_label": "לתכנן שבת",
+        "cta_href": "/dashboard/ai-rabbi/shabbat"
+      },
+      {
+        "emoji": "🪪",
+        "title": "תעודת הזהות היהודית שלכם",
+        "body": "כרטיס דיגיטלי עם QR — בכל קהילת Menorah יזהו אתכם.",
+        "cta_label": "לכרטיס",
+        "cta_href": "/dashboard/me/jewish-id"
+      },
+      {
+        "emoji": "💬",
+        "title": "רב ה-AI כאן",
+        "body": "שיחה לעומק או שאלה קצרה — פשוט שאלו עכשיו.",
+        "cta_label": "לרב ה-AI",
+        "cta_href": "/dashboard/ai-rabbi"
+      }
     ]
   },
   "community": {
-    "tabs": { "info": "מידע", "guide": "מדריך", "contacts": "צור קשר" },
+    "tabs": {
+      "info": "מידע",
+      "guide": "מדריך",
+      "contacts": "צור קשר"
+    },
     "otherCommunity": "קהילה אחרת",
     "myCommunity": "הקהילה שלי",
     "members": "{count} חברים",
@@ -114,7 +147,10 @@
     "seeAll": "הכול",
     "guideEmpty": "עדיין לא נוספו מקומות למדריך העיר",
     "contactsEmpty": "עדיין לא הוזנו פרטי קשר",
-    "roles": { "rabbi": "רב", "admin": "מנהל" },
+    "roles": {
+      "rabbi": "רב",
+      "admin": "מנהל"
+    },
     "contact": {
       "phone": "טלפון",
       "whatsapp": "וואטסאפ",
@@ -155,7 +191,9 @@
     "assistant": {
       "title": "עוזר ה-AI של הרב",
       "desc": "שאלו על הקהילה: ימי הולדת, פעילות, משימות, מי לא ביקר מזמן."
-    }
+    },
+    "approve": "לאשר",
+    "approved": "אושר"
   },
   "discover": {
     "title": "חיפוש",
@@ -220,7 +258,11 @@
     "justNow": "ממש עכשיו",
     "hoursAgo": "לפני {h} שעות",
     "daysAgo": "לפני {d} ימים",
-    "urgency": { "low": "לא דחוף", "normal": "רגיל", "high": "דחוף" },
+    "urgency": {
+      "low": "לא דחוף",
+      "normal": "רגיל",
+      "high": "דחוף"
+    },
     "categories": {
       "childcare": "👶 ילדים / בייביסיטר",
       "services": "🔧 שירותים",

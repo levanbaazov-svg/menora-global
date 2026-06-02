@@ -41,7 +41,6 @@
     "myProfile": "My profile",
     "notifications": "Notifications",
     "rabbiConsole": "Rabbi Console",
-    "rabbiConsole": "Rabbi Console",
     "aiAssistant": "AI Assistant",
     "moderatePlaces": "Moderate places",
     "accessRequests": "Requests & access",
@@ -90,15 +89,49 @@
       }
     },
     "fallbacks": [
-      { "emoji": "📅", "title": "Community events", "body": "Shabbat dinners, talks, kids' activities — see what's coming up.", "cta_label": "Open events", "cta_href": "/dashboard/events" },
-      { "emoji": "🤝", "title": "Want to meet your people?", "body": "Interest groups — study, sports, parents, cooking. Maybe one's yours.", "cta_label": "Open Connect", "cta_href": "/dashboard/connect" },
-      { "emoji": "🕯", "title": "Shabbat is near", "body": "Check candle-lighting in your community — and where to go for dinner.", "cta_label": "Plan Shabbat", "cta_href": "/dashboard/ai-rabbi/shabbat" },
-      { "emoji": "🪪", "title": "Your Jewish ID", "body": "A digital pass with QR — any Menorah community can verify you.", "cta_label": "Open card", "cta_href": "/dashboard/me/jewish-id" },
-      { "emoji": "💬", "title": "The AI Rabbi is here", "body": "A deep talk or a quick question — just ask right now.", "cta_label": "Open AI Rabbi", "cta_href": "/dashboard/ai-rabbi" }
+      {
+        "emoji": "📅",
+        "title": "Community events",
+        "body": "Shabbat dinners, talks, kids' activities — see what's coming up.",
+        "cta_label": "Open events",
+        "cta_href": "/dashboard/events"
+      },
+      {
+        "emoji": "🤝",
+        "title": "Want to meet your people?",
+        "body": "Interest groups — study, sports, parents, cooking. Maybe one's yours.",
+        "cta_label": "Open Connect",
+        "cta_href": "/dashboard/connect"
+      },
+      {
+        "emoji": "🕯",
+        "title": "Shabbat is near",
+        "body": "Check candle-lighting in your community — and where to go for dinner.",
+        "cta_label": "Plan Shabbat",
+        "cta_href": "/dashboard/ai-rabbi/shabbat"
+      },
+      {
+        "emoji": "🪪",
+        "title": "Your Jewish ID",
+        "body": "A digital pass with QR — any Menorah community can verify you.",
+        "cta_label": "Open card",
+        "cta_href": "/dashboard/me/jewish-id"
+      },
+      {
+        "emoji": "💬",
+        "title": "The AI Rabbi is here",
+        "body": "A deep talk or a quick question — just ask right now.",
+        "cta_label": "Open AI Rabbi",
+        "cta_href": "/dashboard/ai-rabbi"
+      }
     ]
   },
   "community": {
-    "tabs": { "info": "Info", "guide": "Guide", "contacts": "Contacts" },
+    "tabs": {
+      "info": "Info",
+      "guide": "Guide",
+      "contacts": "Contacts"
+    },
     "otherCommunity": "Other community",
     "myCommunity": "My community",
     "members": "{count} members",
@@ -114,7 +147,10 @@
     "seeAll": "All",
     "guideEmpty": "No places added to the city guide yet",
     "contactsEmpty": "No contacts provided yet",
-    "roles": { "rabbi": "Rabbi", "admin": "Administrator" },
+    "roles": {
+      "rabbi": "Rabbi",
+      "admin": "Administrator"
+    },
     "contact": {
       "phone": "Phone",
       "whatsapp": "WhatsApp",
@@ -155,7 +191,9 @@
     "assistant": {
       "title": "Rabbi's AI assistant",
       "desc": "Ask about the community: birthdays, activity, tasks, who hasn't visited in a while."
-    }
+    },
+    "approve": "Approve",
+    "approved": "Approved"
   },
   "discover": {
     "title": "Search",
@@ -220,7 +258,11 @@
     "justNow": "just now",
     "hoursAgo": "{h}h ago",
     "daysAgo": "{d}d ago",
-    "urgency": { "low": "Not urgent", "normal": "Normal", "high": "Urgent" },
+    "urgency": {
+      "low": "Not urgent",
+      "normal": "Normal",
+      "high": "Urgent"
+    },
     "categories": {
       "childcare": "👶 Kids / babysitting",
       "services": "🔧 Services",
