@@ -924,15 +924,17 @@ function permissionsFor(table) {
     }
   }
 
-  // Backfill: rabbi/admin are elevated roles — they must be able to read at
-  // least whatever a member can (otherwise GraphQL fields vanish for them and
-  // pages crash with "field not found in query_root"). For any table where a
-  // member SELECT is defined but an elevated role's isn't, clone the member's.
-  const memberSelect = out.select.find((p) => p.role === 'member');
-  if (memberSelect) {
+  // Backfill: rabbi/admin are elevated roles — they must be able to do at least
+  // whatever a member can (otherwise GraphQL fields vanish for them and pages
+  // crash with "field/mutation not found in *_root", or actions silently fail).
+  // For each permission kind, where a member perm exists but an elevated role's
+  // doesn't, clone the member's (same columns/checks/presets).
+  for (const kind of ['select', 'insert', 'update', 'delete']) {
+    const memberPerm = out[kind].find((p) => p.role === 'member');
+    if (!memberPerm) continue;
     for (const role of ['rabbi', 'admin']) {
-      if (!out.select.some((p) => p.role === role)) {
-        out.select.push({ ...memberSelect, role });
+      if (!out[kind].some((p) => p.role === role)) {
+        out[kind].push({ ...memberPerm, role });
       }
     }
   }

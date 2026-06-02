@@ -34,6 +34,36 @@ test('platform admin creates a community (moderated) → redirected to it', asyn
   await expect(page.getByRole('heading', { name }).first()).toBeVisible();
 });
 
+test('rabbi creates an event → detail page renders', async ({ page }) => {
+  const title = `E2E Event ${stamp()}`;
+  await page.goto('/dashboard/events/new');
+
+  await page.locator('input[name="title"]').fill(title);
+  await page.locator('input[name="starts_at"]').fill('2026-12-01T18:00');
+  await page.locator('input[name="location_text"]').fill('Main hall');
+  await page.locator('form button[type="submit"]').click();
+
+  await page.waitForURL(/\/dashboard\/events\/[0-9a-f-]{36}/, { timeout: 20_000 });
+  await expect(page.getByText(title)).toBeVisible(); // detail renders (no 500)
+});
+
+test('rabbi creates a place → detail → edit', async ({ page }) => {
+  const name = `E2E Place ${stamp()}`;
+  await page.goto('/dashboard/community/places/new');
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('input[name="address"]').fill('1 Test St');
+  await page.locator('input[name="city"]').fill('Testopolis');
+  await page.locator('form button[type="submit"]').click();
+
+  await page.waitForURL(/\/dashboard\/community\/places\/[0-9a-f-]{36}/, { timeout: 20_000 });
+  await expect(page.getByText(name)).toBeVisible();
+
+  const id = page.url().match(/places\/([0-9a-f-]{36})/)![1];
+  await page.goto(`/dashboard/community/places/${id}/edit`);
+  await expect(page.locator('input[name="name"]')).toHaveValue(name);
+});
+
 test('member edit guard: program edit page reachable for rabbi', async ({ page }) => {
   // create one, open its edit page, change the name, save
   const name = `E2E Program ${stamp()}`;

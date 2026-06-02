@@ -60,8 +60,9 @@ export async function startConversation(_prev: ActionState, formData: FormData):
     const r = await client.request<{ insert_ai_conversations_one: { id: string } | null }>(
       INSERT_CONVERSATION,
       {
+        // user_id is preset by the Hasura insert permission (X-Hasura-User-Id);
+        // passing it explicitly is rejected as a non-insertable column.
         obj: {
-          user_id: session.user.id,
           scenario: scenarioEnum,
           community_id: session.hasura.community_id,
         },
@@ -93,8 +94,8 @@ export async function askRabbiFromHome(text: string): Promise<void> {
   const r = await client.request<{ insert_ai_conversations_one: { id: string } | null }>(
     INSERT_CONVERSATION,
     {
+      // user_id is preset by the insert permission (X-Hasura-User-Id).
       obj: {
-        user_id: session.user.id,
         scenario: 'open' satisfies AIScenario,
         community_id: session.hasura.community_id,
       },

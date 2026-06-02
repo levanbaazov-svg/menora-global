@@ -90,9 +90,9 @@ export const createPlaceSchema = z.object({
   website_url:    z.string().url().optional().or(z.literal('').transform(() => undefined)),
   reservation_url:z.string().url().optional().or(z.literal('').transform(() => undefined)),
   hours_notes:    z.string().max(500).optional().transform((v) => v?.trim() || undefined),
-  kashrut_level:  z.enum(KASHRUT_LEVELS).optional(),
+  kashrut_level:  z.preprocess(emptyToUndef, z.enum(KASHRUT_LEVELS).optional()),
   kashrut_authority: z.string().max(100).optional().transform((v) => v?.trim() || undefined),
-  price_level:    z.enum(PRICE_LEVELS).optional(),
+  price_level:    z.preprocess(emptyToUndef, z.enum(PRICE_LEVELS).optional()),
   cuisine_tags:   z.union([z.string(), z.array(z.string())]).optional().transform((v) => {
     const arr = !v ? [] : Array.isArray(v) ? v : [v];
     return arr.filter((s): s is typeof CUISINE_TAGS[number] => (CUISINE_TAGS as readonly string[]).includes(s));
