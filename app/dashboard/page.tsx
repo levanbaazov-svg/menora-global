@@ -73,7 +73,7 @@ export default async function DashboardPage() {
       </section>
 
       {/* 3. AI proactive card */}
-      <DailyHomeCard userId={session.user.id} />
+      <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
 
       {/* 4. Routines */}
       <Reveal delay={0.1}>

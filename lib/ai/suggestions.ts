@@ -137,6 +137,91 @@ async function writeCache(userId: string, payload: HomeSuggestion, locale: Local
   });
 }
 
+// ── Activity snapshot (makes the suggestion genuinely proactive) ───────────
+const ACTIVITY = /* GraphQL */ `
+  query HomeActivity($uid: uuid!, $cid: uuid!, $now: timestamptz!, $today: date!) {
+    my_rsvps: rsvps_aggregate(where: {
+      user_id: { _eq: $uid }, status: { _eq: yes }, event: { starts_at: { _gte: $now } }
+    }) { aggregate { count } }
+    next_rsvp: rsvps(where: {
+      user_id: { _eq: $uid }, status: { _eq: yes }, event: { starts_at: { _gte: $now } }
+    }, order_by: { event: { starts_at: asc } }, limit: 1) { event { title starts_at } }
+
+    upcoming_events: events_aggregate(where: {
+      community_id: { _eq: $cid }, status: { _eq: published }, starts_at: { _gte: $now }
+    }) { aggregate { count } }
+    not_rsvped: events(where: {
+      community_id: { _eq: $cid }, status: { _eq: published }, starts_at: { _gte: $now },
+      _not: { rsvps: { user_id: { _eq: $uid } } }
+    }, order_by: { starts_at: asc }, limit: 1) { title starts_at }
+
+    joinable_groups: interest_groups_aggregate(where: {
+      community_id: { _eq: $cid }, archived_at: { _is_null: true },
+      _not: { memberships: { user_id: { _eq: $uid }, left_at: { _is_null: true } } }
+    }) { aggregate { count } }
+
+    open_requests: requests_aggregate(where: {
+      community_id: { _eq: $cid }, status: { _eq: open }
+    }) { aggregate { count } }
+
+    routines: routines(where: { user_id: { _eq: $uid }, enabled: { _eq: true } }) {
+      id
+      done: checkins(where: { user_id: { _eq: $uid }, gregorian_date: { _eq: $today } }) { id }
+    }
+  }
+`;
+
+interface ActivityResp {
+  my_rsvps: { aggregate: { count: number } | null };
+  next_rsvp: Array<{ event: { title: string; starts_at: string } | null }>;
+  upcoming_events: { aggregate: { count: number } | null };
+  not_rsvped: Array<{ title: string; starts_at: string }>;
+  joinable_groups: { aggregate: { count: number } | null };
+  open_requests: { aggregate: { count: number } | null };
+  routines: Array<{ id: string; done: Array<{ id: string }> }>;
+}
+
+/** Build a compact, factual activity block for the model (kept in Russian —
+ *  it's context, the model still answers in the target language). */
+async function buildActivitySnapshot(userId: string, communityId: string | null): Promise<string> {
+  if (!communityId || communityId === '00000000-0000-0000-0000-000000000000') return '';
+  try {
+    const d = await hasuraAdmin.request<ActivityResp>(ACTIVITY, {
+      uid: userId, cid: communityId, now: new Date().toISOString(), today: isoToday(),
+    });
+    const lines: string[] = [];
+    const n = (a: { aggregate: { count: number } | null }) => a.aggregate?.count ?? 0;
+
+    const myRsvps = n(d.my_rsvps);
+    if (myRsvps > 0 && d.next_rsvp[0]?.event) {
+      const e = d.next_rsvp[0].event;
+      lines.push(`Записан на ${myRsvps} предстоящих событий; ближайшее: «${e.title}» (${e.starts_at.slice(0, 10)}).`);
+    } else {
+      lines.push('Пока не записан ни на одно предстоящее событие.');
+    }
+    const upcoming = n(d.upcoming_events);
+    if (upcoming > 0) {
+      const sample = d.not_rsvped[0];
+      lines.push(`Всего предстоящих событий в общине: ${upcoming}${sample ? `; новое для него: «${sample.title}» (${sample.starts_at.slice(0, 10)})` : ''}.`);
+    }
+    const joinable = n(d.joinable_groups);
+    if (joinable > 0) lines.push(`Групп по интересам, где его ещё нет: ${joinable}.`);
+    const openReq = n(d.open_requests);
+    if (openReq > 0) lines.push(`Открытых просьб о помощи в общине: ${openReq}.`);
+
+    const routinesTotal = d.routines.length;
+    if (routinesTotal > 0) {
+      const doneToday = d.routines.filter((r) => r.done.length > 0).length;
+      lines.push(`Молитвенные рутины сегодня: выполнено ${doneToday} из ${routinesTotal}.`);
+    } else {
+      lines.push('Молитвенные рутины ещё не настроены.');
+    }
+    return lines.join('\n');
+  } catch {
+    return '';
+  }
+}
+
 // ── AI generation ────────────────────────────────────────────────────────
 function buildPrompt(
   userName: string | null,
@@ -144,6 +229,7 @@ function buildPrompt(
   parsha: string | null,
   role: string | null,
   languageName: string,
+  activity: string,
 ) {
   return `Ты — проактивный AI помощник в приложении Menorah Global (сеть еврейских общин). Сгенерируй ОДНУ короткую персональную подсказку для главной страницы пользователя на сегодня.
 
@@ -154,12 +240,13 @@ function buildPrompt(
 - Община: ${communityName ?? 'без активной общины'}
 - Роль: ${role ?? 'без членства'}
 ${parsha ? `- Парша недели (используй только если это уместно, не делай это темой по умолчанию): ${parsha}` : ''}
-
+${activity ? `\n=== Реальная активность пользователя (ОПИРАЙСЯ на это в первую очередь) ===\n${activity}\n` : ''}
 Что делает хорошую подсказку:
-- Проактивность: исходи из ситуации пользователя и подталкивай к КОНКРЕТНОМУ следующему шагу в приложении — записаться на ближайшее событие, вступить в группу по интересам, спланировать шаббат, открыть Jewish ID, начать молитвенную рутину.
-- НЕ делай подсказку про парашу/недельную главу по умолчанию — это лишь один из вариантов и только если действительно к месту.
+- ГЛАВНОЕ: исходи из «Реальной активности» выше и подтолкни к самому уместному КОНКРЕТНОМУ шагу. Примеры логики: если он не записан ни на одно событие, а в общине есть предстоящие — предложи записаться на конкретное; если записан — мягко напомни про ближайшее; если не выполнил сегодня рутины — предложи отметить; если не состоит в группах — предложи найти своих; если есть открытые просьбы — предложи помочь.
+- Будь конкретным: если в активности есть название события/число — используй его в подсказке (например «Вижу, ты ещё не записался на „…“ — пойдём?»).
+- НЕ делай подсказку про парашу по умолчанию — только если это реально уместно.
 - Тёплая, личная, без шаблонных фраз. 1-2 предложения максимум для body. Эмоциональный заголовок.
-- Ровно одно действие (CTA).
+- Ровно одно действие (CTA), ведущее на самую релевантную страницу.
 
 CTA должен быть на одну из этих страниц:
 - /dashboard/community — город-гид общины (места, программы, события)
@@ -177,11 +264,14 @@ CTA должен быть на одну из этих страниц:
 НЕ оборачивай в \`\`\`json\`\`\`. Просто JSON.`;
 }
 
-async function callAI(userId: string, locale: Locale): Promise<HomeSuggestion | null> {
+async function callAI(userId: string, locale: Locale, communityId: string | null): Promise<HomeSuggestion | null> {
   if (!isAIConfigured()) return null;
   try {
-    const ctx = await buildUserContext(userId, null);
-    const prompt = buildPrompt(ctx.userName, ctx.communityName, ctx.parsha, ctx.role, LANGUAGE_NAME[locale]);
+    const [ctx, activity] = await Promise.all([
+      buildUserContext(userId, null),
+      buildActivitySnapshot(userId, communityId),
+    ]);
+    const prompt = buildPrompt(ctx.userName, ctx.communityName, ctx.parsha, ctx.role, LANGUAGE_NAME[locale], activity);
 
     const result = await generateText({
       model: openai(AI_MODEL),
@@ -212,13 +302,14 @@ async function callAI(userId: string, locale: Locale): Promise<HomeSuggestion | 
 export async function getDailyHomeSuggestion(
   userId: string,
   locale: Locale = DEFAULT_LOCALE,
+  communityId: string | null = null,
 ): Promise<HomeSuggestion> {
   // 1. Cache hit (same day + same language)?
   const cached = await readCache(userId, locale);
   if (cached) return cached;
 
-  // 2. Try AI
-  const generated = await callAI(userId, locale);
+  // 2. Try AI (grounded in the user's real activity)
+  const generated = await callAI(userId, locale, communityId);
   if (generated) {
     await writeCache(userId, generated, locale).catch(() => {/* non-fatal */});
     return generated;

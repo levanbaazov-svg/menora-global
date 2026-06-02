@@ -8,9 +8,9 @@ import { Reveal } from '@/components/motion/Reveal';
 import { getDailyHomeSuggestion } from '@/lib/ai/suggestions';
 import type { Locale } from '@/i18n/config';
 
-export async function DailyHomeCard({ userId }: { userId: string }) {
+export async function DailyHomeCard({ userId, communityId }: { userId: string; communityId?: string | null }) {
   const locale = (await getLocale()) as Locale;
-  const s = await getDailyHomeSuggestion(userId, locale);
+  const s = await getDailyHomeSuggestion(userId, locale, communityId ?? null);
   const t = await getTranslations('home');
 
   return (
