@@ -924,6 +924,19 @@ function permissionsFor(table) {
     }
   }
 
+  // Backfill: rabbi/admin are elevated roles — they must be able to read at
+  // least whatever a member can (otherwise GraphQL fields vanish for them and
+  // pages crash with "field not found in query_root"). For any table where a
+  // member SELECT is defined but an elevated role's isn't, clone the member's.
+  const memberSelect = out.select.find((p) => p.role === 'member');
+  if (memberSelect) {
+    for (const role of ['rabbi', 'admin']) {
+      if (!out.select.some((p) => p.role === role)) {
+        out.select.push({ ...memberSelect, role });
+      }
+    }
+  }
+
   return out;
 }
 
