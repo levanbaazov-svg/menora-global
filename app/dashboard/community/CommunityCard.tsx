@@ -91,14 +91,22 @@ export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: 
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description — padding on the wrapper, clamp on a padding-free inner
+            element (webkit-line-clamp + bottom padding leaks the next line). */}
         {c.description && (
-          <p
-            className="px-4 pt-2.5 pb-3.5 text-[13px] leading-relaxed text-foreground/70 overflow-hidden"
-            style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
-          >
-            {c.description}
-          </p>
+          <div className="px-4 pt-2.5 pb-3.5">
+            <p
+              className="text-[13px] leading-relaxed text-foreground/70 overflow-hidden"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                maxHeight: 'calc(2 * 1.625em)',
+              }}
+            >
+              {c.description}
+            </p>
+          </div>
         )}
       </Link>
     </motion.div>
