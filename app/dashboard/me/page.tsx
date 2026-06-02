@@ -1,7 +1,8 @@
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
+import { LOCALE_BCP47, type Locale } from '@/i18n/config';
 import Link from 'next/link';
 import { Avatar } from '../_Avatar';
 import {
@@ -54,9 +55,9 @@ interface MyData {
   checkins_30: { aggregate: { count: number } | null };
 }
 
-function fmt(iso: string | null) {
+function fmt(iso: string | null, bcp = 'ru-RU') {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(bcp, { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
 export default async function MyProfilePage() {
@@ -79,6 +80,7 @@ export default async function MyProfilePage() {
   const checkinsCount = data.checkins_30.aggregate?.count ?? 0;
   const t = await getTranslations('profile');
   const tc = await getTranslations('miscChrome');
+  const bcp = LOCALE_BCP47[(await getLocale()) as Locale];
   const genderLabel = (v: string) => (tc.has(`gender.${v}`) ? tc(`gender.${v}`) : v);
   const maritalLabel = (v: string) => (tc.has(`marital.${v}`) ? tc(`marital.${v}`) : v);
   const visibilityLabel = (v: string) => (tc.has(`visibility.${v}`) ? tc(`visibility.${v}`) : v);
@@ -116,7 +118,7 @@ export default async function MyProfilePage() {
                   <div className="font-medium">{m.community.name}</div>
                   <div className="text-xs text-(--color-fg-muted) mt-0.5">
                     {[m.community.city, m.community.country_code].filter(Boolean).join(', ')}
-                    {m.joined_at && ` · ${t('since', { date: fmt(m.joined_at) ?? '' })}`}
+                    {m.joined_at && ` · ${t('since', { date: fmt(m.joined_at, bcp) ?? '' })}`}
                   </div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full ${badge.cls}`}>{m.role}</span>
@@ -130,7 +132,7 @@ export default async function MyProfilePage() {
       <section className="mb-8 grid grid-cols-3 gap-3">
         <Stat label={t('stat_checkins')} value={checkinsCount} />
         <Stat label={t('stat_onboarding')} value={user.onboarded_at ? '✓' : '–'} />
-        <Stat label={t('stat_memberSince')} value={fmt(user.created_at) ?? '—'} />
+        <Stat label={t('stat_memberSince')} value={fmt(user.created_at, bcp) ?? '—'} />
       </section>
 
       {/* Bio */}
@@ -146,7 +148,7 @@ export default async function MyProfilePage() {
         <h2 className="font-serif text-xl font-semibold mb-3">{t('profile')}</h2>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
           {p?.gender && <Row k={t('fields.gender')} v={genderLabel(p.gender)} />}
-          {p?.date_of_birth && <Row k={t('fields.dateOfBirth')} v={fmt(p.date_of_birth)} />}
+          {p?.date_of_birth && <Row k={t('fields.dateOfBirth')} v={fmt(p.date_of_birth, bcp)} />}
           {p?.phone_e164 && <Row k={t('fields.phone')} v={p.phone_e164} />}
           {p?.marital_status && <Row k={t('fields.maritalStatus')} v={maritalLabel(p.marital_status)} />}
           {p?.has_children && (
