@@ -154,6 +154,10 @@ async function bootstrapSession(userId: string): Promise<SessionBootstrap> {
 // ── Auth.js v5 export ────────────────────────────────────────────────────────
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
+  // Trust the deployment host header. Required for self-hosted / `next start`
+  // (Vercel sets this automatically). Without it Auth.js throws UntrustedHost
+  // and sessions break in production.
+  trustHost: true,
   callbacks: {
     ...authConfig.callbacks,
     async jwt({ token, account, profile, trigger }) {
