@@ -47,7 +47,9 @@
     "invitations": "הזמנות",
     "manageCommunity": "ניהול הקהילה",
     "signOut": "התנתקות",
-    "language": "Язык / Language / שפה"
+    "language": "Язык / Language / שפה",
+    "platform": "פלטפורמה",
+    "communityModeration": "מודרציית קהילות"
   },
   "home": {
     "greeting": "שלום, <accent>{name}</accent>",
@@ -193,7 +195,18 @@
       "desc": "שאלו על הקהילה: ימי הולדת, פעילות, משימות, מי לא ביקר מזמן."
     },
     "approve": "לאשר",
-    "approved": "אושר"
+    "approved": "אושר",
+    "platform": {
+      "title": "בקשות קהילה",
+      "subtitle": "קהילות חדשות ממתינות לאישור הפלטפורמה",
+      "empty": "אין בקשות ממתינות",
+      "approve": "לאשר",
+      "reject": "לדחות",
+      "rejected": "נדחה",
+      "approved": "אושר",
+      "by": "הוגש על ידי",
+      "moderation": "מודרציית קהילות"
+    }
   },
   "discover": {
     "title": "חיפוש",

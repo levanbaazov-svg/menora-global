@@ -47,7 +47,9 @@
     "invitations": "Приглашения",
     "manageCommunity": "Управление общиной",
     "signOut": "Выйти",
-    "language": "Язык / Language / שפה"
+    "language": "Язык / Language / שפה",
+    "platform": "Платформа",
+    "communityModeration": "Модерация общин"
   },
   "home": {
     "greeting": "Шалом, <accent>{name}</accent>",
@@ -193,7 +195,18 @@
       "desc": "Спроси про общину: дни рождения, активность, задачи, кто давно не заходил."
     },
     "approve": "Одобрить",
-    "approved": "Одобрено"
+    "approved": "Одобрено",
+    "platform": {
+      "title": "Заявки на общины",
+      "subtitle": "Новые общины ждут проверки платформой",
+      "empty": "Нет заявок на рассмотрении",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "rejected": "Отклонено",
+      "approved": "Одобрено",
+      "by": "Кто подал",
+      "moderation": "Модерация общин"
+    }
   },
   "discover": {
     "title": "Поиск",

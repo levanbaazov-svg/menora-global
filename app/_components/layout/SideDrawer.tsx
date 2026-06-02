@@ -43,6 +43,10 @@ const PERSONAL: MenuItem[] = [
   { href: '/dashboard/notifications',  Icon: Bell,          labelKey: 'notifications' },
 ];
 
+const PLATFORM: MenuItem[] = [
+  { href: '/dashboard/admin/communities',  Icon: ShieldCheck,  labelKey: 'communityModeration', highlight: true },
+];
+
 const ADMIN: MenuItem[] = [
   { href: '/dashboard/admin',              Icon: LayoutDashboard, labelKey: 'rabbiConsole',  highlight: true },
   { href: '/dashboard/assistant',          Icon: Bot,          labelKey: 'aiAssistant' },
@@ -60,10 +64,11 @@ interface Props {
   communityName?: string;
   communities?: CommunityOption[];
   activeCommunityId?: string;
+  platformAdmin?: boolean;
   signOutAction: () => Promise<void>;
 }
 
-export function SideDrawer({ open, onClose, user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
+export function SideDrawer({ open, onClose, user, role, communityName, communities, activeCommunityId, platformAdmin, signOutAction }: Props) {
   const isStaff = role === 'rabbi' || role === 'admin';
   const t = useTranslations('drawer');
 
@@ -102,6 +107,7 @@ export function SideDrawer({ open, onClose, user, role, communityName, communiti
           <SectionList title={t('spiritual')} items={SPIRITUAL} t={t} onClose={onClose} />
           <SectionList title={t('personal')} items={PERSONAL} t={t} onClose={onClose} />
           {isStaff && <SectionList title={t('management')} items={ADMIN} t={t} onClose={onClose} />}
+          {platformAdmin && <SectionList title={t('platform')} items={PLATFORM} t={t} onClose={onClose} />}
           <LanguageSwitcher />
         </div>
 

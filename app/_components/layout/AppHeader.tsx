@@ -23,6 +23,7 @@ interface Props {
   communityName?: string;
   communities?: CommunityOption[];
   activeCommunityId?: string;
+  platformAdmin?: boolean;
   signOutAction: () => Promise<void>;
 }
 
@@ -35,7 +36,7 @@ function greetingKey(): 'night' | 'morning' | 'day' | 'evening' {
   return 'night';
 }
 
-export function AppHeader({ user, role, communityName, communities, activeCommunityId, signOutAction }: Props) {
+export function AppHeader({ user, role, communityName, communities, activeCommunityId, platformAdmin, signOutAction }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const t = useTranslations('header');
   const firstName = user.name?.split(' ')[0] ?? t('friend');
@@ -101,6 +102,7 @@ export function AppHeader({ user, role, communityName, communities, activeCommun
         communityName={communityName}
         communities={communities}
         activeCommunityId={activeCommunityId}
+        platformAdmin={platformAdmin}
         signOutAction={signOutAction}
       />
     </>

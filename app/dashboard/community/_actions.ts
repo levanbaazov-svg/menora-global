@@ -11,6 +11,7 @@ import {
   createProgramSchema, updateProgramSchema, programIdSchema, enrollProgramSchema,
 } from '@/lib/places/schema';
 import { createCommunitySchema } from '@/lib/community/schema';
+import { isPlatformAdmin } from '@/lib/auth/platform';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 const INSERT_PLACE = /* GraphQL */ `
@@ -417,6 +418,13 @@ export async function createCommunity(_prev: ActionState, formData: FormData): P
     return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
   }
 
+  // Moderation: platform admins create live communities; everyone else submits
+  // a request that stays hidden until the platform team approves it (we verify
+  // the rabbi & community are real).
+  const platformAdmin = await isPlatformAdmin(session.user.id);
+  const approvalStatus = platformAdmin ? 'approved' : 'pending';
+  const isPublic = platformAdmin;
+
   const slug = `${slugify(parsed.data.name)}-${Math.abs(hashCode(session.user.id + parsed.data.name)).toString(36).slice(0, 4)}`;
   try {
     // Use admin client: the creator has no membership in this community yet, so
@@ -440,7 +448,8 @@ export async function createCommunity(_prev: ActionState, formData: FormData): P
           whatsapp_url: parsed.data.whatsapp_url ?? null,
           instagram_url: parsed.data.instagram_url ?? null,
           founded_year: parsed.data.founded_year ?? null,
-          is_public: true,
+          is_public: isPublic,
+          approval_status: approvalStatus,
         },
       },
     );
@@ -459,7 +468,7 @@ export async function createCommunity(_prev: ActionState, formData: FormData): P
     });
 
     revalidatePath('/dashboard/community', 'layout');
-    redirect('/dashboard/community/manage');
+    redirect(`/dashboard/community/c/${community.slug}?created=1`);
   } catch (e) {
     if (e && typeof e === 'object' && 'digest' in e) throw e;
     return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
@@ -471,3 +480,29 @@ function hashCode(s: string): number {
   for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
   return h;
 }
+
+// ── Platform moderation of pending communities ─────────────────────────────
+const SET_COMMUNITY_APPROVAL = /* GraphQL */ `
+  mutation SetCommunityApproval($id: uuid!, $status: String!, $public: Boolean!) {
+    update_communities_by_pk(pk_columns: { id: $id }, _set: { approval_status: $status, is_public: $public }) { id }
+  }
+`;
+
+async function moderateCommunity(formData: FormData, status: 'approved' | 'rejected'): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'Не авторизован' };
+  if (!(await isPlatformAdmin(session.user.id))) return { ok: false, error: 'Только платформенный админ' };
+  const id = String(formData.get('community_id') ?? '');
+  if (!id) return { ok: false, error: 'Неверный id' };
+  try {
+    await hasuraAdmin.request(SET_COMMUNITY_APPROVAL, { id, status, public: status === 'approved' });
+    revalidatePath('/dashboard/admin/communities');
+    revalidatePath('/dashboard/community/discover');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Ошибка' };
+  }
+}
+
+export async function approveCommunity(formData: FormData) { return moderateCommunity(formData, 'approved'); }
+export async function rejectCommunity(formData: FormData) { return moderateCommunity(formData, 'rejected'); }

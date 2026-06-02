@@ -47,7 +47,9 @@
     "invitations": "Invitations",
     "manageCommunity": "Manage community",
     "signOut": "Sign out",
-    "language": "Язык / Language / שפה"
+    "language": "Язык / Language / שפה",
+    "platform": "Platform",
+    "communityModeration": "Community moderation"
   },
   "home": {
     "greeting": "Shalom, <accent>{name}</accent>",
@@ -193,7 +195,18 @@
       "desc": "Ask about the community: birthdays, activity, tasks, who hasn't visited in a while."
     },
     "approve": "Approve",
-    "approved": "Approved"
+    "approved": "Approved",
+    "platform": {
+      "title": "Community requests",
+      "subtitle": "New communities awaiting platform review",
+      "empty": "No pending requests",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "by": "Submitted by",
+      "moderation": "Community moderation"
+    }
   },
   "discover": {
     "title": "Search",
