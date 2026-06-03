@@ -198,7 +198,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Re-issue Hasura JWT if expired, never set, or on explicit refresh
       const now = Math.floor(Date.now() / 1000);
       const expiresAt = token.hasuraTokenExpiresAt ?? 0;
-      const needsRefresh = !token.hasuraToken || expiresAt - now < 60 || trigger === 'update';
+      // Also refresh while the user has no community yet, so a freshly-joined
+      // community + role appear on the next request instead of after the 1h TTL.
+      const needsRefresh =
+        !token.hasuraToken || expiresAt - now < 60 || trigger === 'update' || !token.hasMembership;
 
       if (token.userId && needsRefresh) {
         const boot = await bootstrapSession(token.userId);

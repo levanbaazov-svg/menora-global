@@ -12,6 +12,7 @@ import {
 } from '@/lib/places/schema';
 import { createCommunitySchema } from '@/lib/community/schema';
 import { isPlatformAdmin } from '@/lib/auth/platform';
+import { newJoinMembership } from '@/lib/demo';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 const INSERT_PLACE = /* GraphQL */ `
@@ -286,11 +287,12 @@ const CHECK_MEMBERSHIP = /* GraphQL */ `
   }
 `;
 
-const JOIN_REQUEST = /* GraphQL */ `
+// status/role inlined from the demo switch (enums can't be plain variables).
+const joinRequestMutation = (status: string, role: string) => /* GraphQL */ `
   mutation JoinRequest($user_id: uuid!, $community_id: uuid!, $message: String!) {
     insert_memberships_one(object: {
       user_id: $user_id, community_id: $community_id,
-      entry_method: self_request, status: pending, role: member, request_message: $message
+      entry_method: self_request, status: ${status}, role: ${role}, request_message: $message
     }) { id }
   }
 `;
@@ -318,11 +320,12 @@ export async function requestJoinCommunity(
       // rejected/left/suspended → allow re-request by updating below isn't trivial; report
       return { ok: false, error: 'Заявка уже обрабатывалась', status: m.status };
     }
-    await hasuraAdmin.request(JOIN_REQUEST, {
+    const { status, role } = newJoinMembership();
+    await hasuraAdmin.request(joinRequestMutation(status, role), {
       user_id: session.user.id, community_id: communityId, message: message.slice(0, 500),
     });
     revalidatePath('/dashboard/community', 'layout');
-    return { ok: true, status: 'pending' };
+    return { ok: true, status };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Ошибка' };
   }

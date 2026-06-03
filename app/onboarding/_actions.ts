@@ -13,6 +13,7 @@ import {
   communityChoiceSchema, privacySchema,
 } from '@/lib/onboarding/schema';
 import { nextStep, type OnboardingState } from '@/lib/onboarding/steps';
+import { newJoinMembership } from '@/lib/demo';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 const UPSERT_PROFILE = /* GraphQL */ `
@@ -48,14 +49,15 @@ const FINALIZE = /* GraphQL */ `
   }
 `;
 
-const SUBMIT_JOIN_REQUEST = /* GraphQL */ `
+// status/role are enums — inline them (from the demo switch) rather than vars.
+const submitJoinRequestMutation = (status: string, role: string) => /* GraphQL */ `
   mutation SubmitJoinRequest(
     $user_id: uuid!, $community_id: uuid!, $request_message: String!
   ) {
     insert_memberships_one(object: {
       user_id: $user_id, community_id: $community_id,
-      entry_method: self_request, status: pending,
-      request_message: $request_message, role: member,
+      entry_method: self_request, status: ${status},
+      request_message: $request_message, role: ${role},
     }) { id }
   }
 `;
@@ -171,7 +173,8 @@ export async function submitCommunityChoice(_prev: ActionState, formData: FormDa
   if (!parsed.success) {
     return { errors: zodErrorsToMap(parsed.error), values: formValues(formData) };
   }
-  await hasuraAdmin.request(SUBMIT_JOIN_REQUEST, {
+  const { status, role } = newJoinMembership();
+  await hasuraAdmin.request(submitJoinRequestMutation(status, role), {
     user_id: userId,
     community_id: parsed.data.community_id,
     request_message: parsed.data.request_message,
