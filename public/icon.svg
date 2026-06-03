@@ -1,31 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <rect width="256" height="256" rx="48" fill="#FCFAF8"/>
-  <g fill="none" stroke="#D4A23C" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Center stem -->
-    <path d="M128 56 L128 200"/>
-    <!-- Outer pair -->
-    <path d="M72 200 L72 110 Q72 80 90 70"/>
-    <path d="M184 200 L184 110 Q184 80 166 70"/>
-    <!-- Mid-outer pair -->
-    <path d="M92 200 L92 120 Q92 95 110 85"/>
-    <path d="M164 200 L164 120 Q164 95 146 85"/>
-    <!-- Inner pair -->
-    <path d="M112 200 L112 130 Q112 110 128 100"/>
-    <path d="M144 200 L144 130 Q144 110 128 100"/>
-    <!-- Base -->
-    <path d="M50 200 L206 200"/>
-    <path d="M70 210 L186 210"/>
-    <path d="M128 210 L128 232"/>
-    <path d="M100 232 L156 232"/>
-  </g>
-  <!-- Flames -->
-  <g fill="#D4A23C">
-    <ellipse cx="72" cy="60" rx="5" ry="9"/>
-    <ellipse cx="92" cy="75" rx="5" ry="9"/>
-    <ellipse cx="112" cy="90" rx="5" ry="9"/>
-    <ellipse cx="128" cy="46" rx="5" ry="9"/>
-    <ellipse cx="144" cy="90" rx="5" ry="9"/>
-    <ellipse cx="164" cy="75" rx="5" ry="9"/>
-    <ellipse cx="184" cy="60" rx="5" ry="9"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+    <rect width="512" height="512" fill="#14181F"/>
+    <g transform="translate(256 256) scale(1) translate(-256 -256)">
+    <g stroke="#C99B43" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M256 360 L 88 168 M256 360 L 144 168 M256 360 L 200 168 M256 360 L 312 168 M256 360 L 368 168 M256 360 L 424 168" />
+      <path d="M88 168 L 88 138 M144 168 L 144 138 M200 168 L 200 138 M256 168 L 256 138 M312 168 L 312 138 M368 168 L 368 138 M424 168 L 424 138" />
+      <path d="M256 168 L 256 360" />
+      <path d="M196 392 H316" />
+      <path d="M226 360 L 196 392 M286 360 L 316 392" />
+    </g>
+    <circle cx="88" cy="150" r="11" fill="#C99B43" /><circle cx="144" cy="150" r="11" fill="#C99B43" /><circle cx="200" cy="150" r="11" fill="#C99B43" /><circle cx="256" cy="150" r="11" fill="#C99B43" /><circle cx="312" cy="150" r="11" fill="#C99B43" /><circle cx="368" cy="150" r="11" fill="#C99B43" /><circle cx="424" cy="150" r="11" fill="#C99B43" /></g>
+  </svg>

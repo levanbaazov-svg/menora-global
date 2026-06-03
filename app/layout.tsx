@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { dirFor } from '@/i18n/config';
+import { PWARegister } from '@/app/_components/PWARegister';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -42,8 +43,12 @@ export const metadata: Metadata = {
   description: 'Community platform for the Jewish world.',
   manifest: '/manifest.webmanifest',
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/icon.svg' }],
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-icon-180.png', sizes: '180x180' }],
   },
   appleWebApp: {
     capable: true,
@@ -82,6 +87,7 @@ export default async function RootLayout({
           </TooltipProvider>
           <Toaster richColors position="top-center" />
         </NextIntlClientProvider>
+        <PWARegister />
       </body>
     </html>
   );
