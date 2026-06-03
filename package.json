@@ -21,9 +21,16 @@
     "seed": "node scripts/seed.js",
     "invite": "node scripts/invite.js",
     "test:e2e": "playwright test",
-    "test:perms": "node scripts/test-permissions.js"
+    "test:perms": "node scripts/test-permissions.js",
+    "cap:sync": "cap sync",
+    "cap:ios": "cap open ios",
+    "cap:android": "cap open android"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/ios": "^8.4.0",
     "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^25.9.1",
