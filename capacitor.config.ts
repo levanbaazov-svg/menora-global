@@ -13,6 +13,9 @@ const config: CapacitorConfig = {
     cleartext: false,
   },
   ios: { contentInset: 'always' },
+  // Google sign-in (@capawesome/capacitor-google-sign-in) is configured at
+  // runtime via GoogleSignIn.initialize({ clientId }) and, on iOS, via the
+  // GIDClientID + URL-scheme entries in Info.plist — no capacitor.config block.
 };
 
 export default config;

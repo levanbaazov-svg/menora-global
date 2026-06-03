@@ -9,13 +9,10 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
-// Native Google plugin accessed via Capacitor's registry — no JS package
-// dependency, so the web build is clean. The native side ('GoogleAuth' plugin)
-// is added only in the iOS/Android project. See MOBILE.md.
-interface GoogleAuthPlugin {
-  initialize?(options?: Record<string, unknown>): Promise<void>;
-  signIn(): Promise<{ authentication?: { idToken?: string } }>;
-}
+// Web OAuth client ID — @capawesome/capacitor-google-sign-in requires the WEB
+// client id on every platform (it's the server client id the ID token targets).
+const GOOGLE_WEB_CLIENT_ID =
+  '874288364269-00sv6l337hfa5jpav02n1c6oonoj2rtr.apps.googleusercontent.com';
 
 function GoogleLogo() {
   return (
@@ -37,18 +34,14 @@ export function GoogleSignInButton({ label }: { label: string }) {
     setError(null);
     setLoading(true);
     try {
-      const { Capacitor, registerPlugin } = await import('@capacitor/core');
+      const { Capacitor } = await import('@capacitor/core');
       if (Capacitor.isNativePlatform()) {
         // Native: get a Google ID token from the device SDK, then exchange it.
-        // The 'GoogleAuth' plugin is registered by the native iOS/Android project
-        // (see MOBILE.md); we reach it through Capacitor's registry so the web
-        // bundle carries no plugin dependency.
-        const GoogleAuth = registerPlugin<GoogleAuthPlugin>('GoogleAuth');
-        try { await GoogleAuth.initialize?.(); } catch { /* already initialised */ }
-        const user = await GoogleAuth.signIn();
-        const idToken = user.authentication?.idToken;
-        if (!idToken) throw new Error('No ID token from Google');
-        await signIn('google-native', { idToken, callbackUrl: '/dashboard' });
+        const { GoogleSignIn } = await import('@capawesome/capacitor-google-sign-in');
+        await GoogleSignIn.initialize({ clientId: GOOGLE_WEB_CLIENT_ID });
+        const result = await GoogleSignIn.signIn();
+        if (!result.idToken) throw new Error('No ID token from Google');
+        await signIn('google-native', { idToken: result.idToken, callbackUrl: '/dashboard' });
       } else {
         // Web: standard OAuth redirect.
         await signIn('google', { callbackUrl: '/dashboard' });
