@@ -174,6 +174,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
+      // Native Google sign-in (verified id token → user upsert). Same user
+      // record as web Google (linked by provider 'google' + sub).
+      if (account?.provider === 'google-native' && !token.userId && user?.email) {
+        token.userId = await upsertUserAndAccount({
+          email: user.email,
+          name: user.name ?? null,
+          image: user.image ?? null,
+          provider: 'google',
+          providerAccountId: String(user.id),
+        });
+      }
+
       // First-time sign-in: upsert user, link account
       if (account && profile) {
         const email = profile.email ?? token.email;

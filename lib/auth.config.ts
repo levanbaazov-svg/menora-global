@@ -24,6 +24,27 @@ const e2eProvider = process.env.E2E_TEST_SECRET
     })]
   : [];
 
+// Native Google sign-in (Capacitor iOS/Android). The native Google SDK returns
+// an ID token; we verify it here (Google tokeninfo) and issue a session. This
+// avoids Google's "disallowed_useragent" block on OAuth inside a WebView.
+// Edge-safe: only does a fetch; the user is upserted in the Node jwt callback.
+const googleNative = Credentials({
+  id: 'google-native',
+  name: 'Google',
+  credentials: { idToken: {} },
+  authorize: async (c) => {
+    const idToken = typeof c?.idToken === 'string' ? c.idToken : null;
+    if (!idToken) return null;
+    const res = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken));
+    if (!res.ok) return null;
+    const p = await res.json();
+    const allowedAud = [process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_IOS_CLIENT_ID].filter(Boolean);
+    const issOk = typeof p.iss === 'string' && /(^|\.)accounts\.google\.com$/.test(p.iss.replace(/^https?:\/\//, ''));
+    if (!p.email || !issOk || !allowedAud.includes(p.aud) || p.email_verified === 'false') return null;
+    return { id: String(p.sub), email: p.email, name: p.name ?? null, image: p.picture ?? null };
+  },
+});
+
 export const authConfig = {
   providers: [
     Google({
@@ -31,6 +52,7 @@ export const authConfig = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: { params: { prompt: 'select_account' } },
     }),
+    googleNative,
     ...e2eProvider,
   ],
   session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 30 },
