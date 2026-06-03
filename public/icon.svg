@@ -1,12 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
     <rect width="512" height="512" fill="#14181F"/>
     <g transform="translate(256 256) scale(1) translate(-256 -256)">
-    <g stroke="#C99B43" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M256 360 L 88 168 M256 360 L 144 168 M256 360 L 200 168 M256 360 L 312 168 M256 360 L 368 168 M256 360 L 424 168" />
-      <path d="M88 168 L 88 138 M144 168 L 144 138 M200 168 L 200 138 M256 168 L 256 138 M312 168 L 312 138 M368 168 L 368 138 M424 168 L 424 138" />
-      <path d="M256 168 L 256 360" />
-      <path d="M196 392 H316" />
-      <path d="M226 360 L 196 392 M286 360 L 316 392" />
+    <g stroke="#C99B43" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 256 356 L 100 206 M 256 356 L 152 206 M 256 356 L 204 206 M 256 356 L 256 206 M 256 356 L 308 206 M 256 356 L 360 206 M 256 356 L 412 206" />
+      <path d="M 256 356 L 256 414" />            <!-- central shaft to base -->
+      <path d="M 206 414 H 306" />                            <!-- base bar -->
+      <path d="M 224 356 L 200 414 M 288 356 L 312 414" />  <!-- foot legs -->
     </g>
-    <circle cx="88" cy="150" r="11" fill="#C99B43" /><circle cx="144" cy="150" r="11" fill="#C99B43" /><circle cx="200" cy="150" r="11" fill="#C99B43" /><circle cx="256" cy="150" r="11" fill="#C99B43" /><circle cx="312" cy="150" r="11" fill="#C99B43" /><circle cx="368" cy="150" r="11" fill="#C99B43" /><circle cx="424" cy="150" r="11" fill="#C99B43" /></g>
+    <path d="M 84 188 L 116 188 L 108 204 L 92 204 Z" fill="#C99B43"/>
+    <circle cx="100" cy="210" r="4.5" fill="#C99B43"/><path d="M 136 188 L 168 188 L 160 204 L 144 204 Z" fill="#C99B43"/>
+    <circle cx="152" cy="210" r="4.5" fill="#C99B43"/><path d="M 188 188 L 220 188 L 212 204 L 196 204 Z" fill="#C99B43"/>
+    <circle cx="204" cy="210" r="4.5" fill="#C99B43"/><path d="M 240 188 L 272 188 L 264 204 L 248 204 Z" fill="#C99B43"/>
+    <circle cx="256" cy="210" r="4.5" fill="#C99B43"/><path d="M 292 188 L 324 188 L 316 204 L 300 204 Z" fill="#C99B43"/>
+    <circle cx="308" cy="210" r="4.5" fill="#C99B43"/><path d="M 344 188 L 376 188 L 368 204 L 352 204 Z" fill="#C99B43"/>
+    <circle cx="360" cy="210" r="4.5" fill="#C99B43"/><path d="M 396 188 L 428 188 L 420 204 L 404 204 Z" fill="#C99B43"/>
+    <circle cx="412" cy="210" r="4.5" fill="#C99B43"/>
+    <path d="M 100 138
+    C 117 156, 115 175.5, 100 177
+    C 85 175.5, 83 156, 100 138 Z"
+    fill="#C99B43"/><path d="M 152 138
+    C 169 156, 167 175.5, 152 177
+    C 137 175.5, 135 156, 152 138 Z"
+    fill="#C99B43"/><path d="M 204 138
+    C 221 156, 219 175.5, 204 177
+    C 189 175.5, 187 156, 204 138 Z"
+    fill="#C99B43"/><path d="M 256 138
+    C 273 156, 271 175.5, 256 177
+    C 241 175.5, 239 156, 256 138 Z"
+    fill="#C99B43"/><path d="M 308 138
+    C 325 156, 323 175.5, 308 177
+    C 293 175.5, 291 156, 308 138 Z"
+    fill="#C99B43"/><path d="M 360 138
+    C 377 156, 375 175.5, 360 177
+    C 345 175.5, 343 156, 360 138 Z"
+    fill="#C99B43"/><path d="M 412 138
+    C 429 156, 427 175.5, 412 177
+    C 397 175.5, 395 156, 412 138 Z"
+    fill="#C99B43"/></g>
   </svg>
