@@ -12,7 +12,11 @@ const config: CapacitorConfig = {
     url: process.env.CAP_SERVER_URL || 'https://menorah-global.vercel.app',
     cleartext: false,
   },
-  ios: { contentInset: 'always' },
+  // contentInset 'never' lets the web app own the safe areas via CSS
+  // env(safe-area-inset-*) (the header/nav already pad for them). 'always' would
+  // double-inset and leave an empty strip under the status bar + above the home
+  // indicator.
+  ios: { contentInset: 'never' },
   // Google sign-in (@capawesome/capacitor-google-sign-in) is configured at
   // runtime via GoogleSignIn.initialize({ clientId }) and, on iOS, via the
   // GIDClientID + URL-scheme entries in Info.plist — no capacitor.config block.

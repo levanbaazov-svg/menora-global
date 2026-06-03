@@ -1,8 +1,9 @@
 'use client';
 
-// Floating free-chat bar on the dashboard home. Sits just above the Liquid
-// Glass tab bar. Submitting opens a fresh "open" AI Rabbi conversation with the
-// typed question auto-sent.
+// Free-chat bar on the dashboard home. Rendered in-flow at the bottom of the
+// home column (the page pins it there with mt-auto), so it sits just above the
+// Liquid Glass tab bar without leaving an empty gap when content is short.
+// Submitting opens a fresh "open" AI Rabbi conversation with the question sent.
 
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -24,8 +25,8 @@ export function HomeAskBar() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-[74px] z-30 px-4 pointer-events-none safe-bottom">
-      <form onSubmit={submit} className="pointer-events-auto mx-auto max-w-xl">
+    <div>
+      <form onSubmit={submit} className="mx-auto max-w-xl">
         <div
           className="
             flex items-center gap-2 rounded-full pl-3.5 pr-1.5 py-1.5

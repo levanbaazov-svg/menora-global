@@ -11,34 +11,43 @@ const DEEP = '#14181F';
 const OUT = path.join(__dirname, '..', 'public');
 
 const cx = 256;
-const XS = [cx - 156, cx - 104, cx - 52, cx, cx + 52, cx + 104, cx + 156];
-const ARM_JOIN = [cx, 356]; // straight Chabad arms fan from one point
+const XS = [cx - 150, cx - 100, cx - 50, cx, cx + 50, cx + 100, cx + 150];
+const ARM_JOIN = [cx, 338]; // straight Chabad arms fan from one point on the shaft
 const CUP_Y = 196;          // top of arm / base of cup
-const FLAME_Y = 168;        // flame centre
+const FLAME_Y = 166;        // flame centre
+const ARM_W = 16;           // arm/shaft stroke weight
 
 function flame(x) {
   const h = 30;
   // teardrop: pointed top, rounded bottom
   return `<path d="M ${x} ${FLAME_Y - h}
-    C ${x + 17} ${FLAME_Y - h * 0.4}, ${x + 15} ${FLAME_Y + h * 0.25}, ${x} ${FLAME_Y + h * 0.3}
-    C ${x - 15} ${FLAME_Y + h * 0.25}, ${x - 17} ${FLAME_Y - h * 0.4}, ${x} ${FLAME_Y - h} Z"
+    C ${x + 16} ${FLAME_Y - h * 0.4}, ${x + 14} ${FLAME_Y + h * 0.25}, ${x} ${FLAME_Y + h * 0.3}
+    C ${x - 14} ${FLAME_Y + h * 0.25}, ${x - 16} ${FLAME_Y - h * 0.4}, ${x} ${FLAME_Y - h} Z"
     fill="${GOLD}"/>`;
 }
 function cup(x) {
-  // goblet bowl (trapezoid) + small knob under it
-  return `<path d="M ${x - 16} ${CUP_Y - 8} L ${x + 16} ${CUP_Y - 8} L ${x + 8} ${CUP_Y + 8} L ${x - 8} ${CUP_Y + 8} Z" fill="${GOLD}"/>
-    <circle cx="${x}" cy="${CUP_Y + 14}" r="4.5" fill="${GOLD}"/>`;
+  // goblet bowl (trapezoid) over a short stem — the oil cup of the menorah
+  return `<path d="M ${x - 17} ${CUP_Y - 10} L ${x + 17} ${CUP_Y - 10} L ${x + 9} ${CUP_Y + 7} L ${x - 9} ${CUP_Y + 7} Z" fill="${GOLD}"/>`;
+}
+
+// Traditional menorah foot: knop on the shaft → tapered stem → two stacked,
+// rounded tiers widening to the floor. Filled (not outlined) so it reads solid.
+function base() {
+  return `
+    <circle cx="${cx}" cy="358" r="13" fill="${GOLD}"/>
+    <path d="M 242 376 L 270 376 L 296 414 L 216 414 Z" fill="${GOLD}"/>
+    <rect x="206" y="410" width="100" height="17" rx="7" fill="${GOLD}"/>
+    <rect x="182" y="425" width="148" height="20" rx="9" fill="${GOLD}"/>`;
 }
 
 function menorah(scale = 1) {
-  const arms = XS.map((x) => `M ${ARM_JOIN[0]} ${ARM_JOIN[1]} L ${x} ${CUP_Y + 10}`).join(' ');
+  const arms = XS.map((x) => `M ${ARM_JOIN[0]} ${ARM_JOIN[1]} L ${x} ${CUP_Y + 8}`).join(' ');
   const inner = `
-    <g stroke="${GOLD}" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="${GOLD}" stroke-width="${ARM_W}" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path d="${arms}" />
-      <path d="M 256 ${ARM_JOIN[1]} L 256 414" />            <!-- central shaft to base -->
-      <path d="M 206 414 H 306" />                            <!-- base bar -->
-      <path d="M 224 ${ARM_JOIN[1]} L 200 414 M 288 ${ARM_JOIN[1]} L 312 414" />  <!-- foot legs -->
+      <path d="M ${cx} ${ARM_JOIN[1]} L ${cx} 372" />        <!-- central shaft down to the knop -->
     </g>
+    ${base()}
     ${XS.map(cup).join('')}
     ${XS.map(flame).join('')}`;
   return `<g transform="translate(256 256) scale(${scale}) translate(-256 -256)">${inner}</g>`;

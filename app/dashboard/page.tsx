@@ -42,7 +42,8 @@ export default async function DashboardPage() {
     ?? t('friend');
 
   return (
-    <div className="container mx-auto max-w-xl px-4 md:px-6 pt-2 pb-32 space-y-2.5">
+    <div className="container mx-auto max-w-xl w-full px-4 md:px-6 pt-2 pb-3 flex flex-1 flex-col">
+      <div className="space-y-2.5">
       {/* 1. Greeting + question (compact) */}
       <Reveal>
         <header className="px-0.5">
@@ -79,9 +80,13 @@ export default async function DashboardPage() {
       <Reveal delay={0.1}>
         <RoutineHomeCard userId={session.user.id} />
       </Reveal>
+      </div>
 
-      {/* 5. Free-chat bar — floats above the tab bar */}
-      <HomeAskBar />
+      {/* 5. Free-chat bar — pinned to the bottom of the viewport (mt-auto) so the
+          page stays balanced whether content is short or long. */}
+      <div className="mt-auto pt-4">
+        <HomeAskBar />
+      </div>
     </div>
   );
 }

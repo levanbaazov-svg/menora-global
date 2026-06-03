@@ -61,7 +61,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         platformAdmin={platformAdmin}
         signOutAction={signOutAction}
       />
-      <main className="flex-1 pb-28 md:pb-12">
+      <main className="flex-1 flex flex-col pb-28 md:pb-12">
         <PageTransition>{children}</PageTransition>
       </main>
       <BottomNav />

@@ -1,40 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
     <rect width="512" height="512" fill="#14181F"/>
     <g transform="translate(256 256) scale(1) translate(-256 -256)">
-    <g stroke="#C99B43" stroke-width="15" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M 256 356 L 100 206 M 256 356 L 152 206 M 256 356 L 204 206 M 256 356 L 256 206 M 256 356 L 308 206 M 256 356 L 360 206 M 256 356 L 412 206" />
-      <path d="M 256 356 L 256 414" />            <!-- central shaft to base -->
-      <path d="M 206 414 H 306" />                            <!-- base bar -->
-      <path d="M 224 356 L 200 414 M 288 356 L 312 414" />  <!-- foot legs -->
+    <g stroke="#C99B43" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 256 338 L 106 204 M 256 338 L 156 204 M 256 338 L 206 204 M 256 338 L 256 204 M 256 338 L 306 204 M 256 338 L 356 204 M 256 338 L 406 204" />
+      <path d="M 256 338 L 256 372" />        <!-- central shaft down to the knop -->
     </g>
-    <path d="M 84 188 L 116 188 L 108 204 L 92 204 Z" fill="#C99B43"/>
-    <circle cx="100" cy="210" r="4.5" fill="#C99B43"/><path d="M 136 188 L 168 188 L 160 204 L 144 204 Z" fill="#C99B43"/>
-    <circle cx="152" cy="210" r="4.5" fill="#C99B43"/><path d="M 188 188 L 220 188 L 212 204 L 196 204 Z" fill="#C99B43"/>
-    <circle cx="204" cy="210" r="4.5" fill="#C99B43"/><path d="M 240 188 L 272 188 L 264 204 L 248 204 Z" fill="#C99B43"/>
-    <circle cx="256" cy="210" r="4.5" fill="#C99B43"/><path d="M 292 188 L 324 188 L 316 204 L 300 204 Z" fill="#C99B43"/>
-    <circle cx="308" cy="210" r="4.5" fill="#C99B43"/><path d="M 344 188 L 376 188 L 368 204 L 352 204 Z" fill="#C99B43"/>
-    <circle cx="360" cy="210" r="4.5" fill="#C99B43"/><path d="M 396 188 L 428 188 L 420 204 L 404 204 Z" fill="#C99B43"/>
-    <circle cx="412" cy="210" r="4.5" fill="#C99B43"/>
-    <path d="M 100 138
-    C 117 156, 115 175.5, 100 177
-    C 85 175.5, 83 156, 100 138 Z"
-    fill="#C99B43"/><path d="M 152 138
-    C 169 156, 167 175.5, 152 177
-    C 137 175.5, 135 156, 152 138 Z"
-    fill="#C99B43"/><path d="M 204 138
-    C 221 156, 219 175.5, 204 177
-    C 189 175.5, 187 156, 204 138 Z"
-    fill="#C99B43"/><path d="M 256 138
-    C 273 156, 271 175.5, 256 177
-    C 241 175.5, 239 156, 256 138 Z"
-    fill="#C99B43"/><path d="M 308 138
-    C 325 156, 323 175.5, 308 177
-    C 293 175.5, 291 156, 308 138 Z"
-    fill="#C99B43"/><path d="M 360 138
-    C 377 156, 375 175.5, 360 177
-    C 345 175.5, 343 156, 360 138 Z"
-    fill="#C99B43"/><path d="M 412 138
-    C 429 156, 427 175.5, 412 177
-    C 397 175.5, 395 156, 412 138 Z"
+    
+    <circle cx="256" cy="358" r="13" fill="#C99B43"/>
+    <path d="M 242 376 L 270 376 L 296 414 L 216 414 Z" fill="#C99B43"/>
+    <rect x="206" y="410" width="100" height="17" rx="7" fill="#C99B43"/>
+    <rect x="182" y="425" width="148" height="20" rx="9" fill="#C99B43"/>
+    <path d="M 89 186 L 123 186 L 115 203 L 97 203 Z" fill="#C99B43"/><path d="M 139 186 L 173 186 L 165 203 L 147 203 Z" fill="#C99B43"/><path d="M 189 186 L 223 186 L 215 203 L 197 203 Z" fill="#C99B43"/><path d="M 239 186 L 273 186 L 265 203 L 247 203 Z" fill="#C99B43"/><path d="M 289 186 L 323 186 L 315 203 L 297 203 Z" fill="#C99B43"/><path d="M 339 186 L 373 186 L 365 203 L 347 203 Z" fill="#C99B43"/><path d="M 389 186 L 423 186 L 415 203 L 397 203 Z" fill="#C99B43"/>
+    <path d="M 106 136
+    C 122 154, 120 173.5, 106 175
+    C 92 173.5, 90 154, 106 136 Z"
+    fill="#C99B43"/><path d="M 156 136
+    C 172 154, 170 173.5, 156 175
+    C 142 173.5, 140 154, 156 136 Z"
+    fill="#C99B43"/><path d="M 206 136
+    C 222 154, 220 173.5, 206 175
+    C 192 173.5, 190 154, 206 136 Z"
+    fill="#C99B43"/><path d="M 256 136
+    C 272 154, 270 173.5, 256 175
+    C 242 173.5, 240 154, 256 136 Z"
+    fill="#C99B43"/><path d="M 306 136
+    C 322 154, 320 173.5, 306 175
+    C 292 173.5, 290 154, 306 136 Z"
+    fill="#C99B43"/><path d="M 356 136
+    C 372 154, 370 173.5, 356 175
+    C 342 173.5, 340 154, 356 136 Z"
+    fill="#C99B43"/><path d="M 406 136
+    C 422 154, 420 173.5, 406 175
+    C 392 173.5, 390 154, 406 136 Z"
     fill="#C99B43"/></g>
   </svg>
