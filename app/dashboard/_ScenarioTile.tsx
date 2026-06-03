@@ -40,19 +40,19 @@ export function ScenarioTile({ href, title, subtitle, tint, index = 0 }: Props) 
         href={href}
         style={{ backgroundImage: TINT_GRADIENT[tint] }}
         className="
-          group flex items-center justify-between gap-2 rounded-[18px] px-3.5 py-2.5
-          min-h-[60px]
+          group flex items-center justify-between gap-2 rounded-[20px] px-4 py-3.5
+          min-h-[84px]
           shadow-[0_1px_3px_rgba(20,24,31,0.05)]
           transition-shadow duration-200
           hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)]
         "
       >
         <div className="min-w-0">
-          <h3 className="font-serif text-[14px] font-semibold leading-[1.15] tracking-tight">
+          <h3 className="font-serif text-[15.5px] font-semibold leading-[1.15] tracking-tight">
             {title}
           </h3>
           {subtitle && (
-            <p className="text-[11px] text-foreground/55 mt-0.5 leading-snug truncate">{subtitle}</p>
+            <p className="text-[12px] text-foreground/55 mt-1 leading-snug truncate">{subtitle}</p>
           )}
         </div>
 
@@ -60,12 +60,12 @@ export function ScenarioTile({ href, title, subtitle, tint, index = 0 }: Props) 
         <div
           className="
             shrink-0 inline-flex items-center justify-center
-            w-7 h-7 rounded-full bg-foreground/90 text-background
+            w-8 h-8 rounded-full bg-foreground/90 text-background
             transition-transform duration-300
             group-hover:-translate-y-0.5 group-hover:translate-x-0.5
           "
         >
-          <ArrowUpRight size={13} strokeWidth={2.4} />
+          <ArrowUpRight size={15} strokeWidth={2.4} />
         </div>
       </Link>
     </motion.div>

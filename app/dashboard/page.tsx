@@ -42,9 +42,8 @@ export default async function DashboardPage() {
     ?? t('friend');
 
   return (
-    <div className="container mx-auto max-w-xl w-full px-4 md:px-6 pt-2 pb-3 flex flex-1 flex-col">
-      <div className="space-y-2.5">
-      {/* 1. Greeting + question (compact) */}
+    <div className="container mx-auto max-w-xl w-full px-4 md:px-6 pt-3 pb-3 flex flex-1 flex-col">
+      {/* 1. Greeting + question */}
       <Reveal>
         <header className="px-0.5">
           <h1 className="font-serif text-[26px] md:text-3xl font-semibold leading-[1.05] tracking-tight">
@@ -59,8 +58,8 @@ export default async function DashboardPage() {
         </header>
       </Reveal>
 
-      {/* 2. Scenario tiles — compact 2-col grid */}
-      <section className="grid grid-cols-2 gap-2">
+      {/* 2. Scenario tiles — 2-col grid */}
+      <section className="grid grid-cols-2 gap-2.5 mt-4">
         {SCENARIOS.map((s, i) => (
           <ScenarioTile
             key={s.href}
@@ -73,20 +72,22 @@ export default async function DashboardPage() {
         ))}
       </section>
 
-      {/* 3. AI proactive card */}
-      <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
+      {/* flexible breathing room — splits the slack evenly above/below the
+          AI + routine group so the screen fills organically on any height */}
+      <div className="flex-1 min-h-3" />
 
-      {/* 4. Routines */}
-      <Reveal delay={0.1}>
-        <RoutineHomeCard userId={session.user.id} />
-      </Reveal>
+      {/* 3+4. AI proactive card + routines */}
+      <div className="space-y-2.5">
+        <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
+        <Reveal delay={0.1}>
+          <RoutineHomeCard userId={session.user.id} />
+        </Reveal>
       </div>
 
-      {/* 5. Free-chat bar — pinned to the bottom of the viewport (mt-auto) so the
-          page stays balanced whether content is short or long. */}
-      <div className="mt-auto pt-4">
-        <HomeAskBar />
-      </div>
+      <div className="flex-1 min-h-3" />
+
+      {/* 5. Free-chat bar — sits at the bottom of the column, above the tab bar */}
+      <HomeAskBar />
     </div>
   );
 }
