@@ -5,7 +5,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // deployed site in a WebView rather than a static export — so it's always in
 // sync with what's on the web. Point `server.url` at your production deploy.
 const config: CapacitorConfig = {
-  appId: 'com.menorahglobal.app',
+  appId: 'com.menorahglobal.community',
   appName: 'Menorah',
   webDir: 'public',
   server: {
