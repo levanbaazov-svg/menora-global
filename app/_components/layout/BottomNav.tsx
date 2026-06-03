@@ -40,8 +40,9 @@ export function BottomNav() {
       aria-label="Bottom navigation"
       className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
     >
-      {/* Sits just above the home indicator; pill stretches a bit wider */}
-      <div className="px-2.5 pb-1 pt-2 flex justify-center">
+      {/* Sits just above the home indicator; pill inset slightly inside the
+          content width above it so it reads symmetric */}
+      <div className="px-5 pb-1 pt-2 flex justify-center">
         <div
           className="
             pointer-events-auto relative
