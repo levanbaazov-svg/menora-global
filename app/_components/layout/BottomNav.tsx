@@ -38,7 +38,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Bottom navigation"
-      className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
+      className="app-bottom-nav fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
     >
       {/* Sits just above the home indicator; pill inset slightly inside the
           content width above it so it reads symmetric */}

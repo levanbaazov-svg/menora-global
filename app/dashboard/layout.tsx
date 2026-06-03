@@ -5,6 +5,7 @@ import { getOnboardingInfo } from '@/lib/onboarding/server';
 import { isPlatformAdmin } from '@/lib/auth/platform';
 import { AppHeader } from '@/app/_components/layout/AppHeader';
 import { BottomNav } from '@/app/_components/layout/BottomNav';
+import { KeyboardChrome } from '@/app/_components/layout/KeyboardChrome';
 import { PageTransition } from '@/components/motion/PageTransition';
 import type { UserDisplay } from '@/lib/profile/display';
 
@@ -54,6 +55,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <KeyboardChrome />
       <AppHeader
         user={user}
         role={role}

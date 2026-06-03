@@ -295,6 +295,15 @@
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 .safe-top    { padding-top: env(safe-area-inset-top); }
 
+/* Tuck the floating tab bar away while the keyboard is open (set by
+   KeyboardChrome), so it doesn't float mid-screen above the keyboard. */
+.app-bottom-nav { transition: transform 0.2s ease, opacity 0.2s ease; }
+.keyboard-open .app-bottom-nav {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
  *  Prose styles (Inspire body)
  * ════════════════════════════════════════════════════════════════════════════ */
