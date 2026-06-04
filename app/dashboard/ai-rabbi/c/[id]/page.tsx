@@ -6,6 +6,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { SCENARIOS, type AIScenario } from '@/lib/ai/scenarios';
+import { SCENARIO_ICON } from '@/lib/ai/scenario-icons';
 import { Chat } from './Chat';
 
 const FETCH = /* GraphQL */ `
@@ -62,6 +63,7 @@ export default async function ConversationPage({
   if (!conv || conv.archived_at) notFound();
 
   const meta = SCENARIOS[conv.scenario];
+  const ScenarioIcon = SCENARIO_ICON[conv.scenario] ?? SCENARIO_ICON.open;
 
   // Initial UIMessages: persisted history shaped for @ai-sdk/react useChat.
   // We synthesize an "opener" assistant message if conversation is empty.
@@ -88,10 +90,10 @@ export default async function ConversationPage({
           ←
         </Link>
         <div
-          className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg"
+          className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: meta.tint }}
         >
-          {meta.emoji}
+          <ScenarioIcon size={17} strokeWidth={2} className="text-foreground/80" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold truncate">
