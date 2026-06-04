@@ -1,6 +1,7 @@
 // Dashboard home — Lovable layout, lucide everywhere, no emoji icons.
 // Goal: scenarios + AI card + routine all fit in one viewport (no long scroll).
 
+import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { hasuraAdmin } from '@/lib/hasura';
 import { redirect } from 'next/navigation';
@@ -76,12 +77,16 @@ export default async function DashboardPage() {
           AI + routine group so the screen fills organically on any height */}
       <div className="flex-1 min-h-3" />
 
-      {/* 3+4. AI proactive card + routines */}
+      {/* 3+4. AI proactive card + routines — streamed in via Suspense so the
+          home shell paints instantly instead of blocking on the AI suggestion
+          (an OpenAI call on the first load of the day). */}
       <div className="space-y-2.5">
-        <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
-        <Reveal delay={0.1}>
+        <Suspense fallback={<div className="h-[76px] rounded-[18px] bg-foreground/[0.06] animate-pulse" />}>
+          <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
+        </Suspense>
+        <Suspense fallback={<div className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse" />}>
           <RoutineHomeCard userId={session.user.id} />
-        </Reveal>
+        </Suspense>
       </div>
 
       <div className="flex-1 min-h-3" />
