@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ArrowUpRight, MessageCircle } from 'lucide-react';
 import { Reveal } from '@/components/motion/Reveal';
 import { AI_SCENARIOS, SCENARIOS, SCENARIO_ENUM_TO_SLUG } from '@/lib/ai/scenarios';
+import { openScenario } from './_actions';
 
 const FETCH = /* GraphQL */ `
   query AiRabbiHub($user_id: uuid!) {
@@ -63,19 +64,22 @@ export default async function AiRabbiHub() {
           const slug = SCENARIO_ENUM_TO_SLUG[s];
           return (
             <Reveal key={s} delay={0.03 * i}>
-              <Link
-                href={`/dashboard/ai-rabbi/${slug}`}
-                style={{ backgroundImage: TINT_GRADIENT[(meta.tint.match(/pastel-(\w+)/)?.[1]) ?? 'cream'] }}
-                className="group flex items-center justify-between gap-2 rounded-[20px] px-3.5 py-3 min-h-[76px] shadow-[0_1px_3px_rgba(20,24,31,0.05)] hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)] transition-shadow"
-              >
-                <div className="min-w-0">
-                  <div className="font-serif text-[15px] font-semibold leading-[1.15] tracking-tight">{meta.title}</div>
-                  <div className="text-[11px] text-foreground/55 mt-0.5 leading-snug">{meta.subtitle}</div>
-                </div>
-                <div className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-foreground/90 text-background transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-                  <ArrowUpRight size={13} strokeWidth={2.4} />
-                </div>
-              </Link>
+              <form action={openScenario}>
+                <input type="hidden" name="scenario" value={slug} />
+                <button
+                  type="submit"
+                  style={{ backgroundImage: TINT_GRADIENT[(meta.tint.match(/pastel-(\w+)/)?.[1]) ?? 'cream'] }}
+                  className="group flex w-full items-center justify-between gap-2 rounded-[20px] px-3.5 py-3 min-h-[76px] text-start shadow-[0_1px_3px_rgba(20,24,31,0.05)] hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)] transition-shadow"
+                >
+                  <div className="min-w-0">
+                    <div className="font-serif text-[15px] font-semibold leading-[1.15] tracking-tight">{meta.title}</div>
+                    <div className="text-[11px] text-foreground/55 mt-0.5 leading-snug">{meta.subtitle}</div>
+                  </div>
+                  <div className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-foreground/90 text-background transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                    <ArrowUpRight size={13} strokeWidth={2.4} />
+                  </div>
+                </button>
+              </form>
             </Reveal>
           );
         })}

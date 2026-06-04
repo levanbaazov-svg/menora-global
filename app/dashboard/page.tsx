@@ -64,7 +64,7 @@ export default async function DashboardPage() {
         {SCENARIOS.map((s, i) => (
           <ScenarioTile
             key={s.href}
-            href={s.href}
+            scenarioSlug={s.href.split('/').pop() as string}
             title={t(`scenarios.${s.key}Title`)}
             subtitle={t(`scenarios.${s.key}Subtitle`)}
             tint={s.tint}

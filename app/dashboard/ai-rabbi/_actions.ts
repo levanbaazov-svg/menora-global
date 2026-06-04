@@ -78,6 +78,50 @@ export async function startConversation(_prev: ActionState, formData: FormData):
   }
 }
 
+const FIND_EMPTY_IN_SCENARIO = /* GraphQL */ `
+  query FindEmpty($scenario: ai_scenario!) {
+    ai_conversations(
+      where: { scenario: { _eq: $scenario }, archived_at: { _is_null: true }, message_count: { _eq: 0 } }
+      order_by: { created_at: desc }
+      limit: 1
+    ) { id }
+  }
+`;
+
+/**
+ * One-tap entry from a scenario tile: skip the explanatory landing page and go
+ * straight into the chat. Reuses an existing empty conversation for the scenario
+ * so repeated taps don't pile up blank threads.
+ */
+export async function openScenario(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/');
+
+  const slug = String(formData.get('scenario') ?? '');
+  const scenarioEnum: AIScenario | undefined =
+    SCENARIO_SLUG_TO_ENUM[slug] ?? ((AI_SCENARIOS as readonly string[]).includes(slug) ? (slug as AIScenario) : undefined);
+  if (!scenarioEnum) redirect('/dashboard/ai-rabbi');
+
+  const client = await hasuraAsCurrentUser({ role: session.hasura.default_role });
+
+  const found = await client.request<{ ai_conversations: Array<{ id: string }> }>(
+    FIND_EMPTY_IN_SCENARIO, { scenario: scenarioEnum },
+  );
+  let id: string | undefined = found.ai_conversations[0]?.id;
+
+  if (!id) {
+    const r = await client.request<{ insert_ai_conversations_one: { id: string } | null }>(
+      INSERT_CONVERSATION,
+      { obj: { scenario: scenarioEnum, community_id: session.hasura.community_id } },
+    );
+    id = r.insert_ai_conversations_one?.id ?? undefined;
+  }
+  if (!id) throw new Error('Не удалось открыть разговор');
+
+  revalidatePath('/dashboard/ai-rabbi');
+  redirect(`/dashboard/ai-rabbi/c/${id}`);
+}
+
 /**
  * Free-text entry point from the home screen's "Спросить раввина" bar.
  * Creates an `open` conversation and hands off to the chat view, passing the

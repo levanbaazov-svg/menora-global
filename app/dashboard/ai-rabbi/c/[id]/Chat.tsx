@@ -7,6 +7,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage } from 'ai';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Sparkles } from 'lucide-react';
 
 interface InitialMessage {
   id: string;
@@ -229,10 +230,10 @@ function Bubble({
   return (
     <div className="flex items-start gap-2">
       <div
-        className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base"
+        className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center"
         style={{ background: scenarioTint }}
       >
-        {scenarioEmoji}
+        <Sparkles size={15} strokeWidth={2} className="text-foreground/80" />
       </div>
       <div className="max-w-[85%] rounded-3xl rounded-bl-md bg-(--color-bg-elevated) border border-(--color-border)/60 px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed">
         {typing ? <TypingDots /> : text}

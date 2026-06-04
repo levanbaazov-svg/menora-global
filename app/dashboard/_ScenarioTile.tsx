@@ -3,10 +3,10 @@
 // Lovable-style pastel scenario tile — light gradient tints, compact.
 // NO emoji — lucide arrow corner badge.
 
-import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
+import { openScenario } from '@/app/dashboard/ai-rabbi/_actions';
 
 export type ScenarioTint = 'yellow' | 'lavender' | 'mint' | 'rose' | 'sky' | 'cream';
 
@@ -21,14 +21,14 @@ const TINT_GRADIENT: Record<ScenarioTint, string> = {
 };
 
 interface Props {
-  href: string;
+  scenarioSlug: string;
   title: ReactNode;
   subtitle?: ReactNode;
   tint: ScenarioTint;
   index?: number;
 }
 
-export function ScenarioTile({ href, title, subtitle, tint, index = 0 }: Props) {
+export function ScenarioTile({ scenarioSlug, title, subtitle, tint, index = 0 }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -36,17 +36,20 @@ export function ScenarioTile({ href, title, subtitle, tint, index = 0 }: Props) 
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.03 * index }}
       whileTap={{ scale: 0.97 }}
     >
-      <Link
-        href={href}
-        style={{ backgroundImage: TINT_GRADIENT[tint] }}
-        className="
-          group flex items-center justify-between gap-2 rounded-[20px] px-4 py-3.5
-          min-h-[84px]
-          shadow-[0_1px_3px_rgba(20,24,31,0.05)]
-          transition-shadow duration-200
-          hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)]
-        "
-      >
+      {/* One tap → straight into the chat (no intermediate explainer page) */}
+      <form action={openScenario}>
+        <input type="hidden" name="scenario" value={scenarioSlug} />
+        <button
+          type="submit"
+          style={{ backgroundImage: TINT_GRADIENT[tint] }}
+          className="
+            group flex w-full items-center justify-between gap-2 rounded-[20px] px-4 py-3.5
+            min-h-[84px] text-start
+            shadow-[0_1px_3px_rgba(20,24,31,0.05)]
+            transition-shadow duration-200
+            hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)]
+          "
+        >
         <div className="min-w-0">
           <h3 className="font-serif text-[15.5px] font-semibold leading-[1.15] tracking-tight">
             {title}
@@ -67,7 +70,8 @@ export function ScenarioTile({ href, title, subtitle, tint, index = 0 }: Props) 
         >
           <ArrowUpRight size={15} strokeWidth={2.4} />
         </div>
-      </Link>
+        </button>
+      </form>
     </motion.div>
   );
 }
