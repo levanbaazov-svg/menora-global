@@ -170,7 +170,10 @@
     },
     "servicesTitle": "Сервисы общины",
     "serviceRequest": "Оставить заявку",
-    "serviceFree": "Бесплатно"
+    "serviceFree": "Бесплатно",
+    "serviceSentTitle": "Заявка принята",
+    "serviceSentBody": "Спасибо! Передали в общину — с вами скоро свяжутся.",
+    "serviceError": "Не удалось отправить, попробуйте ещё раз"
   },
   "admin": {
     "title": "Пульт раввина",

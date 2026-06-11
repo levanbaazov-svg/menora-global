@@ -11,6 +11,7 @@ import {
   createRequestSchema, postReplySchema,
   requestIdSchema, acceptReplySchema, replyIdSchema,
 } from '@/lib/requests/schema';
+import { getServicesForCommunity } from '@/lib/services/catalog';
 import { type ActionState, formValues, zodErrorsToMap } from '@/lib/onboarding/action-state';
 
 const INSERT_REQUEST = /* GraphQL */ `
@@ -78,6 +79,37 @@ export async function createRequest(_prev: ActionState, formData: FormData): Pro
   } catch (e) {
     if (e && typeof e === 'object' && 'digest' in e) throw e;
     return { formError: e instanceof Error ? e.message : 'Ошибка', values: formValues(formData) };
+  }
+}
+
+/**
+ * One-tap service order from the community page: creates a 'services' request
+ * (the rabbi/community sees it on the requests board) and returns success so
+ * the UI can show a confirmation. No form — the service is already specific.
+ */
+export async function requestService(slug: string): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'unauth' };
+
+  const svc = getServicesForCommunity('').find((s) => s.slug === slug);
+  if (!svc) return { ok: false, error: 'unknown' };
+
+  const client = await hasuraAsCurrentUser({ role: 'member' });
+  try {
+    await client.request(INSERT_REQUEST, {
+      obj: {
+        community_id: session.hasura.community_id,
+        category: 'services',
+        urgency: 'normal',
+        title: svc.title,
+        body: `Заявка на сервис общины: «${svc.title}». ${svc.teaser}`,
+        // user_id is preset by Hasura permission from X-Hasura-User-Id
+      },
+    });
+    revalidatePath('/dashboard/requests');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'error' };
   }
 }
 

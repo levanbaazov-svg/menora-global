@@ -14,10 +14,9 @@ import { cookies } from 'next/headers';
 import {
   MapPin, Users, Phone, Mail, Globe, MessageCircle, Navigation,
   ChevronRight, Search, CalendarDays, BookOpenText, Flame, AtSign,
-  DoorOpen, Box, Wine, UtensilsCrossed, HeartHandshake, BookMarked,
-  type LucideIcon,
 } from 'lucide-react';
-import { getServicesForCommunity, type ServiceIcon } from '@/lib/services/catalog';
+import { getServicesForCommunity } from '@/lib/services/catalog';
+import { ServiceRequestRow } from './_ServiceRequestRow';
 import { Reveal } from '@/components/motion/Reveal';
 import { Avatar } from '@/app/dashboard/_Avatar';
 import { CommunityTabs } from './CommunityTabs';
@@ -325,52 +324,23 @@ export default async function CommunityPage({
 }
 
 // ── Services section (info tab) ────────────────────────────────────────────
-// Сервисы общины — «мезуза в дом», «шабатний набор» и т.п. Пока из
-// lib/services/catalog.ts (демо); заявка уходит в раздел «Просьбы».
-const SERVICE_ICONS: Record<ServiceIcon, LucideIcon> = {
-  mezuzah:  DoorOpen,
-  tefillin: Box,
-  candles:  Flame,
-  shabbat:  Wine,
-  kosher:   UtensilsCrossed,
-  kaddish:  HeartHandshake,
-  books:    BookMarked,
-};
-
+// Сервисы общины — «мезуза в дом», «шабатний набор» и т.п. Один тап создаёт
+// заявку ('services' request) — раввин видит её в «Просьбах».
 function ServicesSection({ communitySlug, t }: { communitySlug: string; t: T }) {
   const services = getServicesForCommunity(communitySlug);
   if (services.length === 0) return null;
+  const labels = {
+    free: t('serviceFree'),
+    request: t('serviceRequest'),
+    sentTitle: t('serviceSentTitle'),
+    sentBody: t('serviceSentBody'),
+    error: t('serviceError'),
+  };
   return (
     <div className="space-y-2">
-      {services.map((s) => {
-        const Icon = SERVICE_ICONS[s.icon];
-        return (
-          <Link
-            key={s.slug}
-            href={`/dashboard/requests/new?service=${s.slug}`}
-            className="group flex items-center gap-3 rounded-2xl bg-card ring-1 ring-border/70 px-4 py-3 hover:ring-primary/30 transition-all"
-          >
-            <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/12 text-primary flex items-center justify-center">
-              <Icon size={16} strokeWidth={1.9} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium leading-tight flex items-center gap-2">
-                <span className="truncate">{s.title}</span>
-                {s.free && (
-                  <span className="shrink-0 rounded-full bg-primary/12 text-primary text-[10px] font-semibold px-2 py-0.5">
-                    {t('serviceFree')}
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{s.teaser}</div>
-            </div>
-            <span className="shrink-0 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-              {t('serviceRequest')}
-            </span>
-            <ChevronRight size={15} className="shrink-0 text-muted-foreground/50 rtl:-scale-x-100" />
-          </Link>
-        );
-      })}
+      {services.map((s) => (
+        <ServiceRequestRow key={s.slug} service={s} labels={labels} />
+      ))}
     </div>
   );
 }

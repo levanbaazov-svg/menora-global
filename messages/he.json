@@ -170,7 +170,10 @@
     },
     "servicesTitle": "שירותי הקהילה",
     "serviceRequest": "להשאיר בקשה",
-    "serviceFree": "חינם"
+    "serviceFree": "חינם",
+    "serviceSentTitle": "הבקשה התקבלה",
+    "serviceSentBody": "תודה! העברנו לקהילה — ניצור איתך קשר בקרוב.",
+    "serviceError": "השליחה נכשלה, נסו שוב"
   },
   "admin": {
     "title": "פאנל הרב",

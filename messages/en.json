@@ -170,7 +170,10 @@
     },
     "servicesTitle": "Community services",
     "serviceRequest": "Request",
-    "serviceFree": "Free"
+    "serviceFree": "Free",
+    "serviceSentTitle": "Request received",
+    "serviceSentBody": "Thank you! We have passed it to the community — we will be in touch.",
+    "serviceError": "Could not send, please try again"
   },
   "admin": {
     "title": "Rabbi Console",
