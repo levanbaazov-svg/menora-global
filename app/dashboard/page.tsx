@@ -45,24 +45,24 @@ export default async function DashboardPage() {
     ?? t('friend');
 
   return (
-    <div className="container mx-auto max-w-xl w-full px-4 md:px-6 pt-3 pb-3 flex flex-1 flex-col">
-      {/* 1. Greeting + question */}
+    <div className="container mx-auto max-w-xl w-full px-4 md:px-6 pt-2 pb-2 flex flex-col gap-2">
+      {/* 1. Greeting + question (compact) */}
       <Reveal>
         <header className="px-0.5">
-          <h1 className="font-serif text-[26px] md:text-3xl font-semibold leading-[1.05] tracking-tight">
+          <h1 className="font-serif text-[21px] md:text-2xl font-semibold leading-[1.1] tracking-tight">
             {t.rich('greeting', {
               name: firstName,
               accent: (chunks) => <em className="italic font-normal text-primary">{chunks}</em>,
             })}
           </h1>
-          <h2 className="font-serif text-base text-foreground/70 mt-1">
+          <h2 className="font-serif text-[13px] text-foreground/70 mt-0.5">
             {t('prompt')}
           </h2>
         </header>
       </Reveal>
 
       {/* 2. Scenario tiles — 2-col grid */}
-      <section className="grid grid-cols-2 gap-2.5 mt-4">
+      <section className="grid grid-cols-2 gap-2">
         {SCENARIOS.map((s, i) => (
           <ScenarioTile
             key={s.href}
@@ -75,29 +75,23 @@ export default async function DashboardPage() {
         ))}
       </section>
 
-      {/* flexible breathing room — splits the slack evenly above/below the
-          AI + routine group so the screen fills organically on any height */}
-      <div className="flex-1 min-h-3" />
+      {/* 3. AI proactive card — streamed via Suspense so the shell paints fast */}
+      <Suspense fallback={<div className="h-[68px] rounded-[18px] bg-foreground/[0.06] animate-pulse" />}>
+        <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
+      </Suspense>
 
-      {/* 3+4. AI proactive card + routines — streamed in via Suspense so the
-          home shell paints instantly instead of blocking on the AI suggestion
-          (an OpenAI call on the first load of the day). */}
-      <div className="space-y-2.5">
-        <Suspense fallback={<div className="h-[76px] rounded-[18px] bg-foreground/[0.06] animate-pulse" />}>
-          <DailyHomeCard userId={session.user.id} communityId={session.hasura.community_id} />
-        </Suspense>
-        <Suspense fallback={<div className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse" />}>
-          <RoutineHomeCard userId={session.user.id} />
-        </Suspense>
-        {/* Цдака — тихий блок после рутины */}
-        <TzedakahHomeCard />
-        {/* Сервисы общины — быстрый доступ */}
-        <ServicesHomeCard />
-      </div>
+      {/* 4. Routine */}
+      <Suspense fallback={<div className="h-20 rounded-2xl bg-foreground/[0.06] animate-pulse" />}>
+        <RoutineHomeCard userId={session.user.id} />
+      </Suspense>
 
-      <div className="flex-1 min-h-3" />
+      {/* 5. Цдака */}
+      <TzedakahHomeCard />
 
-      {/* 5. Free-chat bar — sits at the bottom of the column, above the tab bar */}
+      {/* 6. Сервисы общины */}
+      <ServicesHomeCard />
+
+      {/* 7. Free-chat bar */}
       <HomeAskBar />
     </div>
   );

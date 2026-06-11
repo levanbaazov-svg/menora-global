@@ -38,11 +38,11 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Bottom navigation"
-      className="app-bottom-nav fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-bottom"
+      className="app-bottom-nav fixed inset-x-0 bottom-0 z-40 pointer-events-none pb-[calc(env(safe-area-inset-bottom)*0.5)]"
     >
       {/* Sits just above the home indicator; pill inset slightly inside the
           content width above it so it reads symmetric */}
-      <div className="px-5 pb-1 pt-2 flex justify-center">
+      <div className="px-5 pb-0.5 pt-1.5 flex justify-center">
         <div
           className="
             pointer-events-auto relative

@@ -109,7 +109,7 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
       "
     >
       {/* Header */}
-      <div className="px-3.5 pt-3 pb-2 flex items-center gap-2.5">
+      <div className="px-3.5 pt-2.5 pb-1.5 flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
           <Flame size={15} strokeWidth={2} />
         </div>
@@ -123,7 +123,7 @@ export async function RoutineHomeCard({ userId }: { userId: string }) {
       </div>
 
       {/* Routine pills row */}
-      <div className="px-3.5 pb-3 pt-0.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+      <div className="px-3.5 pb-2.5 pt-0.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
         {next3.map((r) => {
           const label = r.custom_label ?? (KNOWN_TYPES.has(r.type) ? t(`types.${r.type}`) : r.type);
           const done = r.checkins.some((c) => c.gregorian_date === todayIso);
