@@ -1,0 +1,22 @@
+{
+  "tzedakah": {
+    "title": "Tzedakah",
+    "intro": "Community charity campaigns — with goals and progress. Even a small contribution is a mitzvah.",
+    "completed": "Completed campaigns",
+    "goalReached": "Goal reached",
+    "of": "of",
+    "ofGoal": "goal {goal}",
+    "donations": "{count} donations",
+    "until": "until {date}",
+    "chooseAmount": "Choose an amount",
+    "chaiNote": "Amounts are multiples of 18 — the gematria of “chai”, life.",
+    "donate": "Donate {amount}",
+    "thanksTitle": "Thank you for your tzedakah!",
+    "thanksDemo": "This is a demo — payments will be connected at launch.",
+    "demoNote": "Demo: campaigns are illustrative; payments are not connected.",
+    "homeTitle": "Tzedakah",
+    "homeQuote": "Great is tzedakah, for it brings the redemption closer",
+    "homeQuoteSource": "Bava Batra 10a",
+    "homeCta": "Give"
+  }
+}

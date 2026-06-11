@@ -105,7 +105,7 @@ export default async function DiscoverCommunitiesPage({
           description={t('discover.emptyDescription')}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
           {filtered.map((c, i) => (
             <CommunityCard
               key={c.slug}

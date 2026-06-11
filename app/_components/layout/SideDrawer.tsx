@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import {
   Sparkles, Flame, BookOpenText, ScanLine, Bell, UserRound,
   Bot, ShieldCheck, MailPlus, Settings2, LogOut, ChevronRight, LayoutDashboard,
+  HandCoins,
   type LucideIcon,
 } from 'lucide-react';
 import { Avatar } from '@/app/dashboard/_Avatar';
@@ -35,6 +36,7 @@ const SPIRITUAL: MenuItem[] = [
   { href: '/dashboard/ai-rabbi',       Icon: Sparkles,      labelKey: 'aiRabbi' },
   { href: '/dashboard/routines',       Icon: Flame,         labelKey: 'routine' },
   { href: '/dashboard/inspire',        Icon: BookOpenText,  labelKey: 'inspire' },
+  { href: '/dashboard/tzedakah',       Icon: HandCoins,     labelKey: 'tzedakah' },
 ];
 
 const PERSONAL: MenuItem[] = [

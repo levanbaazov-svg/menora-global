@@ -37,6 +37,7 @@
     "aiRabbi": "AI Rabbi",
     "routine": "My routine",
     "inspire": "Parsha · holidays · wisdom",
+    "tzedakah": "Tzedakah",
     "jewishId": "Jewish ID",
     "myProfile": "My profile",
     "notifications": "Notifications",
@@ -126,7 +127,11 @@
         "cta_label": "Open AI Rabbi",
         "cta_href": "/dashboard/ai-rabbi"
       }
-    ]
+    ],
+    "services": {
+      "title": "Community services",
+      "cta": "Order"
+    }
   },
   "community": {
     "tabs": {
@@ -162,7 +167,10 @@
       "instagram": "Instagram",
       "instagramValue": "Open profile",
       "address": "Address"
-    }
+    },
+    "servicesTitle": "Community services",
+    "serviceRequest": "Request",
+    "serviceFree": "Free"
   },
   "admin": {
     "title": "Rabbi Console",
@@ -296,7 +304,9 @@
     "past": "Past",
     "going": "Going",
     "host": "Host",
-    "free": "Free"
+    "free": "Free",
+    "goingCount": "+{count} going",
+    "beFirst": "Be the first!"
   },
   "profile": {
     "backToDashboard": "← To dashboard",

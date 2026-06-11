@@ -1,7 +1,8 @@
 'use client';
 
-// Community feed card — hero photo + name + location + denomination + members.
-// Used in the Discover feed (vertical scroll).
+// Community card — вертикальный постер (фото на всю карточку): бейдж
+// «моя община»/конфессия, счётчик участников, имя + город + описание на фото.
+// Используется в Discover (сетка 2 колонки).
 
 import Link from 'next/link';
 import { MapPin, Users } from 'lucide-react';
@@ -36,79 +37,66 @@ export function CommunityCard({ c, index = 0 }: { c: CommunityCardData; index?: 
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1], delay: 0.04 * index }}
+      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1], delay: 0.03 * (index % 8) }}
     >
       <Link
         href={href}
         className="
-          group block overflow-hidden rounded-2xl bg-card ring-1 ring-border/70
-          shadow-[0_1px_3px_rgba(20,24,31,0.05)]
-          transition-shadow duration-200 hover:shadow-[0_10px_28px_-6px_rgba(20,24,31,0.14)]
+          group relative block aspect-[3/4] overflow-hidden rounded-2xl
+          ring-1 ring-border/60
+          hover:ring-primary/40 hover:shadow-[0_12px_30px_-8px_rgba(20,24,31,0.22)]
+          transition-all
         "
       >
-        {/* Hero */}
-        <div className="relative h-40 overflow-hidden">
+        {/* Фото на всю карточку */}
+        <div className="absolute inset-0">
           {c.hero_image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={c.hero_image_url}
               alt={c.name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
           ) : (
             <MotifFallback variant="community" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-
-          {/* Badges */}
-          {c.isMine && (
-            <span className="absolute top-3 left-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
-              {t('myCommunity')}
-            </span>
-          )}
-          {c.denomination && !c.isMine && (
-            <span className="absolute top-3 left-3 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-foreground backdrop-blur">
-              {c.denomination}
-            </span>
-          )}
-
-          {/* Title block on photo */}
-          <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-            <h3 className="font-serif text-lg font-semibold leading-tight drop-shadow-sm">
-              {c.name}
-            </h3>
-            <div className="mt-1 flex items-center gap-3 text-xs text-white/90">
-              {(c.city || c.country_code) && (
-                <span className="inline-flex items-center gap-1">
-                  <MapPin size={12} strokeWidth={2} />
-                  {[c.city, c.country_code].filter(Boolean).join(', ')}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1">
-                <Users size={12} strokeWidth={2} />
-                {fmtCount(c.member_count_cached)}
-              </span>
-            </div>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/5" />
         </div>
 
-        {/* Description — padding on the wrapper, clamp on a padding-free inner
-            element (webkit-line-clamp + bottom padding leaks the next line). */}
-        {c.description && (
-          <div className="px-4 pt-2.5 pb-3.5">
-            <p
-              className="text-[13px] leading-relaxed text-foreground/70 overflow-hidden"
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                maxHeight: 'calc(2 * 1.625em)',
-              }}
-            >
+        {/* Бейдж слева: моя община / конфессия */}
+        {c.isMine ? (
+          <span className="absolute top-2.5 left-2.5 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-primary-foreground shadow-sm">
+            {t('myCommunity')}
+          </span>
+        ) : c.denomination ? (
+          <span className="absolute top-2.5 left-2.5 rounded-full bg-white/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-foreground shadow-sm">
+            {c.denomination}
+          </span>
+        ) : null}
+
+        {/* Участники справа */}
+        <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-black/35 backdrop-blur px-2 py-1 text-[10px] font-semibold text-white">
+          <Users size={11} strokeWidth={2.2} />
+          {fmtCount(c.member_count_cached)}
+        </span>
+
+        {/* Низ: имя + город + описание */}
+        <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+          <h3 className="font-serif text-[15px] font-semibold leading-snug drop-shadow-sm line-clamp-2">
+            {c.name}
+          </h3>
+          {(c.city || c.country_code) && (
+            <div className="mt-0.5 inline-flex items-center gap-1 text-[10.5px] text-white/85">
+              <MapPin size={11} strokeWidth={2} />
+              {[c.city, c.country_code].filter(Boolean).join(', ')}
+            </div>
+          )}
+          {c.description && (
+            <p className="mt-1 text-[10.5px] leading-snug text-white/75 line-clamp-2">
               {c.description}
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </Link>
     </motion.div>
   );

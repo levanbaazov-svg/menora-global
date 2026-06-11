@@ -37,6 +37,7 @@
     "aiRabbi": "רב AI",
     "routine": "השגרה שלי",
     "inspire": "פרשה · חגים · חוכמה",
+    "tzedakah": "צדקה",
     "jewishId": "תעודת זהות יהודית",
     "myProfile": "הפרופיל שלי",
     "notifications": "התראות",
@@ -126,7 +127,11 @@
         "cta_label": "לרב ה-AI",
         "cta_href": "/dashboard/ai-rabbi"
       }
-    ]
+    ],
+    "services": {
+      "title": "שירותי הקהילה",
+      "cta": "להזמין"
+    }
   },
   "community": {
     "tabs": {
@@ -162,7 +167,10 @@
       "instagram": "אינסטגרם",
       "instagramValue": "פתיחת פרופיל",
       "address": "כתובת"
-    }
+    },
+    "servicesTitle": "שירותי הקהילה",
+    "serviceRequest": "להשאיר בקשה",
+    "serviceFree": "חינם"
   },
   "admin": {
     "title": "פאנל הרב",
@@ -296,7 +304,9 @@
     "past": "שעברו",
     "going": "מגיע/ה",
     "host": "מארח/ת",
-    "free": "חינם"
+    "free": "חינם",
+    "goingCount": "+{count} מגיעים",
+    "beFirst": "היו הראשונים!"
   },
   "profile": {
     "backToDashboard": "← לדשבורד",

@@ -17,6 +17,9 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // Dev: Turbopack chunk names are not content-hashed — cache-first would
+  // serve stale CSS/JS after every edit. Bypass caching on localhost.
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return;
 
   const isStatic =
     url.pathname.startsWith('/_next/static') ||

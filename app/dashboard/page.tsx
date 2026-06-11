@@ -11,6 +11,8 @@ import { ScenarioTile, type ScenarioTint } from './_ScenarioTile';
 import { DailyHomeCard } from '@/app/_components/ai/DailyHomeCard';
 import { HomeAskBar } from '@/app/_components/ai/HomeAskBar';
 import { RoutineHomeCard } from './_RoutineHomeCard';
+import { TzedakahHomeCard } from './_TzedakahHomeCard';
+import { ServicesHomeCard } from './_ServicesHomeCard';
 
 const SCENARIOS: Array<{ href: string; key: string; tint: ScenarioTint }> = [
   { href: '/dashboard/ai-rabbi/purpose',       tint: 'yellow',   key: 'purpose' },
@@ -87,6 +89,10 @@ export default async function DashboardPage() {
         <Suspense fallback={<div className="h-24 rounded-2xl bg-foreground/[0.06] animate-pulse" />}>
           <RoutineHomeCard userId={session.user.id} />
         </Suspense>
+        {/* Цдака — тихий блок после рутины */}
+        <TzedakahHomeCard />
+        {/* Сервисы общины — быстрый доступ */}
+        <ServicesHomeCard />
       </div>
 
       <div className="flex-1 min-h-3" />

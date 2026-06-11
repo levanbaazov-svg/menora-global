@@ -37,6 +37,7 @@
     "aiRabbi": "AI Раввин",
     "routine": "Моя рутина",
     "inspire": "Парша · праздники · мудрости",
+    "tzedakah": "Цдака",
     "jewishId": "Jewish ID",
     "myProfile": "Мой профиль",
     "notifications": "Уведомления",
@@ -126,7 +127,11 @@
         "cta_label": "Открыть AI Раввина",
         "cta_href": "/dashboard/ai-rabbi"
       }
-    ]
+    ],
+    "services": {
+      "title": "Сервисы общины",
+      "cta": "Заказать"
+    }
   },
   "community": {
     "tabs": {
@@ -162,7 +167,10 @@
       "instagram": "Instagram",
       "instagramValue": "Открыть профиль",
       "address": "Адрес"
-    }
+    },
+    "servicesTitle": "Сервисы общины",
+    "serviceRequest": "Оставить заявку",
+    "serviceFree": "Бесплатно"
   },
   "admin": {
     "title": "Пульт раввина",
@@ -296,7 +304,9 @@
     "past": "Прошедшие",
     "going": "Иду",
     "host": "Хост",
-    "free": "Бесплатно"
+    "free": "Бесплатно",
+    "goingCount": "{count, plural, one {+# идёт} other {+# идут}}",
+    "beFirst": "Будь первым!"
   },
   "profile": {
     "backToDashboard": "← К дашборду",

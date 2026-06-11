@@ -89,24 +89,40 @@ export default async function EventDetailPage({
 
   return (
     <div className="container mx-auto max-w-xl px-0 md:px-6 pt-0 md:pt-3 pb-36">
-      {/* Hero */}
+      {/* Hero — афиша целиком (object-contain) поверх размытой себя же,
+          чтобы постер любой пропорции не обрезался */}
       <Reveal>
         <section className="relative">
-          <div className="relative h-56 md:h-64 md:rounded-2xl overflow-hidden">
+          <div className="relative md:rounded-2xl overflow-hidden bg-black/90">
             {e.cover_image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={e.cover_image_url} alt={e.title} className="h-full w-full object-cover" />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={e.cover_image_url}
+                  alt=""
+                  aria-hidden
+                  className="absolute inset-0 h-full w-full object-cover scale-110 blur-2xl opacity-50"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={e.cover_image_url}
+                  alt={e.title}
+                  className="relative z-[1] mx-auto max-h-[26rem] w-auto object-contain"
+                />
+              </>
             ) : (
-              <MotifFallback variant="event" />
+              <div className="h-56 md:h-64">
+                <MotifFallback variant="event" />
+              </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/5" />
+            <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
             <Link
               href="/dashboard/events"
-              className="absolute top-3 start-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
+              className="absolute z-[3] top-3 start-3 inline-flex items-center gap-1 rounded-full bg-white/85 backdrop-blur px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-white transition-colors"
             >
               <ChevronLeft size={14} className="rtl:-scale-x-100" /> {t('backToEvents')}
             </Link>
-            <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+            <div className="absolute z-[3] inset-x-0 bottom-0 p-5 text-white">
               <span className="inline-block rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-semibold text-foreground mb-2">
                 {typeLabel}
               </span>

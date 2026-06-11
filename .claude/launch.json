@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "/Users/simantovbaazov/Desktop/vaedai"],
       "port": 2300
+    },
+    {
+      "name": "static-docs",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/tmp/serve_docs.py"],
+      "port": 8800
     }
   ]
 }
