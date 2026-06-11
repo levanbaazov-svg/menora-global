@@ -43,19 +43,19 @@ export function ScenarioTile({ scenarioSlug, title, subtitle, tint, index = 0 }:
           type="submit"
           style={{ backgroundImage: TINT_GRADIENT[tint] }}
           className="
-            group flex w-full items-center justify-between gap-2 rounded-[18px] px-3.5 py-2.5
-            min-h-[58px] text-start
+            group flex w-full items-center justify-between gap-2 rounded-[20px] px-4 py-3.5
+            min-h-[78px] text-start
             shadow-[0_1px_3px_rgba(20,24,31,0.05)]
             transition-shadow duration-200
             hover:shadow-[0_6px_18px_-4px_rgba(20,24,31,0.12)]
           "
         >
         <div className="min-w-0">
-          <h3 className="font-serif text-[14px] font-semibold leading-[1.15] tracking-tight">
+          <h3 className="font-serif text-[15.5px] font-semibold leading-[1.15] tracking-tight">
             {title}
           </h3>
           {subtitle && (
-            <p className="text-[11px] text-foreground/55 mt-0.5 leading-snug truncate">{subtitle}</p>
+            <p className="text-[12px] text-foreground/55 mt-1 leading-snug truncate">{subtitle}</p>
           )}
         </div>
 
@@ -63,12 +63,12 @@ export function ScenarioTile({ scenarioSlug, title, subtitle, tint, index = 0 }:
         <div
           className="
             shrink-0 inline-flex items-center justify-center
-            w-7 h-7 rounded-full bg-foreground/90 text-background
+            w-8 h-8 rounded-full bg-foreground/90 text-background
             transition-transform duration-300
             group-hover:-translate-y-0.5 group-hover:translate-x-0.5
           "
         >
-          <ArrowUpRight size={13} strokeWidth={2.4} />
+          <ArrowUpRight size={15} strokeWidth={2.4} />
         </div>
         </button>
       </form>
