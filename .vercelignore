@@ -3,6 +3,7 @@ migrations/
 scripts/
 docs/
 hasura/
+research/
 
 # Test/dev artefacts
 .env

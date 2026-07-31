@@ -1,0 +1,7 @@
+# Downloaded public records — large, and re-fetchable from the DOR portal.
+data/
+# Screen output: target lists and dossiers contain real owner names and
+# addresses. Keep them out of the repo.
+out/
+__pycache__/
+*.pyc
