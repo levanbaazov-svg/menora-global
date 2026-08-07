@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════════════════════
+ *  Online Cheder — design tokens.
+ *  Clean white surface, ink buttons, per-subject color accents.
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.22 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --border: oklch(0.925 0.004 260);
+  --input: oklch(0.925 0.004 260);
+  --muted: oklch(0.967 0.003 260);
+  --muted-foreground: oklch(0.54 0.015 260);
+  --secondary: oklch(0.967 0.003 260);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.955 0.02 250);
+  --accent-foreground: oklch(0.46 0.19 262);
+  --primary: oklch(0.26 0.03 260);
+  --primary-foreground: oklch(1 0 0);
+  --destructive: oklch(0.58 0.22 27);
+  --ring: oklch(0.55 0.18 262);
+  --radius: 1rem;
+
+  /* Subject accents — saturated ink + soft wash */
+  --ch-blue: #2563eb;   --ch-blue-soft: #eff4ff;
+  --ch-violet: #7c3aed; --ch-violet-soft: #f5f2ff;
+  --ch-teal: #0d9488;   --ch-teal-soft: #effcf9;
+  --ch-amber: #d97706;  --ch-amber-soft: #fff8e9;
+  --ch-rose: #e11d48;   --ch-rose-soft: #fff0f2;
+  --ch-green: #16a34a;  --ch-green-soft: #f0fbf2;
+  --ch-sky: #0284c7;    --ch-sky-soft: #eff9ff;
+  --ch-slate: #64748b;  --ch-slate-soft: #f4f6f8;
+}
+
+/* The shell wraps everything in .cheder-theme; tokens already live on :root,
+ * so the class is a no-op kept for compatibility with the shared components. */
+.cheder-theme {}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-lg: calc(var(--radius) - 0.5rem);
+  --radius-xl: calc(var(--radius) - 0.25rem);
+  --radius-2xl: var(--radius);
+  --radius-3xl: calc(var(--radius) + 0.5rem);
+
+  --font-sans: var(--font-inter, ui-sans-serif), var(--font-hebrew), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-fraunces, ui-serif), var(--font-hebrew), Georgia, serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes cheder-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes cheder-pop { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes cheder-tug-l { 0%, 100% { transform: translateX(0) rotate(0deg); } 50% { transform: translateX(-8px) rotate(-2deg); } }
+@keyframes cheder-tug-r { 0%, 100% { transform: translateX(0) rotate(0deg); } 50% { transform: translateX(8px) rotate(2deg); } }
+@keyframes cheder-bubble { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 0.9; } 100% { transform: translateY(-46px); opacity: 0; } }
+@keyframes cheder-steam { 0% { transform: translateY(0) scaleX(1); opacity: 0; } 25% { opacity: 0.6; } 100% { transform: translateY(-34px) scaleX(1.5); opacity: 0; } }
+@keyframes cheder-dip { 0%, 100% { transform: translateY(-16px); } 55% { transform: translateY(4px); } }
+@keyframes cheder-rays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes cheder-draw { to { stroke-dashoffset: 0; } }
+@keyframes cheder-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cheder-shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
