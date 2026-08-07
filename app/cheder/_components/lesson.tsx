@@ -11,14 +11,17 @@ export function LessonShell({
   title,
   hebrewTitle,
   subtitle,
+  accent,
   children,
 }: {
   chip: string;
   title: string;
   hebrewTitle?: string;
   subtitle?: string;
+  accent?: { main: string; soft: string };
   children: React.ReactNode;
 }) {
+  const a = accent ?? { main: 'var(--ch-blue)', soft: 'var(--ch-blue-soft)' };
   return (
     <div className="py-6">
       <Link
@@ -29,14 +32,14 @@ export function LessonShell({
       </Link>
       <div className="mt-4 flex items-start justify-between gap-4">
         <div>
-          <span className="inline-flex rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
+          <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ backgroundColor: a.soft, color: a.main }}>
             {chip}
           </span>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
         {hebrewTitle && (
-          <p dir="rtl" className="shrink-0 pt-7 text-2xl font-semibold text-accent-foreground">
+          <p dir="rtl" className="shrink-0 pt-7 text-2xl font-semibold" style={{ color: a.main }}>
             {hebrewTitle}
           </p>
         )}
@@ -58,11 +61,11 @@ export function CompletionCard({
   onFinish: () => void;
 }) {
   return (
-    <div className="rounded-3xl border border-primary/30 bg-accent p-6 text-center">
-      <PartyPopper className="mx-auto size-8 text-accent-foreground" />
+    <div className="rounded-3xl border border-[var(--ch-green)]/40 bg-[var(--ch-green-soft)] p-6 text-center">
+      <PartyPopper className="mx-auto size-8 text-[var(--ch-green)]" />
       <p className="mt-3 font-serif text-xl font-semibold">{message}</p>
       {!alreadyDone && (
-        <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-foreground">
+        <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-bold text-[var(--ch-amber)]">
           +{reward} <Ticket className="size-4" /> tickets earned
         </p>
       )}
@@ -111,14 +114,14 @@ export function MasteryQuiz({
         <p
           className={cn(
             'mt-1 font-serif text-5xl font-semibold',
-            mastered ? 'text-primary' : 'text-muted-foreground',
+            mastered ? 'text-[var(--ch-green)]' : 'text-muted-foreground',
           )}
         >
           {masteryPct}%
         </p>
         <div className="mx-auto mt-3 h-2 w-48 overflow-hidden rounded-full bg-muted">
           <div
-            className={cn('h-full rounded-full', mastered ? 'bg-primary' : 'bg-muted-foreground/40')}
+            className={cn('h-full rounded-full', mastered ? 'bg-[var(--ch-green)]' : 'bg-muted-foreground/40')}
             style={{ width: `${masteryPct}%` }}
           />
         </div>
@@ -183,7 +186,7 @@ export function MasteryQuiz({
             className={cn(
               'w-full rounded-2xl border px-4 py-3 text-left text-[0.95rem] font-medium transition-colors',
               !answered && 'border-border bg-background hover:bg-muted',
-              answered && i === question.correct && 'border-primary bg-accent text-accent-foreground',
+              answered && i === question.correct && 'border-[var(--ch-green)]/50 bg-[var(--ch-green-soft)] text-[var(--ch-green)]',
               answered && picked === i && i !== question.correct &&
                 'border-destructive/40 bg-destructive/10 text-destructive',
               answered && picked !== i && i !== question.correct && 'border-border opacity-50',
@@ -196,7 +199,7 @@ export function MasteryQuiz({
       {answered && (
         <div className="mt-4">
           {isRight ? (
-            <p className="text-sm font-medium text-accent-foreground">
+            <p className="text-sm font-medium text-[var(--ch-green)]">
               {question.explain ?? 'Exactly right.'}
             </p>
           ) : (

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GraduationCap, Ticket, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { MelamedGuide } from './melamed';
 import { useCheder } from './state';
 
 export function ChederShell({ children }: { children: React.ReactNode }) {
@@ -12,16 +13,16 @@ export function ChederShell({ children }: { children: React.ReactNode }) {
   const onLanding = pathname === '/cheder';
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="cheder-theme min-h-dvh bg-background text-foreground">
       {!onLanding && ready && child && (
-        <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
+        <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
           <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-3 px-4">
             <Link href="/cheder/today" className="flex min-w-0 items-center gap-2">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                 <GraduationCap className="size-4.5" />
               </span>
               <span className="truncate font-serif text-lg font-semibold tracking-tight">
-                Online Cheder
+                Online <span style={{ color: 'var(--ch-blue)' }}>Cheder</span>
               </span>
             </Link>
             <div className="flex items-center gap-2">
@@ -37,19 +38,28 @@ export function ChederShell({ children }: { children: React.ReactNode }) {
               </Link>
               <Link
                 href="/cheder/store"
-                className="flex h-9 items-center gap-1.5 rounded-xl border border-primary/30 bg-accent px-3 font-semibold text-accent-foreground"
+                className="flex h-9 items-center gap-1.5 rounded-xl border px-3 font-bold"
+                style={{
+                  backgroundColor: 'var(--ch-amber-soft)',
+                  borderColor: 'color-mix(in oklch, var(--ch-amber) 35%, transparent)',
+                  color: 'var(--ch-amber)',
+                }}
               >
                 <Ticket className="size-4.5" />
                 <span className="tabular-nums">{tickets}</span>
               </Link>
-              <span className="flex size-9 items-center justify-center rounded-full bg-secondary text-sm font-bold uppercase">
+              <span
+                className="flex size-9 items-center justify-center rounded-full text-sm font-bold uppercase"
+                style={{ backgroundColor: 'var(--ch-blue-soft)', color: 'var(--ch-blue)' }}
+              >
                 {child.name.slice(0, 1)}
               </span>
             </div>
           </div>
         </header>
       )}
-      <main className="mx-auto max-w-3xl px-4 pb-16">{children}</main>
+      <main className="mx-auto max-w-3xl px-4 pb-36">{children}</main>
+      {ready && <MelamedGuide />}
     </div>
   );
 }

@@ -30,6 +30,7 @@ export default function TefillaLesson() {
 
   return (
     <LessonShell
+      accent={{ main: 'var(--ch-sky)', soft: 'var(--ch-sky-soft)' }}
       chip="Tefilla · Live class"
       title="Modeh Ani"
       hebrewTitle="מוֹדֶה אֲנִי"
@@ -70,9 +71,9 @@ export default function TefillaLesson() {
                 className={cn(
                   'w-full rounded-2xl border px-4 py-3 text-right text-2xl leading-relaxed transition-colors',
                   active === i
-                    ? 'border-primary bg-accent'
+                    ? 'border-[var(--ch-sky)]/60 bg-[var(--ch-sky-soft)]'
                     : learned.has(i)
-                      ? 'border-primary/40 bg-card'
+                      ? 'border-[var(--ch-sky)]/40 bg-card'
                       : 'border-border hover:bg-muted',
                 )}
               >
@@ -102,7 +103,7 @@ export default function TefillaLesson() {
       {stage === 'read' && (
         <div className="rounded-3xl border border-border bg-card p-6">
           <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Sunrise className="size-4 text-primary" /> Read each phrase out loud, then tap it
+            <Sunrise className="size-4 text-[var(--ch-sky)]" /> Read each phrase out loud, then tap it
           </p>
           <div dir="rtl" className="mt-4 space-y-3 text-3xl leading-relaxed">
             {PHRASES.map((phrase, i) => (
@@ -119,13 +120,13 @@ export default function TefillaLesson() {
                 }}
                 className={cn(
                   'block w-full rounded-2xl px-3 py-2 text-right transition-all',
-                  i === readPos && 'bg-accent text-accent-foreground shadow-sm',
+                  i === readPos && 'bg-[var(--ch-sky-soft)] text-[var(--ch-sky)] shadow-sm',
                   i < readPos && 'text-muted-foreground/50',
                   i > readPos && 'text-foreground/30',
                 )}
               >
                 {phrase.he}
-                {i < readPos && <Check className="mr-2 inline size-5 text-primary" />}
+                {i < readPos && <Check className="mr-2 inline size-5 text-[var(--ch-green)]" />}
               </button>
             ))}
           </div>

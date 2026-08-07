@@ -80,9 +80,9 @@ export default function ChumashLesson() {
                 className={cn(
                   'rounded-xl px-2 py-1 transition-colors',
                   activeWord === i
-                    ? 'bg-accent text-accent-foreground'
+                    ? 'bg-[var(--ch-blue-soft)] text-[var(--ch-blue)]'
                     : tapped.has(i)
-                      ? 'text-foreground underline decoration-primary/50 decoration-2 underline-offset-8'
+                      ? 'text-foreground underline decoration-[var(--ch-blue)]/50 decoration-2 underline-offset-8'
                       : 'text-foreground/70 hover:bg-muted',
                 )}
               >
@@ -115,7 +115,7 @@ export default function ChumashLesson() {
       {stage === 'rashi' && (
         <div className="rounded-3xl border border-border bg-card p-6">
           <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--ch-blue-soft)] text-[var(--ch-blue)]">
               <BookOpen className="size-4.5" />
             </span>
             <p className="font-serif text-lg font-semibold">Rashi asks:</p>
@@ -135,7 +135,7 @@ export default function ChumashLesson() {
                 className={cn(
                   'w-full rounded-2xl border px-4 py-3 text-left text-[0.95rem] font-medium transition-colors',
                   rashiPick === null && 'border-border hover:bg-muted',
-                  rashiPick !== null && i === 0 && 'border-primary bg-accent text-accent-foreground',
+                  rashiPick !== null && i === 0 && 'border-[var(--ch-green)]/50 bg-[var(--ch-green-soft)] text-[var(--ch-green)]',
                   rashiPick === i && i !== 0 && 'border-destructive/40 bg-destructive/10 text-destructive',
                   rashiPick !== null && rashiPick !== i && i !== 0 && 'border-border opacity-50',
                 )}

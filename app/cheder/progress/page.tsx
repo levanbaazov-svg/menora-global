@@ -5,11 +5,11 @@ import { LessonShell } from '../_components/lesson';
 import { useCheder } from '../_components/state';
 
 const SUBJECTS = [
-  { name: 'Kriah', level: 4, mastery: 82, tint: 'var(--scenario-sky)' },
-  { name: 'Chumash', level: 2, mastery: 91, tint: 'var(--scenario-yellow)' },
-  { name: 'Mishna', level: 1, mastery: 75, tint: 'var(--scenario-lavender)' },
-  { name: 'Math', level: 5, mastery: 88, tint: 'var(--scenario-mint)' },
-  { name: 'English reading', level: 3, mastery: 79, tint: 'var(--scenario-rose)' },
+  { name: 'Kriah', level: 4, mastery: 82, color: 'var(--ch-sky)' },
+  { name: 'Chumash', level: 2, mastery: 91, color: 'var(--ch-blue)' },
+  { name: 'Mishna', level: 1, mastery: 75, color: 'var(--ch-violet)' },
+  { name: 'Math', level: 5, mastery: 88, color: 'var(--ch-teal)' },
+  { name: 'English reading', level: 3, mastery: 79, color: 'var(--ch-green)' },
 ];
 
 export default function ProgressPage() {
@@ -27,7 +27,7 @@ export default function ProgressPage() {
           <div key={s.name} className="rounded-3xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">{s.name}</p>
-              <p className="text-sm font-bold" style={{ color: 'var(--color-gold-dark)' }}>
+              <p className="text-sm font-bold" style={{ color: s.color }}>
                 Level {s.level}
               </p>
             </div>
@@ -35,7 +35,7 @@ export default function ProgressPage() {
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${s.mastery}%`, backgroundColor: s.tint, filter: 'saturate(2.2) brightness(0.85)' }}
+                  style={{ width: `${s.mastery}%`, backgroundColor: s.color }}
                 />
               </div>
               <span className="w-10 text-right text-sm font-semibold text-muted-foreground tabular-nums">
@@ -47,8 +47,8 @@ export default function ProgressPage() {
 
         <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
           <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--scenario-cream)' }}>
-              <Flame className="size-5 text-foreground/80" />
+            <span className="flex size-10 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--ch-amber-soft)' }}>
+              <Flame className="size-5 text-[var(--ch-amber)]" />
             </span>
             <div>
               <p className="font-semibold">Davening streak</p>
@@ -61,7 +61,7 @@ export default function ProgressPage() {
 
       <div className="mt-4 space-y-2.5">
         <div className="flex items-start gap-3 rounded-3xl border border-border bg-card p-4 text-sm">
-          <RefreshCcw className="mt-0.5 size-4.5 shrink-0 text-primary" />
+          <RefreshCcw className="mt-0.5 size-4.5 shrink-0 text-[var(--ch-blue)]" />
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground">The plan rebuilds itself weekly.</span>{' '}
             Strong in math? Deeper problems, not busywork. Mishna dipping? More time, an easier
@@ -69,7 +69,7 @@ export default function ProgressPage() {
           </p>
         </div>
         <div className="flex items-start gap-3 rounded-3xl border border-border bg-card p-4 text-sm">
-          <Bell className="mt-0.5 size-4.5 shrink-0 text-primary" />
+          <Bell className="mt-0.5 size-4.5 shrink-0 text-[var(--ch-rose)]" />
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground">A person sees every dip, same day.</span>{' '}
             {name}&apos;s mashpia gets the flag before a small struggle becomes a big one.

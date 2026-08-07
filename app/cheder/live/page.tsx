@@ -27,6 +27,7 @@ export default function ChavrusaRoom() {
 
   return (
     <LessonShell
+      accent={{ main: 'var(--ch-rose)', soft: 'var(--ch-rose-soft)' }}
       chip="Chavrusa · Live"
       title="You & Levi"
       subtitle="Same pair all zman — matched by level and time zone"
@@ -38,13 +39,13 @@ export default function ChavrusaRoom() {
               <div
                 key={p.name}
                 className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-3xl border border-border"
-                style={{ backgroundColor: p.me ? 'var(--scenario-sky)' : 'var(--scenario-mint)' }}
+                style={{ backgroundColor: p.me ? 'var(--ch-sky-soft)' : 'var(--ch-teal-soft)' }}
               >
                 <span className="flex size-16 items-center justify-center rounded-full bg-card font-serif text-2xl font-bold shadow-sm">
                   {p.name.slice(0, 1).toUpperCase()}
                 </span>
                 <span className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-card/90 px-2.5 py-1 text-xs font-semibold">
-                  {p.me && muted ? <MicOff className="size-3.5 text-destructive" /> : <Mic className="size-3.5 text-primary" />}
+                  {p.me && muted ? <MicOff className="size-3.5 text-destructive" /> : <Mic className="size-3.5 text-[var(--ch-green)]" />}
                   {p.name}
                 </span>
                 <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-destructive/90 px-2 py-0.5 text-[0.65rem] font-bold text-white uppercase">
@@ -80,13 +81,13 @@ export default function ChavrusaRoom() {
                     }
                     className={cn(
                       'flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-[0.95rem] font-medium transition-colors',
-                      on ? 'border-primary/40 bg-accent/60' : 'border-border hover:bg-muted',
+                      on ? 'border-[var(--ch-green)]/40 bg-[var(--ch-green-soft)]' : 'border-border hover:bg-muted',
                     )}
                   >
                     <span
                       className={cn(
                         'flex size-6 shrink-0 items-center justify-center rounded-full border-2',
-                        on ? 'border-primary bg-primary text-primary-foreground' : 'border-border',
+                        on ? 'border-[var(--ch-green)] bg-[var(--ch-green)] text-white' : 'border-border',
                       )}
                     >
                       {on && <Check className="size-4" />}

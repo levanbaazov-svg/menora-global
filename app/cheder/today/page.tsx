@@ -22,6 +22,7 @@ type Block = {
   sub: string;
   icon: LucideIcon;
   tint: string;
+  fg: string;
   kind: 'live' | 'lesson' | 'platform' | 'recess' | 'off' | 'preview';
   href?: string;
   preview?: string;
@@ -29,18 +30,18 @@ type Block = {
 };
 
 const BLOCKS: Block[] = [
-  { id: 'tefilla', time: '8:00', title: 'Tefilla — whole class', sub: 'Live · Modeh Ani, morning brachos', icon: Sunrise, tint: 'var(--scenario-sky)', kind: 'live', href: '/cheder/lesson/tefilla' },
-  { id: 'chumash', time: '8:40', title: 'Chumash — Bereishis', sub: 'The very first pasuk + Rashi\u2019s question', icon: BookOpen, tint: 'var(--scenario-yellow)', kind: 'lesson', href: '/cheder/lesson/chumash' },
-  { id: 'recess-1', time: '9:15', title: 'Recess', sub: 'Approved games only — pick one', icon: Gamepad2, tint: 'var(--scenario-mint)', kind: 'recess', href: '/cheder/play' },
-  { id: 'mishna', time: '9:35', title: 'Mishna — Shnayim Ochazin', sub: 'Two people, one tallis: the sugya map', icon: Scale, tint: 'var(--scenario-lavender)', kind: 'lesson', href: '/cheder/lesson/mishna' },
-  { id: 'chavrusa', time: '10:10', title: 'Chavrusa with Levi', sub: 'Live · retell the Mishna to each other', icon: Users, tint: 'var(--scenario-rose)', kind: 'live', href: '/cheder/live' },
-  { id: 'math', time: '10:40', title: 'Math — my own pace', sub: 'Fluency sprint + adaptive practice', icon: Calculator, tint: 'var(--scenario-sky)', kind: 'platform', href: '/cheder/lesson/math' },
-  { id: 'lunch', time: '11:30', title: 'Lunch & outside', sub: 'Real-world time', icon: UtensilsCrossed, tint: 'var(--scenario-cream)', kind: 'off' },
-  { id: 'english', time: '1:00', title: 'English reading', sub: 'Adaptive reading · your level', icon: BookMarked, tint: 'var(--scenario-mint)', kind: 'preview', preview: 'A serious adaptive reading program (Lexia-class) at exactly the child\u2019s level — part of the ~2-hour general-studies block, the same subjects Chabad schools teach, done properly.' },
-  { id: 'chassidus', time: '1:45', title: 'Chassidus — story time', sub: 'The Alter Rebbe + the sefiros chart', icon: Star, tint: 'var(--scenario-lavender)', kind: 'preview', preview: 'A story of the Alter Rebbe, then the sefiros chart assembled by hand like a puzzle — every canonical chart approved by the Rav before a child ever sees it.' },
-  { id: 'create', time: '2:15', title: 'Bring it to life', sub: 'Make a picture of what you learned', icon: Sparkles, tint: 'var(--scenario-yellow)', kind: 'preview', preview: 'The child turns today\u2019s learning into a picture or a 30-second clip — only inside scene templates the Rav approves in advance. Nothing is generated free-form.' },
-  { id: 'shiur', time: '2:30', title: 'Shiur with Rabbi Khanukaev', sub: 'Live · the whole cheder together', icon: Video, tint: 'var(--scenario-rose)', kind: 'preview', previewLive: true, preview: 'Three times a week the whole cheder gathers live with the Rav — the anchor that makes this a school, not an app.' },
-  { id: 'mincha', time: '3:15', title: 'Mincha + day recap', sub: 'Live · finish the day together', icon: Sunset, tint: 'var(--scenario-cream)', kind: 'preview', previewLive: true, preview: 'The day closes the way it opened: together. Mincha, a two-minute recap of what everyone learned, and tickets for the day are counted.' },
+  { id: 'tefilla', time: '8:00', title: 'Tefilla — whole class', sub: 'Live · Modeh Ani, morning brachos', icon: Sunrise, tint: 'var(--ch-sky-soft)', fg: 'var(--ch-sky)', kind: 'live', href: '/cheder/lesson/tefilla' },
+  { id: 'chumash', time: '8:40', title: 'Chumash — Bereishis', sub: 'The very first pasuk + Rashi\u2019s question', icon: BookOpen, tint: 'var(--ch-blue-soft)', fg: 'var(--ch-blue)', kind: 'lesson', href: '/cheder/lesson/chumash' },
+  { id: 'recess-1', time: '9:15', title: 'Recess', sub: 'Approved games only — pick one', icon: Gamepad2, tint: 'var(--ch-green-soft)', fg: 'var(--ch-green)', kind: 'recess', href: '/cheder/play' },
+  { id: 'mishna', time: '9:35', title: 'Mishna — Shnayim Ochazin', sub: 'Two people, one tallis: the sugya map', icon: Scale, tint: 'var(--ch-violet-soft)', fg: 'var(--ch-violet)', kind: 'lesson', href: '/cheder/lesson/mishna' },
+  { id: 'chavrusa', time: '10:10', title: 'Chavrusa with Levi', sub: 'Live · retell the Mishna to each other', icon: Users, tint: 'var(--ch-rose-soft)', fg: 'var(--ch-rose)', kind: 'live', href: '/cheder/live' },
+  { id: 'math', time: '10:40', title: 'Math — my own pace', sub: 'Fluency sprint + adaptive practice', icon: Calculator, tint: 'var(--ch-teal-soft)', fg: 'var(--ch-teal)', kind: 'platform', href: '/cheder/lesson/math' },
+  { id: 'lunch', time: '11:30', title: 'Lunch & outside', sub: 'Real-world time', icon: UtensilsCrossed, tint: 'var(--ch-slate-soft)', fg: 'var(--ch-slate)', kind: 'off' },
+  { id: 'english', time: '1:00', title: 'English reading', sub: 'Adaptive reading · your level', icon: BookMarked, tint: 'var(--ch-green-soft)', fg: 'var(--ch-green)', kind: 'preview', preview: 'A serious adaptive reading program (Lexia-class) at exactly the child\u2019s level — part of the ~2-hour general-studies block, the same subjects Chabad schools teach, done properly.' },
+  { id: 'chassidus', time: '1:45', title: 'Chassidus — story time', sub: 'The Alter Rebbe + the sefiros chart', icon: Star, tint: 'var(--ch-violet-soft)', fg: 'var(--ch-violet)', kind: 'preview', preview: 'A story of the Alter Rebbe, then the sefiros chart assembled by hand like a puzzle — every canonical chart approved by the Rav before a child ever sees it.' },
+  { id: 'create', time: '2:15', title: 'Bring it to life', sub: 'Turn today\u2019s learning into a living scene', icon: Sparkles, tint: 'var(--ch-amber-soft)', fg: 'var(--ch-amber)', kind: 'lesson', href: '/cheder/create' },
+  { id: 'shiur', time: '2:30', title: 'Shiur with Rabbi Khanukaev', sub: 'Live · the whole cheder together', icon: Video, tint: 'var(--ch-rose-soft)', fg: 'var(--ch-rose)', kind: 'preview', previewLive: true, preview: 'Three times a week the whole cheder gathers live with the Rav — the anchor that makes this a school, not an app.' },
+  { id: 'mincha', time: '3:15', title: 'Mincha + day recap', sub: 'Live · finish the day together', icon: Sunset, tint: 'var(--ch-sky-soft)', fg: 'var(--ch-sky)', kind: 'preview', previewLive: true, preview: 'The day closes the way it opened: together. Mincha, a two-minute recap of what everyone learned, and tickets for the day are counted.' },
 ];
 
 function hebrewToday(): { date: string; parsha: string } {
@@ -91,8 +92,7 @@ export default function TodayPage() {
           </p>
           <div className="mt-1 h-1.5 w-24 overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-primary transition-all"
-              style={{ width: `${(doneCount / doable.length) * 100}%` }}
+              className="h-full rounded-full transition-all" style={{ backgroundColor: 'var(--ch-green)', width: `${(doneCount / doable.length) * 100}%` }}
             />
           </div>
         </div>
@@ -113,8 +113,8 @@ export default function TodayPage() {
                 style={{ backgroundColor: block.tint }}
               >
                 {block.kind === 'off'
-                  ? <MonitorOff className="size-5 text-foreground/60" />
-                  : <Icon className="size-5 text-foreground/80" />}
+                  ? <MonitorOff className="size-5" style={{ color: block.fg }} />
+                  : <Icon className="size-5" style={{ color: block.fg }} />}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2">
@@ -133,11 +133,11 @@ export default function TodayPage() {
               </span>
               <span className="flex shrink-0 items-center gap-2 self-center">
                 {done ? (
-                  <span className="flex size-7 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                  <span className="flex size-7 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--ch-green-soft)', color: 'var(--ch-green)' }}>
                     <Check className="size-4" />
                   </span>
                 ) : isNext ? (
-                  <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+                  <span className="rounded-full px-2.5 py-1 text-xs font-bold text-white" style={{ backgroundColor: 'var(--ch-blue)' }}>
                     Up next
                   </span>
                 ) : block.kind === 'off' ? (
@@ -151,7 +151,7 @@ export default function TodayPage() {
 
           const cardCls = cn(
             'flex w-full items-start gap-3 rounded-3xl border bg-card p-3 text-left transition-colors',
-            isNext ? 'border-primary/50 shadow-sm shadow-primary/10' : 'border-border',
+            isNext ? 'border-[var(--ch-blue)]/40 shadow-sm' : 'border-border',
             block.kind === 'off' && 'border-dashed bg-transparent',
           );
 
@@ -175,11 +175,11 @@ export default function TodayPage() {
 
       <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
         <div className="flex items-center gap-3 rounded-3xl border border-border bg-card p-3.5 text-sm">
-          <CalendarHeart className="size-5 shrink-0 text-primary" />
+          <CalendarHeart className="size-5 shrink-0" style={{ color: 'var(--ch-rose)' }} />
           <span><span className="font-semibold">Thursday 4:00</span> — your weekly 1:1 with your mashpia</span>
         </div>
         <div className="flex items-center gap-3 rounded-3xl border border-border bg-card p-3.5 text-sm">
-          <MapPin className="size-5 shrink-0 text-primary" />
+          <MapPin className="size-5 shrink-0" style={{ color: 'var(--ch-blue)' }} />
           <span><span className="font-semibold">Sunday</span> — cheder meetup & raffle at Chabad of Atlanta</span>
         </div>
       </div>
@@ -192,7 +192,7 @@ export default function TodayPage() {
                 className="mb-2 flex size-12 items-center justify-center rounded-2xl"
                 style={{ backgroundColor: preview.tint }}
               >
-                <preview.icon className="size-6 text-foreground/80" />
+                <preview.icon className="size-6" style={{ color: preview.fg }} />
               </span>
               <DrawerTitle className="font-serif text-2xl">{preview.title}</DrawerTitle>
               <DrawerDescription className="text-base">{preview.preview}</DrawerDescription>

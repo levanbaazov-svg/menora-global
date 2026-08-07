@@ -8,14 +8,15 @@ import { LessonShell } from '../_components/lesson';
 import { useCheder } from '../_components/state';
 
 const ITEMS = [
-  { name: 'Pizza party with the class', cost: 25, icon: Pizza, tint: 'var(--scenario-yellow)' },
-  { name: 'Seforim set (mailed home)', cost: 40, icon: BookMarked, tint: 'var(--scenario-mint)' },
-  { name: 'Remote-control car', cost: 60, icon: Car, tint: 'var(--scenario-sky)' },
+  { name: 'Pizza party with the class', cost: 25, icon: Pizza, tint: 'var(--ch-amber-soft)', fg: 'var(--ch-amber)' },
+  { name: 'Seforim set (mailed home)', cost: 40, icon: BookMarked, tint: 'var(--ch-blue-soft)', fg: 'var(--ch-blue)' },
+  { name: 'Remote-control car', cost: 60, icon: Car, tint: 'var(--ch-teal-soft)', fg: 'var(--ch-teal)' },
   {
     name: 'Give tzedakah — the cheder matches it',
     cost: 10,
     icon: HeartHandshake,
-    tint: 'var(--scenario-rose)',
+    tint: 'var(--ch-rose-soft)',
+    fg: 'var(--ch-rose)',
     tzedakah: true,
   },
 ];
@@ -25,28 +26,29 @@ export default function StorePage() {
 
   return (
     <LessonShell
+      accent={{ main: 'var(--ch-amber)', soft: 'var(--ch-amber-soft)' }}
       chip="Cheder store"
       title="My tickets"
       subtitle="Earned for mastered units, streaks, chavrusa and davening skills"
     >
-      <div className="flex items-center justify-between rounded-3xl border border-primary/30 bg-accent p-5">
+      <div className="flex items-center justify-between rounded-3xl border border-[var(--ch-amber)]/40 bg-[var(--ch-amber-soft)] p-5">
         <div className="flex items-center gap-3">
           <span className="flex size-12 items-center justify-center rounded-2xl bg-card">
-            <Ticket className="size-6 text-primary" />
+            <Ticket className="size-6 text-[var(--ch-amber)]" />
           </span>
           <div>
             <p className="font-serif text-3xl font-semibold tabular-nums">{tickets}</p>
             <p className="text-xs font-medium text-muted-foreground">tickets to spend</p>
           </div>
         </div>
-        <Gift className="size-8 text-accent-foreground/50" />
+        <Gift className="size-8 text-[var(--ch-amber)]/50" />
       </div>
 
       <div className="mt-4 rounded-3xl border border-border bg-card p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="flex items-center gap-2 font-serif text-lg font-semibold">
-              <Trophy className="size-5 text-primary" /> Rosh Chodesh Raffle
+              <Trophy className="size-5 text-[var(--ch-amber)]" /> Rosh Chodesh Raffle
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Drawn <span className="font-semibold text-foreground">live this Sunday</span> at the
@@ -54,7 +56,7 @@ export default function StorePage() {
             </p>
           </div>
           {raffleEntries > 0 && (
-            <span className="shrink-0 rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">
+            <span className="shrink-0 rounded-full bg-[var(--ch-amber-soft)] px-2.5 py-1 text-xs font-bold text-[var(--ch-amber)]">
               {raffleEntries} {raffleEntries === 1 ? 'entry' : 'entries'}
             </span>
           )}
@@ -79,7 +81,7 @@ export default function StorePage() {
           return (
             <div key={item.name} className="flex flex-col rounded-3xl border border-border bg-card p-4">
               <span className="flex size-12 items-center justify-center rounded-2xl" style={{ backgroundColor: item.tint }}>
-                <Icon className="size-5 text-foreground/80" />
+                <Icon className="size-5" style={{ color: item.fg }} />
               </span>
               <p className="mt-3 text-sm font-semibold leading-snug">{item.name}</p>
               <Button

@@ -102,14 +102,15 @@ export default function MathSprint() {
 
   return (
     <LessonShell
+      accent={{ main: 'var(--ch-teal)', soft: 'var(--ch-teal-soft)' }}
       chip="Math · your own pace"
       title="Fluency sprint"
       subtitle="60 seconds. The questions grow with you."
     >
       {stage === 'idle' && (
         <div className="rounded-3xl border border-border bg-card p-6 text-center">
-          <span className="mx-auto flex size-14 items-center justify-center rounded-3xl" style={{ backgroundColor: 'var(--scenario-sky)' }}>
-            <Zap className="size-7 text-foreground/80" />
+          <span className="mx-auto flex size-14 items-center justify-center rounded-3xl" style={{ backgroundColor: 'var(--ch-teal-soft)' }}>
+            <Zap className="size-7 text-[var(--ch-teal)]" />
           </span>
           <p className="mt-4 font-serif text-2xl font-semibold">Ready?</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
@@ -137,16 +138,16 @@ export default function MathSprint() {
               <span className="tabular-nums">{timeLeft}s</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <TrendingUp className="size-4 text-primary" /> Level {level}
+              <TrendingUp className="size-4 text-[var(--ch-teal)]" /> Level {level}
             </span>
-            <span className={cn('flex items-center gap-1', streak >= 3 ? 'text-primary' : 'text-muted-foreground')}>
+            <span className={cn('flex items-center gap-1', streak >= 3 ? 'text-[var(--ch-amber)]' : 'text-muted-foreground')}>
               <Flame className={cn('size-4', streak >= 3 && 'fill-current')} />
               <span className="tabular-nums">{streak}</span>
             </span>
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-primary transition-all duration-1000 ease-linear"
+              className="h-full rounded-full bg-[var(--ch-teal)] transition-all duration-1000 ease-linear"
               style={{ width: `${(timeLeft / ROUND_SECONDS) * 100}%` }}
             />
           </div>
@@ -172,14 +173,14 @@ export default function MathSprint() {
       )}
 
       {stage === 'end' && (
-        <div className="rounded-3xl border border-primary/30 bg-accent p-6 text-center">
-          <p className="text-sm font-semibold text-accent-foreground uppercase">Time!</p>
+        <div className="rounded-3xl border border-[var(--ch-teal)]/40 bg-[var(--ch-teal-soft)] p-6 text-center">
+          <p className="text-sm font-semibold text-[var(--ch-teal)] uppercase">Time!</p>
           <p className="mt-2 font-serif text-6xl font-semibold tabular-nums">{score}</p>
           <p className="mt-1 text-sm text-muted-foreground">
             correct answers · best streak {bestStreak} · reached level {level}
           </p>
           {!alreadyDone && (
-            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-bold text-accent-foreground">
+            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-bold text-[var(--ch-amber)]">
               +{earned} <Ticket className="size-4" /> tickets
             </p>
           )}
