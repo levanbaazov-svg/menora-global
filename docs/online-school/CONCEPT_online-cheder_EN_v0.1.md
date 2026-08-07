@@ -75,4 +75,4 @@ In a physical classroom of 20–30, everyone moves at one pace: the quick boys w
 - **Winter–Spring 2027:** build-out of content and platform, guidelines and review process running, pricing and scholarship mechanics settled.
 - **Elul 2027:** first full wave of enrollment.
 
-*Prepared by Lev with the founding team. This is a draft for the Rav's honest criticism — the sharper, the better.*
+*Prepared by Siman Tov with the founding team. This is a draft for the Rav's honest criticism — the sharper, the better.*
