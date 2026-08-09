@@ -1,5 +1,9 @@
 # Online Cheder
 
+> **Taking over this project?** Start with **[AGENTS.md](./AGENTS.md)** — full context in one file.
+> The build specification is **[docs/PLATFORM_SPEC.md](./docs/PLATFORM_SPEC.md)**.
+> Live: **https://online-cheder.vercel.app**
+
 Interactive demo of the Online Cheder platform — a full Jewish day-school
 experience online: live davening and chavrusas, mastery-based lessons,
 sugya maps, a "bring it to life" scene studio, tickets & raffle motivation,
