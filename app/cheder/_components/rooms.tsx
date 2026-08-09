@@ -147,8 +147,9 @@ export function RoomVignette({ kind, main }: { kind: Room['vignette']; main: str
     <svg viewBox="0 0 120 72" className="h-16 w-full" aria-hidden>
       {kind === 'aron' && (
         <g>
-          <path d="M35 64 v-34 a25 25 0 0 1 50 0 v34" {...stroke} />
-          <path d="M60 22 v42 M48 34 h24 M48 46 h24" {...stroke} strokeWidth={4} opacity={0.7} />
+          <path d="M33 64 v-32 a27 27 0 0 1 54 0 v32" {...stroke} />
+          <path d="M44 62 v-19 a7.5 7.5 0 0 1 15 0 v19 z" fill={main} opacity={0.85} />
+          <path d="M61 62 v-19 a7.5 7.5 0 0 1 15 0 v19 z" fill={main} opacity={0.6} />
         </g>
       )}
       {kind === 'sefer' && (
@@ -188,7 +189,8 @@ export function RoomVignette({ kind, main }: { kind: Room['vignette']; main: str
       {kind === 'ball' && (
         <g>
           <circle cx="60" cy="40" r="22" {...stroke} />
-          <path d="M60 18 v44 M38 40 h44 M45 24 q15 16 30 32 M75 24 q-15 16 -30 32" stroke={main} strokeWidth={3} fill="none" opacity={0.6} />
+          <polygon points="60,32 52.4,37.5 55.3,46.5 64.7,46.5 67.6,37.5" fill={main} opacity={0.8} />
+          <path d="M60 32 L60 20 M52.4 37.5 L41 33.8 M55.3 46.5 L48.2 56.2 M64.7 46.5 L71.8 56.2 M67.6 37.5 L79 33.8" stroke={main} strokeWidth={3} fill="none" opacity={0.6} />
         </g>
       )}
       {kind === 'gift' && (
