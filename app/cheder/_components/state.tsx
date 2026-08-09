@@ -5,7 +5,7 @@ import * as React from 'react';
 // Demo state for the Online Cheder prototype. localStorage-backed so the Rav
 // can enroll the first talmid on his own iPad and it survives reloads.
 
-export type Child = { name: string; grade: number };
+export type Child = { name: string; grade: number; favorite?: string };
 
 type Persisted = {
   child: Child | null;

@@ -2,17 +2,18 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Mic, Sunrise } from 'lucide-react';
+import { Check, Mic, Sunrise, Volume2 } from 'lucide-react';
+import { speak } from '../../_components/voice';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CompletionCard, LessonShell } from '../../_components/lesson';
 import { useCheder } from '../../_components/state';
 
 const PHRASES = [
-  { he: 'מוֹדֶה אֲנִי לְפָנֶיךָ', en: 'I give thanks before You' },
-  { he: 'מֶלֶךְ חַי וְקַיָּם', en: 'living and everlasting King' },
-  { he: 'שֶׁהֶחֱזַרְתָּ בִּי נִשְׁמָתִי בְּחֶמְלָה', en: 'for You returned my neshama to me with kindness' },
-  { he: 'רַבָּה אֱמוּנָתֶךָ', en: 'great is Your faithfulness' },
+  { he: 'מוֹדֶה אֲנִי לְפָנֶיךָ', tr: 'Modeh ani lefanecha', en: 'I give thanks before You' },
+  { he: 'מֶלֶךְ חַי וְקַיָּם', tr: 'melech chai vekayam', en: 'living and everlasting King' },
+  { he: 'שֶׁהֶחֱזַרְתָּ בִּי נִשְׁמָתִי בְּחֶמְלָה', tr: 'shehechezarta bi nishmasi bechemla', en: 'for You returned my neshama to me with kindness' },
+  { he: 'רַבָּה אֱמוּנָתֶךָ', tr: 'rabba emunasecha', en: 'great is Your faithfulness' },
 ];
 
 const CLASSMATES = ['Levi', 'Mendy', 'Sholom', 'Zalmy'];
@@ -31,6 +32,7 @@ export default function TefillaLesson() {
   return (
     <LessonShell
       accent={{ main: 'var(--ch-sky)', soft: 'var(--ch-sky-soft)' }}
+      intro="Boker tov! Let us thank Hashem for a brand new day — word by word."
       chip="Tefilla · Live class"
       title="Modeh Ani"
       hebrewTitle="מוֹדֶה אֲנִי"
@@ -86,6 +88,15 @@ export default function TefillaLesson() {
               </button>
             ))}
           </div>
+          {active !== null && (
+            <button
+              type="button"
+              onClick={() => speak(`${PHRASES[active].tr} — ${PHRASES[active].en}`)}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-border py-2 text-sm font-semibold text-[var(--ch-sky)] transition-colors hover:bg-muted"
+            >
+              <Volume2 className="size-4" /> Hear this phrase
+            </button>
+          )}
           <Button
             size="lg"
             disabled={!allLearned}

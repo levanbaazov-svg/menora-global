@@ -1,4 +1,4 @@
-# Online Cheder — Platform Specification v1.0
+# Online Cheder — Platform Specification v1.1
 
 *Prepared by Siman Tov and the founding team · August 2026.*
 
@@ -6,7 +6,7 @@ This document is a complete, self-contained specification of the Online Cheder p
 
 Requirement language: **MUST** = non-negotiable; **SHOULD** = strong default, deviate only with a documented reason; **MAY** = optional.
 
-**Authority.** The school operates under the spiritual leadership of **Rabbi Adi Khanukaev** (Chabad, Cheder Atlanta). Every content rule, visual boundary, and halachic question in this document ultimately routes to him ("the Rav"). His written guidelines override any default stated here.
+**Authority.** The school operates under the spiritual leadership of **Rabbi Adi Khanukaev** (Chabad). **Home base: Miami, Florida** — first cohorts anchor to Eastern Time; the first in-person hub is the Chabad House in Hollywood, FL. Every content rule, visual boundary, and halachic question in this document ultimately routes to him ("the Rav"). His written guidelines override any default stated here.
 
 ---
 
@@ -60,7 +60,7 @@ Rule: **every school day, each child meets live people at least three times.**
 - **Word-level interactive text** — Chumash, Mishna and siddur text opens word by word on tap: translation, shoresh, Rashi's comment where relevant.
 - **"Bring it to life"** — after finishing a unit the child generates an illustration or a 20–30-second video of what he just learned (see §8.1 for the strict template mechanism).
 - **Diagram puzzles** — sefiros, seder hishtalshelus, mishkan layout, halachic processes (e.g., hagalas keilim): canonical diagrams the child assembles like a puzzle.
-- **Guide character** — an animated melamed mascot accompanies the child everywhere (see §5.10).
+- **Guide character** — a fully animated, *speaking* melamed mascot accompanies the child everywhere (see §5.0 and §5.10).
 
 ### P4 — Motivation economy
 
@@ -103,12 +103,25 @@ Rules:
 
 ## 5. Experience Specification
 
+### 5.0 Voice-first interaction layer
+The school talks. This is a platform-wide layer, not a feature of one screen:
+- **The Rebbe speaks.** Every guidance moment — onboarding, the school tour, entering a room, starting a lesson, praise on mastery — is delivered by the guide character with real speech and lip-synced animation. Implementation today: on-device speech synthesis (works offline, no keys); production: a realtime voice model (e.g. GPT-realtime / Gemini Live class) behind the same `voice` module, so the swap touches one file.
+- **Voice commands.** A microphone button on the character listens and navigates: "Chumash", "math", "my day", "store" — the child steers the school by talking to the Rebbe. Production upgrades this to free conversation with the AI-tutor rules of §8.2.
+- **Everything can be heard.** Every Hebrew phrase and word carries a "hear it" control (transliteration + meaning read aloud); lesson texts are narrated; the siddur reads along.
+- Voice defaults ON with a one-tap mute, persisted per device. No audio is ever recorded or stored (P5).
+
 ### 5.1 Accounts & onboarding
 - **Family account** (parent email/password + OAuth), children as sub-profiles; one login per child on his device via magic link / device profile — a child never types passwords daily.
 - Enrollment flow: family application → intake call scheduling → payment/voucher/scholarship setup → child diagnostic (§6.1) → cohort & chavrusa assignment → device setup guide (managed mode).
 - Roles: child, parent, rebbi, mashpia, content editor, Rav (reviewer), admin.
 
-### 5.2 My Day (child home)
+### 5.2 The school campus (child home)
+The child lands in a **school**, not a menu: a campus of illustrated classroom doors — Beis Midrash, Chumash Room, Mishna & Gemara, Chassidus Corner, Math Lab, Library & English, Art Studio, the Yard, the Cheder Store, and My Desk. Each door shows its Hebrew name, a hand-drawn vignette and a live status line ("Today: Bereishis 1:1").
+- **First-visit tour:** the Rebbe walks the child door to door with voice — exactly like being shown around a new school — ending at "start my day". Re-playable anytime ("Tour again").
+- **Classrooms:** entering a room gives a subject home, like a physical classroom: the day's task front and center (into the lesson player), a **class board** (moderated discussion with classmates — the rebbi reads everything), a **shelf** of extra materials (stories, maps, audio, puzzles), and one-tap **"Ask the Rebbi"**.
+- Onboarding is conversational: the character greets the child by voice, asks his name, grade and favorite subject step by step — the school knows him before he walks in.
+
+### 5.2a My Day (schedule view)
 The schedule of §4. Greeting by name, Hebrew date + parsha, day progress (n of m blocks), ticket balance always visible in the header, one-tap navigation to store and progress.
 
 ### 5.3 Live rooms
@@ -247,13 +260,22 @@ Framed exactly as strong Chabad schools frame it (reference: Lubavitch Education
 
 ## 13. Build Roadmap
 - **Phase 1 — Pilot school (fall 2026):** family accounts + child profiles; My Day + schedule engine (one cohort); lesson player with word-tap, quiz, sugya map, mastery gates; interactive siddur v1; live rooms (tefilla, shiur, chavrusa); tickets v1 + first live raffle; progress + auto parent report; guide character; 2 kodesh subjects fully in-player, rest via live classes; 1 adaptive math platform integrated; 3–5 volunteer families from the Rav's community. *Accept:* a real child completes a full school day end-to-end; gates 2, 3, 4, 8 pass.
-- **Phase 2 — Depth (winter–spring 2027):** diagnostic + weekly replan engine + staff console flags; "Bring it to life" with live generation + moderation; recess catalog; store fulfillment; content studio with review workflow + versioning; AI tutor beta behind evals; second kodesh subject wave; reading platform integrated. *Accept:* all §12 gates green; 20+ families in daily use.
-- **Phase 3 — School wave (Elul 2027):** enrollment funnel + payments/vouchers/scholarships; city-hub management; multiple cohorts/time zones; girls' cohorts prep; RU/HE UI groundwork. *Accept:* E2E gate 8 in production; first full grade-band running.
+- **Phase 2 — Depth (winter–spring 2027):** realtime voice-model integration for the Rebbe (conversation, not only narration); diagnostic + weekly replan engine + staff console flags; "Bring it to life" with live generation + moderation; recess catalog; store fulfillment; content studio with review workflow + versioning; AI tutor beta behind evals; second kodesh subject wave; reading platform integrated. *Accept:* all §12 gates green; 20+ families in daily use.
+- **Phase 3 — School wave (Elul 2027):** first 2–3 Chabad House micro-campuses onboarded (§15); enrollment funnel + payments/vouchers/scholarships; city-hub management; multiple cohorts/time zones; girls' cohorts prep; RU/HE UI groundwork. *Accept:* E2E gate 8 in production; first full grade-band running.
 
 ## 14. Economics Snapshot (context for builders)
 Tuition target $3,000–4,500/year (inside Florida PEP-class voucher amounts, ~⅕–⅓ of physical day school; anchors: Nigri ~$4.6k, AFA $4.9k). Staffing: the Rav (leadership, review, shiurim), 1–2 rebbeim, mashpiim at 1:10–15, small content+engineering team. The margin exists to fund the live fabric (P1) — protect it.
 
-## 15. Open Items Owned by the Rav
+## 15. Chabad House Micro-Campus Network (the growth engine)
+There are Chabad Houses in nearly every city on earth — and most have no Jewish school nearby (example: Hollywood, FL — several Chabad Houses, no Jewish day school). The platform turns each one into a **micro-campus**, franchise-style:
+
+- **The offer to a shliach:** a ready school-in-a-box. The platform brings the full program, live rebbeim, personalization and the cohort; the Chabad House brings a room, supervision (often the rebbetzin), warmth, recess and lunch. 6–12 local children learn together on site.
+- **What the shliach needs:** iPads/laptops with the school's managed profile (hardware kit list shipped as part of hub onboarding), Wi-Fi, one responsible adult on site.
+- **Platform support:** a *hub* entity in the data model (roster, on-site adult role, attendance, hub dashboard), hub events (monthly raffle draw, farbrengens), hub onboarding kit and training, co-branded enrollment page per hub.
+- **Economics:** hub revenue share on tuition of its children (exact split TBD with the Rav) — the shliach gains a school and a parnassa line; the network gains rooted, supervised, in-person presence everywhere.
+- **Why it wins:** the largest Jewish infrastructure network in the world already exists. This model uses it instead of building against it — and answers the strongest objection to online school ("a child alone at home") with a real room, real friends, and a real adult.
+
+## 16. Open Items Owned by the Rav
 Written guidelines document (§P5, §8) · scene-template approvals · siddur scope per grade · store/raffle catalog and competitiveness caps · language of instruction details (Hebrew/Yiddish balance) · girls' program timing.
 
 ## Glossary (for builders new to the domain)

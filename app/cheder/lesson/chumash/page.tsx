@@ -2,18 +2,19 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Volume2 } from 'lucide-react';
+import { speak } from '../../_components/voice';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CompletionCard, LessonShell, MasteryQuiz, type QuizQuestion } from '../../_components/lesson';
 import { useCheder } from '../../_components/state';
 
 const WORDS = [
-  { he: 'בְּרֵאשִׁית', en: 'In the beginning' },
-  { he: 'בָּרָא', en: 'created' },
-  { he: 'אֱלֹקִים', en: 'Hashem' },
-  { he: 'אֵת הַשָּׁמַיִם', en: 'the heavens' },
-  { he: 'וְאֵת הָאָרֶץ', en: 'and the earth' },
+  { he: 'בְּרֵאשִׁית', tr: 'Bereishis', en: 'In the beginning' },
+  { he: 'בָּרָא', tr: 'bara', en: 'created' },
+  { he: 'אֱלֹקִים', tr: 'Elokim', en: 'Hashem' },
+  { he: 'אֵת הַשָּׁמַיִם', tr: 'es hashamayim', en: 'the heavens' },
+  { he: 'וְאֵת הָאָרֶץ', tr: "ve'es ha'aretz", en: 'and the earth' },
 ];
 
 const RASHI_CHOICES = [
@@ -58,6 +59,7 @@ export default function ChumashLesson() {
 
   return (
     <LessonShell
+      intro="Bereishis! The very first words of the whole Torah. Open every word — and then Rashi has a question for you."
       chip="Chumash · Unit 1"
       title="Bereishis 1:1"
       hebrewTitle="בְּרֵאשִׁית"
@@ -92,10 +94,18 @@ export default function ChumashLesson() {
           </div>
           <div className="mt-4 flex min-h-12 items-center rounded-2xl bg-secondary px-4 py-3">
             {activeWord !== null ? (
-              <p className="text-sm">
+              <p className="flex w-full items-center text-sm">
                 <span dir="rtl" className="text-lg font-semibold">{WORDS[activeWord].he}</span>
                 <span className="mx-2 text-muted-foreground">—</span>
                 <span className="font-medium">{WORDS[activeWord].en}</span>
+                <button
+                  type="button"
+                  aria-label="Hear it"
+                  onClick={() => speak(`${WORDS[activeWord].tr} — ${WORDS[activeWord].en}`)}
+                  className="ml-auto flex size-8 items-center justify-center rounded-full bg-card text-[var(--ch-blue)] shadow-sm"
+                >
+                  <Volume2 className="size-4" />
+                </button>
               </p>
             ) : (
               <p className="text-sm text-muted-foreground">The meaning appears here</p>

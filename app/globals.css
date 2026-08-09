@@ -83,3 +83,22 @@ body {
 @keyframes cheder-draw { to { stroke-dashoffset: 0; } }
 @keyframes cheder-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes cheder-shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+
+/* ── Rebbe character animation ── */
+.rb-bob { animation: cheder-float 3.4s ease-in-out infinite; }
+.rb-eye { animation: rb-blink 4.6s ease-in-out infinite; }
+@keyframes rb-blink { 0%, 93%, 100% { transform: scaleY(1); } 95%, 97% { transform: scaleY(0.08); } }
+.rb-mouth-open { opacity: 0; }
+.rb-talking .rb-mouth-open { animation: rb-mouth-o 0.32s steps(1) infinite; }
+.rb-talking .rb-mouth-closed { animation: rb-mouth-c 0.32s steps(1) infinite; }
+@keyframes rb-mouth-o { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes rb-mouth-c { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+.rb-waving .rb-arm { animation: rb-wave 1.5s ease-in-out; }
+@keyframes rb-wave { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(-28deg); } 40% { transform: rotate(6deg); } 60% { transform: rotate(-22deg); } 80% { transform: rotate(0deg); } }
+
+/* ── Room door hover ── */
+.cheder-door { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.cheder-door:hover { transform: translateY(-4px); box-shadow: 0 12px 28px -12px rgb(15 23 42 / 0.25); }
+
+/* ── Tour spotlight ── */
+.tour-highlight { position: relative; z-index: 45; box-shadow: 0 0 0 4px var(--ch-blue), 0 0 0 9999px rgb(15 23 42 / 0.55); border-radius: 1.5rem; }

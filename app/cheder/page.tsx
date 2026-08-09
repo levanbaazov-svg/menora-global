@@ -2,39 +2,67 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, GraduationCap, HeartHandshake, Sparkles, Users } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calculator, MapPin, Scale, Star, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { REBBE_NAME, RebbeArt, useRebbe } from './_components/rebbe';
 import { useCheder } from './_components/state';
 
 const GRADES = [1, 2, 3, 4, 5];
 
-const PILLARS = [
-  { icon: Users, text: 'Live davening, chavrusas and shiurim — every single day', main: 'var(--ch-rose)', soft: 'var(--ch-rose-soft)' },
-  { icon: Sparkles, text: 'A personal program that adapts to every child', main: 'var(--ch-amber)', soft: 'var(--ch-amber-soft)' },
-  { icon: BookOpen, text: 'Torah that comes alive: maps, charts, interactive text', main: 'var(--ch-blue)', soft: 'var(--ch-blue-soft)' },
-  { icon: HeartHandshake, text: 'A mashpia for every 10–15 talmidim', main: 'var(--ch-green)', soft: 'var(--ch-green-soft)' },
+const FAVORITES: Array<{ id: string; label: string; icon: LucideIcon; main: string; soft: string }> = [
+  { id: 'chumash', label: 'Chumash', icon: BookOpen, main: 'var(--ch-blue)', soft: 'var(--ch-blue-soft)' },
+  { id: 'mishna', label: 'Mishna', icon: Scale, main: 'var(--ch-violet)', soft: 'var(--ch-violet-soft)' },
+  { id: 'math', label: 'Math', icon: Calculator, main: 'var(--ch-teal)', soft: 'var(--ch-teal-soft)' },
+  { id: 'stories', label: 'Stories', icon: Star, main: 'var(--ch-amber)', soft: 'var(--ch-amber-soft)' },
 ];
+
+type Step = 'hello' | 'name' | 'grade' | 'favorite';
+const STEPS: Step[] = ['hello', 'name', 'grade', 'favorite'];
 
 export default function ChederLanding() {
   const router = useRouter();
   const { ready, child, enroll, reset } = useCheder();
+  const { say } = useRebbe();
+  const [step, setStep] = React.useState<Step>('hello');
   const [name, setName] = React.useState('');
   const [grade, setGrade] = React.useState<number | null>(null);
+
+  const goName = () => {
+    say(`Sholom aleichem! I am ${REBBE_NAME}, your melamed. And what is your name?`, { wave: true });
+    setStep('name');
+  };
+  const goGrade = () => {
+    if (!name.trim()) return;
+    say(`${name.trim()}! A beautiful name. And what grade are you in?`);
+    setStep('grade');
+  };
+  const goFavorite = (g: number) => {
+    setGrade(g);
+    say(`Grade ${g} — wonderful. One more thing: what do you love learning most?`);
+    setStep('favorite');
+  };
+  const finish = (favorite: string) => {
+    if (!name.trim() || grade === null) return;
+    enroll({ name: name.trim(), grade, favorite });
+    say(`Welcome to the cheder, ${name.trim()}! Come — let me show you your school.`, { wave: true });
+    router.push('/cheder/school');
+  };
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center py-10">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <span className="mx-auto mb-4 flex size-16 items-center justify-center rounded-3xl bg-primary text-primary-foreground shadow-lg shadow-black/10">
-            <GraduationCap className="size-8" />
-          </span>
-          <h1 className="font-serif text-4xl font-semibold tracking-tight">Online <span style={{ color: 'var(--ch-blue)' }}>Cheder</span></h1>
-          <p className="mt-1 text-sm font-medium text-muted-foreground">
-            with Rabbi Khanukaev · Cheder Atlanta
+        <div className="mb-6 text-center">
+          <RebbeArt className="mx-auto h-44 w-auto drop-shadow-xl" />
+          <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight">
+            Online <span style={{ color: 'var(--ch-blue)' }}>Cheder</span>
+          </h1>
+          <p className="mt-1 flex items-center justify-center gap-1.5 text-sm font-medium text-muted-foreground">
+            <MapPin className="size-3.5" style={{ color: 'var(--ch-blue)' }} />
+            with Rabbi Khanukaev · Miami, Florida
           </p>
-          <p dir="rtl" className="mt-3 text-lg font-medium" style={{ color: 'var(--ch-blue)' }}>
+          <p dir="rtl" className="mt-2 text-lg font-medium" style={{ color: 'var(--ch-blue)' }}>
             חינוך של חדר — לכל ילד, בכל מקום
           </p>
         </div>
@@ -51,9 +79,9 @@ export default function ChederLanding() {
               <Button
                 size="lg"
                 className="mt-5 h-12 w-full rounded-2xl text-base"
-                onClick={() => router.push('/cheder/today')}
+                onClick={() => router.push('/cheder/school')}
               >
-                Open my day
+                Enter my school
               </Button>
               <Button
                 variant="ghost"
@@ -65,69 +93,106 @@ export default function ChederLanding() {
               </Button>
             </div>
           ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!name.trim() || grade === null) return;
-                enroll({ name: name.trim(), grade });
-                router.push('/cheder/today');
-              }}
-            >
-              <h2 className="font-serif text-xl font-semibold">Enroll your first talmid</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                This is a live demo — the account is created right here on this device.
-              </p>
-              <label className="mt-5 block text-sm font-medium" htmlFor="cheder-name">
-                Child&apos;s name
-              </label>
-              <Input
-                id="cheder-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Mendel"
-                className="mt-1.5 h-12 rounded-xl text-base"
-                autoComplete="off"
-              />
-              <p className="mt-4 text-sm font-medium">Grade</p>
-              <div className="mt-1.5 grid grid-cols-5 gap-2">
-                {GRADES.map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setGrade(g)}
-                    className={cn(
-                      'h-12 rounded-xl border text-base font-semibold transition-colors',
-                      grade === g
-                        ? 'border-[var(--ch-blue)] bg-[var(--ch-blue)] text-white'
-                        : 'border-border bg-background hover:bg-muted',
-                    )}
-                  >
-                    {g}
-                  </button>
+            <>
+              <div className="mb-4 flex justify-center gap-1.5">
+                {STEPS.map((s, i) => (
+                  <span
+                    key={s}
+                    className="h-1.5 rounded-full transition-all"
+                    style={{
+                      width: s === step ? 24 : 10,
+                      backgroundColor: STEPS.indexOf(step) >= i ? 'var(--ch-blue)' : 'var(--border)',
+                    }}
+                  />
                 ))}
               </div>
-              <Button
-                type="submit"
-                size="lg"
-                disabled={!name.trim() || grade === null}
-                className="mt-6 h-12 w-full rounded-2xl text-base"
-              >
-                Create student account
-              </Button>
-            </form>
+
+              {step === 'hello' && (
+                <div className="text-center">
+                  <h2 className="font-serif text-2xl font-semibold">Your school is waiting</h2>
+                  <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+                    A real cheder — live davening, friends, a rebbi who knows you — right here.
+                  </p>
+                  <Button size="lg" className="mt-5 h-12 w-full rounded-2xl text-base" onClick={goName}>
+                    Meet your melamed
+                  </Button>
+                  <p className="mt-2 text-xs text-muted-foreground">He talks. Turn your sound on.</p>
+                </div>
+              )}
+
+              {step === 'name' && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">What&apos;s your name?</h2>
+                  <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && goGrade()}
+                    placeholder="Mendel"
+                    autoFocus
+                    className="mt-3 h-12 rounded-xl text-center text-lg"
+                    autoComplete="off"
+                  />
+                  <Button size="lg" disabled={!name.trim()} className="mt-4 h-12 w-full rounded-2xl text-base" onClick={goGrade}>
+                    That&apos;s me
+                  </Button>
+                </div>
+              )}
+
+              {step === 'grade' && (
+                <div>
+                  <button type="button" onClick={() => setStep('name')} className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                    <ArrowLeft className="size-3.5" /> back
+                  </button>
+                  <h2 className="mt-2 font-serif text-xl font-semibold">What grade are you in, {name.trim()}?</h2>
+                  <div className="mt-3 grid grid-cols-5 gap-2">
+                    {GRADES.map((g) => (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => goFavorite(g)}
+                        className={cn(
+                          'h-14 rounded-2xl border text-lg font-bold transition-all hover:-translate-y-0.5',
+                          grade === g
+                            ? 'border-[var(--ch-blue)] bg-[var(--ch-blue)] text-white'
+                            : 'border-border bg-background hover:bg-muted',
+                        )}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 'favorite' && (
+                <div>
+                  <button type="button" onClick={() => setStep('grade')} className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                    <ArrowLeft className="size-3.5" /> back
+                  </button>
+                  <h2 className="mt-2 font-serif text-xl font-semibold">What do you love learning most?</h2>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {FAVORITES.map(({ id, label, icon: Icon, main, soft }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => finish(id)}
+                        className="flex items-center gap-3 rounded-2xl border border-border p-3 text-left font-semibold transition-all hover:-translate-y-0.5 hover:bg-muted"
+                      >
+                        <span className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: soft, color: main }}>
+                          <Icon className="size-5" />
+                        </span>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    Your school builds itself around what you love — and what you need.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
-
-        <ul className="mt-8 space-y-3">
-          {PILLARS.map(({ icon: Icon, text, main, soft }) => (
-            <li key={text} className="flex items-center gap-3 text-sm text-muted-foreground">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: soft, color: main }}>
-                <Icon className="size-4" />
-              </span>
-              {text}
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

@@ -103,6 +103,7 @@ export default function MathSprint() {
   return (
     <LessonShell
       accent={{ main: 'var(--ch-teal)', soft: 'var(--ch-teal-soft)' }}
+      intro="Sixty seconds on the clock. Show me your kop — on your marks!"
       chip="Math · your own pace"
       title="Fluency sprint"
       subtitle="60 seconds. The questions grow with you."

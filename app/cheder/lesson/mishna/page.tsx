@@ -81,6 +81,7 @@ export default function MishnaLesson() {
   return (
     <LessonShell
       accent={{ main: 'var(--ch-violet)', soft: 'var(--ch-violet-soft)' }}
+      intro="Two boys found one tallis — a real din Torah! Open the whole map, and you can even watch it happen."
       chip="Mishna · Bava Metzia 1:1"
       title="Shnayim Ochazin"
       hebrewTitle="שְׁנַיִם אוֹחֲזִין"

@@ -52,7 +52,7 @@ export default function StorePage() {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Drawn <span className="font-semibold text-foreground">live this Sunday</span> at the
-              Chabad of Atlanta meetup. Grand prize: LEGO set.
+              Chabad House meetup · Hollywood, FL. Grand prize: LEGO set.
             </p>
           </div>
           {raffleEntries > 0 && (

@@ -1,6 +1,8 @@
 'use client';
 
-import { Bell, Flame, Mail, RefreshCcw } from 'lucide-react';
+import * as React from 'react';
+import { Bell, BookCheck, Clock, Eye, Flame, Mail, RefreshCcw, Ticket } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { LessonShell } from '../_components/lesson';
 import { useCheder } from '../_components/state';
 
@@ -12,17 +14,47 @@ const SUBJECTS = [
   { name: 'English reading', level: 3, mastery: 79, color: 'var(--ch-green)' },
 ];
 
+const MASTERED = [
+  { unit: 'Bereishis 1:1 — the first pasuk', subject: 'Chumash', color: 'var(--ch-blue)', when: 'Today', score: '100%' },
+  { unit: 'Shnayim Ochazin — the sugya map', subject: 'Mishna', color: 'var(--ch-violet)', when: 'Today', score: '84%' },
+  { unit: 'Multiplication — level 5 set', subject: 'Math', color: 'var(--ch-teal)', when: 'Yesterday', score: '92%' },
+  { unit: 'Modeh Ani — every word', subject: 'Tefilla', color: 'var(--ch-sky)', when: 'Yesterday', score: '100%' },
+  { unit: 'The Alter Rebbe — story & chart', subject: 'Chassidus', color: 'var(--ch-amber)', when: 'Sunday', score: '88%' },
+];
+
+const STATS = [
+  { label: 'Units mastered', value: '12', icon: BookCheck, main: 'var(--ch-blue)', soft: 'var(--ch-blue-soft)' },
+  { label: 'Learning this week', value: '5h 40m', icon: Clock, main: 'var(--ch-teal)', soft: 'var(--ch-teal-soft)' },
+  { label: 'Davening streak', value: '6 days', icon: Flame, main: 'var(--ch-amber)', soft: 'var(--ch-amber-soft)' },
+  { label: 'Tickets earned', value: '87', icon: Ticket, main: 'var(--ch-green)', soft: 'var(--ch-green-soft)' },
+];
+
 export default function ProgressPage() {
   const { child } = useCheder();
+  const [parentView, setParentView] = React.useState(false);
   const name = child?.name ?? 'Your child';
 
   return (
     <LessonShell
-      chip="My progress"
+      chip="My desk"
       title="One child, one map"
       subtitle="Not one grade for everything — a real level in every subject"
     >
-      <div className="space-y-2.5">
+      {/* stats */}
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        {STATS.map(({ label, value, icon: Icon, main, soft }) => (
+          <div key={label} className="rounded-3xl border border-border bg-card p-3.5">
+            <span className="flex size-9 items-center justify-center rounded-xl" style={{ backgroundColor: soft }}>
+              <Icon className="size-4.5" style={{ color: main }} />
+            </span>
+            <p className="mt-2.5 font-serif text-2xl font-semibold tabular-nums">{value}</p>
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* levels */}
+      <div className="mt-4 space-y-2.5">
         {SUBJECTS.map((s) => (
           <div key={s.name} className="rounded-3xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">
@@ -33,10 +65,7 @@ export default function ProgressPage() {
             </div>
             <div className="mt-2 flex items-center gap-3">
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${s.mastery}%`, backgroundColor: s.color }}
-                />
+                <div className="h-full rounded-full" style={{ width: `${s.mastery}%`, backgroundColor: s.color }} />
               </div>
               <span className="w-10 text-right text-sm font-semibold text-muted-foreground tabular-nums">
                 {s.mastery}%
@@ -44,28 +73,35 @@ export default function ProgressPage() {
             </div>
           </div>
         ))}
+      </div>
 
-        <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--ch-amber-soft)' }}>
-              <Flame className="size-5 text-[var(--ch-amber)]" />
-            </span>
-            <div>
-              <p className="font-semibold">Davening streak</p>
-              <p className="text-xs text-muted-foreground">every morning with the class</p>
+      {/* recently mastered */}
+      <div className="mt-4 rounded-3xl border border-border bg-card p-5">
+        <p className="font-serif text-lg font-semibold">What I&apos;ve learned</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">Every mastered unit stays on your record</p>
+        <div className="mt-3 space-y-2">
+          {MASTERED.map((m) => (
+            <div key={m.unit} className="flex items-center gap-3 rounded-2xl border border-border px-3.5 py-2.5">
+              <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: m.color }} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{m.unit}</p>
+                <p className="text-xs text-muted-foreground">{m.subject} · {m.when}</p>
+              </div>
+              <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--ch-green)' }}>
+                {m.score}
+              </span>
             </div>
-          </div>
-          <p className="font-serif text-2xl font-semibold tabular-nums">6 days</p>
+          ))}
         </div>
       </div>
 
+      {/* how the plan works */}
       <div className="mt-4 space-y-2.5">
         <div className="flex items-start gap-3 rounded-3xl border border-border bg-card p-4 text-sm">
           <RefreshCcw className="mt-0.5 size-4.5 shrink-0 text-[var(--ch-blue)]" />
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground">The plan rebuilds itself weekly.</span>{' '}
-            Strong in math? Deeper problems, not busywork. Mishna dipping? More time, an easier
-            ramp.
+            Strong in math? Deeper problems, not busywork. Mishna dipping? More time, an easier ramp.
           </p>
         </div>
         <div className="flex items-start gap-3 rounded-3xl border border-border bg-card p-4 text-sm">
@@ -77,23 +113,44 @@ export default function ProgressPage() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-3xl border border-border bg-secondary p-5">
-        <p className="flex items-center gap-2 text-xs font-bold tracking-wide text-muted-foreground uppercase">
-          <Mail className="size-4" /> Weekly report · sent to parents automatically
-        </p>
-        <div className="mt-3 rounded-2xl bg-card p-4 text-sm leading-relaxed">
-          <p className="font-serif text-base font-semibold">This week: {name}</p>
-          <p className="mt-2 text-muted-foreground">
-            Mastered 4 units (Chumash ×2, Mishna ×1, Math ×1) at 87% average first-try mastery.
-            Davened with the class 5 of 5 mornings. Chavrusa attendance: 5/5. Math moved up to
-            Level 5 — we added two enrichment sets. Mishna needs one more pass on Shnayim Ochazin;
-            the mashpia will review it at Thursday&apos;s 1:1.
+      {/* parent view */}
+      <button
+        type="button"
+        onClick={() => setParentView((v) => !v)}
+        className={cn(
+          'mt-4 flex w-full items-center justify-between rounded-3xl border px-5 py-3.5 text-left transition-colors',
+          parentView ? 'border-[var(--ch-blue)]/40 bg-[var(--ch-blue-soft)]' : 'border-border bg-card hover:bg-muted',
+        )}
+      >
+        <span className="flex items-center gap-2.5 font-semibold">
+          <Eye className="size-4.5" style={{ color: 'var(--ch-blue)' }} />
+          Parent view
+        </span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {parentView ? 'shown' : 'tap to preview what parents see'}
+        </span>
+      </button>
+
+      {parentView && (
+        <div className="mt-2.5 rounded-3xl border border-border bg-secondary p-5" style={{ animation: 'cheder-pop 0.3s ease-out both' }}>
+          <p className="flex items-center gap-2 text-xs font-bold tracking-wide text-muted-foreground uppercase">
+            <Mail className="size-4" /> Weekly report · sent automatically every Friday
+          </p>
+          <div className="mt-3 rounded-2xl bg-card p-4 text-sm leading-relaxed">
+            <p className="font-serif text-base font-semibold">This week: {name}</p>
+            <p className="mt-2 text-muted-foreground">
+              Mastered 4 units (Chumash ×2, Mishna ×1, Math ×1) at 87% average first-try mastery.
+              Davened with the class 5 of 5 mornings. Chavrusa attendance: 5/5. Math moved up to
+              Level 5 — we added two enrichment sets. Mishna needs one more pass on Shnayim
+              Ochazin; the mashpia will review it at Thursday&apos;s 1:1.
+            </p>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Generated from real learning data — no teacher spends Sunday night writing it. Parents
+            also see attendance, the ticket ledger and the full unit record.
           </p>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Generated from real learning data — no teacher spends Sunday night writing it.
-        </p>
-      </div>
+      )}
     </LessonShell>
   );
 }

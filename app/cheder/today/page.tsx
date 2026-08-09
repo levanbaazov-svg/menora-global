@@ -180,7 +180,7 @@ export default function TodayPage() {
         </div>
         <div className="flex items-center gap-3 rounded-3xl border border-border bg-card p-3.5 text-sm">
           <MapPin className="size-5 shrink-0" style={{ color: 'var(--ch-blue)' }} />
-          <span><span className="font-semibold">Sunday</span> — cheder meetup & raffle at Chabad of Atlanta</span>
+          <span><span className="font-semibold">Sunday</span> — cheder meetup & raffle · Chabad House, Hollywood FL</span>
         </div>
       </div>
 

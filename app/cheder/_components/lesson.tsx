@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Check, PartyPopper, RotateCcw, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useRebbe } from './rebbe';
 
 export function LessonShell({
   chip,
@@ -12,6 +13,7 @@ export function LessonShell({
   hebrewTitle,
   subtitle,
   accent,
+  intro,
   children,
 }: {
   chip: string;
@@ -19,9 +21,18 @@ export function LessonShell({
   hebrewTitle?: string;
   subtitle?: string;
   accent?: { main: string; soft: string };
+  intro?: string;
   children: React.ReactNode;
 }) {
   const a = accent ?? { main: 'var(--ch-blue)', soft: 'var(--ch-blue-soft)' };
+  const { say } = useRebbe();
+  const introSaid = React.useRef(false);
+  React.useEffect(() => {
+    if (intro && !introSaid.current) {
+      introSaid.current = true;
+      say(intro);
+    }
+  }, [intro, say]);
   return (
     <div className="py-6">
       <Link

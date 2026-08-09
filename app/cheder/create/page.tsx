@@ -63,6 +63,7 @@ export default function CreateStudio() {
 
   return (
     <LessonShell
+      intro="Pick a scene — and watch what you learned come alive!"
       chip="Bring it to life"
       title="Make it real"
       subtitle="Turn what you learned today into a living scene"
